@@ -1,0 +1,131 @@
+<html>
+<head>
+	<title>BeCal + Ben0bis Calendar</title>
+	<meta charset="utf-8" />
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="css/jdoor.css">
+	<link rel="stylesheet" type="text/css" href="css/jdoor_theme.css">
+</head>
+<body>
+
+<div id ="content">
+	<div id="calMenu"></div>
+	<div id="calContent"></div>
+</div>
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/jdoor.js"></script>
+<script>
+var monthNames = ["Jan.", "Feb.", "März", "April", "Mai", "Juni",
+					"July", "Aug.", "Sept.", "Okt.", "Nov.", "Dez."];
+var monthNamesL = ["Januar", "Februar", "März", "April", "Mai", "Juni",
+					"July", "August", "September", "Oktober", "November", "Dezember"];
+
+// today needs to be a date.
+function createMonthDisplay(today)
+{
+	var myMonth = today.getMonth();
+
+	// build menu.
+	var mt = "";
+	mt = '<div id="calMonthName">'+monthNamesL[today.getMonth()]+" "+today.getFullYear()+"</div>";
+	mt+='<div id="calMonthAdvancer">';
+	mt+='<a href="javascript:" class="advBtn calBtn" onclick="getToday();">Heute</a>';
+	mt+='<a href="javascript:" class="advBtn" onclick="advanceMonth(-1);">&nbsp;&lt;&nbsp;</a>';
+	mt+='<a href="javascript:" class="advBtn" onclick="advanceMonth(1);">&nbsp;&gt;&nbsp;</a>';
+	mt+='</div>';
+	$('#calMenu').html(mt);
+
+	// get the month begin.
+	var monthBegin = new Date(today.getFullYear(), today.getMonth(), 1, 1, 1, 10, 0);
+	var returnDate = new Date(monthBegin);
+	var myMonth = today.getMonth();
+	
+	// maybe move the date some way forward.
+	var monthBeginDay = monthBegin.getDay();
+	if(monthBeginDay > 0)
+		monthBegin.setDate(monthBegin.getDate() - monthBeginDay);
+
+	// get and set widht and height.
+	$('#calContent').height($('#content').height()-$('#calMenu').height()-11);
+	var calFieldHeight = ($("#calContent").height()-20)*0.2;	
+	var calFieldWidth =$("#calContent").width()*(1.0/7.0);
+	
+	var txt="";
+	txt+='<div class="calDayField" style="top: 0px; left: 0px;">&nbsp;So.</div>';
+	txt+='<div class="calDayField" style="top: 0px; left: '+(calFieldWidth)+'px;">&nbsp;Mo.</div>';
+	txt+='<div class="calDayField" style="top: 0px; left: '+(calFieldWidth*2)+'px;">&nbsp;Di.</div>';
+	txt+='<div class="calDayField" style="top: 0px; left: '+(calFieldWidth*3)+'px;">&nbsp;Mi.</div>';
+	txt+='<div class="calDayField" style="top: 0px; left: '+(calFieldWidth*4)+'px;">&nbsp;Do.</div>';
+	txt+='<div class="calDayField" style="top: 0px; left: '+(calFieldWidth*5)+'px;">&nbsp;Fr.</div>';
+	txt+='<div class="calDayField lastCalField" style="top: 0px; left: '+(calFieldWidth*6)+'px;">&nbsp;Sa.</div>';
+	
+	for(weeks=0;weeks<5;weeks++)
+	{  
+		for(days=0;days<7;days++)
+		{
+			var mydate = new Date(monthBegin);
+			mydate.setDate(monthBegin.getDate()+(weeks*7 + days));
+			var posY = calFieldHeight*weeks+20;
+			var posX = calFieldWidth*days;
+			var cl="";
+			if(days==6) cl=" lastCalField";
+			if(weeks==4) cl+=" lowestCalField";
+			var dt = mydate.getDate();
+			if(mydate.getDate()==1)
+				dt+=". "+monthNames[mydate.getMonth()];
+			txt+='<div class="calField'+cl+'" style="top:'+posY+'px; left: '+posX+'px;"><br />&nbsp;'+dt+'</div>';
+		}
+	}
+	
+	$("#calContent").html(txt);
+	
+	$(".calDayField").each(function()
+	{
+		$(this).width(calFieldWidth);}
+	);
+	$(".calField").each(function()
+	{
+		$(this).width(calFieldWidth);
+		$(this).height(calFieldHeight);
+	});
+		
+	return returnDate;
+}
+
+// get global date and create the first display.
+var globaltoday = createMonthDisplay(new Date());
+
+// get the month of today.
+function getToday() {globaltoday = createMonthDisplay(new Date());}
+
+// advance the month.
+function advanceMonth(amount)
+{
+	var dt = globaltoday;
+	dt.setMonth(dt.getMonth()+amount);
+	globaltoday = createMonthDisplay(dt);
+	//$("#createEntryWindow").jdShow();
+	return globaltoday;
+}
+
+// show the entry window and set the focus to the input.
+function showEntryWindow()
+{
+	$('#createEntryWindow').show();
+	$('#calInputName').focus();
+}
+
+// resize the window.
+$(window).resize(function(){globaltoday=createMonthDisplay(globaltoday);});
+$(document).ready(function()
+{
+	// create the jdoor windows.
+	$.fn.jdoor.defaults.WindowHideIconContent ="&#9776;";
+	$.fn.jdoor.defaults.WindowTopBarHeight = 50;
+	$('#content').jdCreateWindow("createEntryWindow",100,100,500,200, '<input type="text" id="calInputName" placeholder="Titel hinzufügen"></input>', "Hallo");
+	showEntryWindow();
+	//$('#createEntryWindow').hide();
+});
+
+</script>
+</body>

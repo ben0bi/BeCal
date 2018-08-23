@@ -1,0 +1,44 @@
+/* A jdwindow 
+	It contains all the other classes below in their own divs. 
+*/
+/* .jdwindow  {} */
+
+/* This is the bar for moving a window around.
+	It is located on the top of the window.
+*/
+.jdwindow-top
+{
+	position: relative; /* Cannot use dynamic size with absolute positions. */
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	overflow: hidden;
+	/* height is set by $.fn.jdoor.defaults.WindowTopBarHeight */
+}
+
+/* 
+	This is the hide button of the window.
+	Only position is set in css, for using other ones.
+	The jdwindow-hide-clicker is an invisible div over the jdwindow-hide icon,
+	so that the cursor does not change over the icon text.
+*/
+.jdwindow-hide, .jdwindow-hide-clicker
+{
+	position: absolute;
+	right: 0px;
+	top: 0px;
+}
+
+/* This is the actual content of the window.
+	It must not fill the whole window (when you set the window size. (not auto/dynamic))
+*/
+/*.jdwindow-content{}*/
+
+/* The lock is over the content and prevents the user from clicking links
+	on windows in the back. Only the one with the focus has no lock (display:none)
+	On generating of a window, the lock is hidden because it is the most foreground one.
+	All locks will be set on generating a new window and by other focus operations.
+	
+	Uncomment the border styling to see how the lock works.
+*/
+.jdwindow-lock { /* border: 2px solid #FF0; */ }

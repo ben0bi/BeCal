@@ -1,0 +1,30 @@
+/* (graphical) stuff for the window class. 
+	for layouting it, refer to jdoors.css */
+/* the whole window */
+.jdwindow
+{
+	border: 2px solid #FFFFFA;
+	border-radius: 5px;
+	background-color: #111133;
+	color: #FFFFFA;
+}
+
+/* the top bar of the window (to move it) */
+.jdwindow-top 
+{
+	background-color: #113311;
+	padding-left: 10px;
+}
+
+/* the hide button. 
+	a window will not be deleted, only hidden.
+	remember that. You can show it again with jQuery and the window name given. 
+	$('#mywindow').show();
+*/
+.jdwindow-hide 
+{
+	background-color: #333366;
+	padding-left: 13px;
+	font-family: monospace;
+	font-size: 25pt;
+}

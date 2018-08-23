@@ -1,0 +1,187 @@
+<html>
+<head>
+<title>jDoor + Documentation</title>
+<style type="text/css">
+body {background-color: #FAFAFF; color: #000;}
+.todo {color: #FF0000;}
+code 
+{
+	background-color: #FFA; 
+	color: #3A3; 
+	padding: 2px;
+	padding-left:5px; 
+	padding-right:5px;
+}
+td {vertical-align: top; padding-left: 5px; padding-right: 5px; padding-bottom: 20px;}
+</style>
+</head>
+<body>
+	<h1>Introduction</h1>
+	<h3>jDoor version: 1.1.0-beta</h3>
+	jDoor enables you to create moveable windows on your web-page. These windows behave almost like "Real-OS"-Windows:
+	They can get or loose the focus and you can move them with your mouse around the screen.<br />
+	<br />
+	<b>DOES NOT WORK WITH MS Internet Explorer.</b> Fix it yourself, I am sick of it.<br />
+	DOES WORK WITH MS Edge. What a relief. :)<br />
+	<hr />
+	
+	<h1>LICENSE</h1>
+	You can do with jDoor what you want if you follow these rules:<br />
+		<br />
+		1. <b>IT IS NOT ALLOWED TO USE THIS SOFTWARE OR PARTS OF IT FOR ADVERTISING.</b> (Popups etc.)<br />
+		2. <b>AUTHOR CREDITS MUST BE INCLUDED IN YOUR SOFTWARE, VISIBLE TO [AND ACCESSIBLE FOR] THE END-USER.</b><br />
+			<br />
+			Minimum Credits:<br />
+			jDoor by Beni Yager (twitter.com/ben0bi)<br />
+			<br />
+			Create author credits window:<br />
+			$('#myscreenid').jdCreateAuthorCredits();<br />
+			<br />
+		3. For that two rules, you can use it as you want, private or commercial.<br />
+	<hr />
+	
+	<h1>Usage</h1>
+	jDoor is a jQuery-plugin. You need to include jQuery to use jDoor.<br />
+	<br />
+	jDoor is split in several files:<br />
+		jdoor.js	<- This is the main js-File with the jdoor plugin in it.<br />
+		jdoor.css	<- Basic css setup. <span class="todo">TODO: remove</span><br />
+		themes/xxx.css <- Colouring, border and font setup.<br />
+		<br />
+	You NEED to include jdoor.js and jdoor.css, but you can create your own theme.<br />
+	<br />
+	jDoor provides some extra methods for jQuery.
+	To use jDoor related stuff, call <code>$('#targetscreen').myJDoorFunction()</code><br />
+	<br />
+	<hr />
+
+	<h1>Default Values</h1>
+	You can set or get these default values directly.<br />
+	<table>
+			<tr><td>Variable Name</td><td>Default-Value</td><td>Description</td><tr>
+		<tr><td>$.fn.djoor.defaults.WindowTopBarHeight</td><td>20</td><td>The height of the top-bar in a window. (In pixels)</td><tr>
+		<tr><td>$.fn.djoor.defaults.WindowHideIconContent</td><td>'X'</td><td>The HTML-content of the hide icon in a window.</td><tr>
+		<tr><td>$.fn.djoor.defaults.MinimumFloatIn</td><td>10</td><td>Minimum size of top-bar that must remain in the screen when moving the window out of the screen. (In pixels) Takes into account if the hide icon is on the left or on the right of the window and above the top-bar.</td><tr>
+		<tr><td>$.fn.djoor.defaults.UseCookies</td><td>true</td><td>Cookies will be used to save the position of the windows, so they are at the same place on reload. You can switch cookies off by setting this to false.</td><tr>
+	</table>
+	
+	<h1>Methods</h1>
+	<hr/>
+	<h3><code>$(targetscreenId).jdCreateWindow(windowId, x, y, width, height, title, content)</code></h3>
+	Create a window in a specific screen. A window has a top-bar where you can drag it around, a hide button and a content area.<br />
+	jDoor windows are NOT represented as objects in JavaScript. They will be created as html code and appended to the targetscreens html.<br />
+	<br />
+	Parameters:<br />
+	<table border="0">
+	<tr><td>targetscreenId</td><td>The jQuery-selector for the target screen. E.g. '#mytargetscreen', 'div'<br />
+			The window will be created in each found element.</td></tr>
+	<tr><td>windowId</td><td>The (html) name and id of the window. Used for further processing of the end user.<br />
+			=> $('#myWindowId') will get your window element.</td></tr>
+	<tr><td>x</td><td>Left position of the window on the targetscreen (in pixels).<br />
+		Use <code>'center'</code> to center it horizontally. (width must be given for right centering, see below.)</td></tr>
+	<tr><td>y</td><td>Top position of the window on the targetscreen (in pixels).<br />
+		Use <code>'center'</code> to center it vertically. (height must be given for right centering, see below.)</td></tr>
+	<tr><td>width</td><td>Width of the window in pixels.<br />
+		If the content overflows the window, a scrollbar will be shown.<br />
+		Use <code>'auto'</code>, <code>'dynamic'</code> or <code>'dyn'</code> to use the content for defining the width. If so, <code>x='center'</code> will position the left instead of the middle of the window to the center.<br />
+		<br />
+		Use a negative number to set the "max-width" instead of the "width" to get a pseudo-dynamic sizing.
+		</td></tr>
+	<tr><td>height</td><td>Height of the window in pixels.<br />
+		If the content overflows the window, a scrollbar will be shown.<br />
+		Use <code>'auto'</code>, <code>'dynamic'</code>, <code>'dyn'</code> to use the content for defining the height. If so, <code>y='center'</code> will position the top instead of the middle of the window to the center.<br />
+		<br />
+		Use a negative number to set the "max-height" instead of the "height" to get a pseudo-dynamic sizing.
+		</td></tr>
+	<tr><td>title</td><td>Text shown in the top bar of the window. The window title.</td></tr>
+	<tr><td>content</td><td>Content of the window (HTML).</td></tr>	
+	</table>
+	<hr />
+
+	<h3><code>$(targetscreenId).jdCreateAuthorCredits()</code></h3>
+	Shows author credits of jDoor. You MUST INCLUDE this information (not the window itself) somewhere, where the end user can access and see it, if you use this software in a commercial way.<br />
+	The credits-window will have the id and name <code>jdoor_window_author_credits</code>.<br />
+	<br />
+	Parameters:<br />
+	<table border="0">
+	<tr><td>targetscreenId</td><td>The jQuery-selector for the target screen. E.g. '#mytargetscreen', 'div'<br />
+			The window will be created in each found element.</td></tr>
+	</table>
+	<hr />
+	
+	<h3><code>$(targetscreenId).jdCreateYoutubeWindow(windowId, x, y, width, height,title, youtubeid)</code></h3>
+	Create a window with an embedded Youtube-Video.<br />
+	<br />
+	Parameters:<br />
+	<table border="0">
+	<tr><td>targetscreenId</td><td>The jQuery-selector for the target screen. E.g. '#mytargetscreen', 'div'<br />
+			The window will be created in each found element.</td></tr>
+	<tr><td>windowId</td><td>The (html) name and id of the window. Used for further processing of the end user.<br />
+			=> $('#myWindowId') will get your window element.</td></tr>
+	<tr><td>x</td><td>Left position of the window on the targetscreen (in pixels).<br />
+		Use <code>'center'</code> to center it horizontally. (width must be given for right centering, see below.)</td></tr>
+	<tr><td>y</td><td>Top position of the window on the targetscreen (in pixels).<br />
+		Use <code>'center'</code> to center it vertically. (height must be given for right centering, see below.)</td></tr>
+	<tr><td>width</td><td>Width of the window in pixels.<br />
+		If the content overflows the window, a scrollbar will be shown.<br />
+		Use <code>'auto'</code>, <code>'dynamic'</code> or <code>'dyn'</code> to use the content for defining the width. If so, <code>x='center'</code> will position the left instead of the middle of the window to the center.<br />
+		<br />
+		Use a negative number to set the "max-width" instead of the "width" to get a pseudo-dynamic sizing.
+		</td></tr>
+	<tr><td>height</td><td>Height of the window in pixels.<br />
+		If the content overflows the window, a scrollbar will be shown.<br />
+		Use <code>'auto'</code>, <code>'dynamic'</code>, <code>'dyn'</code> to use the content for defining the height. If so, <code>y='center'</code> will position the top instead of the middle of the window to the center.<br />
+		<br />
+		Use a negative number to set the "max-height" instead of the "height" to get a pseudo-dynamic sizing.
+		</td></tr>
+	<tr><td>title</td><td>Text shown in the top bar of the window. The window title.</td></tr>
+	<tr><td>youtubeid</td><td>The ID of the youtube video to play. In code it will look like that: <code>http://youtube.com/embed/MyGivenID</code></td></tr>
+	</table>
+	<hr />
+
+	<h3><code>$(targetscreenId).jdHideAllWindows()</code></h3>
+	Hide all windows on the targetscreen.<br />
+	<br />
+	Parameters:<br />
+	<table border="0">
+	<tr><td>targetscreenId</td><td>The jQuery-selector for the target screen. E.g. '#mytargetscreen', 'div'<br />
+			The windows in each found element will be hidden.</td></tr>
+	</table>
+	<hr />
+
+	<h3><code>$(windowId).jdShow()</code></h3>
+	Shows an element and gets it to the top if it has the jdwindow class.<br />
+	<br />
+	Parameters:<br />
+	<table border="0">
+	<tr><td>windowId</td><td>The jQuery-selector for the window to show. Calls $(windowId).show() AND $(windowId).jdoor(1) (Focus, see below) IF it has the jdwindow class.</td></tr>
+	</table>
+	<hr />
+
+	<h3><code>$(windowId).jdHTML(html)</code></h3>
+	Sets and/or gets the html-content of a windows CONTENT. (Not the whole window, only the content in the content-div.)<br />Target must have the class jdwindow.<br />
+	<br />
+	Parameters:<br />
+	<table border="0">
+	<tr><td>windowId</td><td>The jQuery-selector for the window to show. </td></tr>
+	</table>
+	<hr />
+	
+	<h3><code>$().Mouse()</code></h3>
+		Returns the mouse position. (Mouse().x and Mouse().y)<br />
+	<hr />
+	
+	<h1>(Useable) Internal Methods</h1>
+	<h3><code>$(target).jdoor(funcId)</code></h3>
+	THIS FUNCTION IS USED INTERNALLY.<br />
+	Does several things, based on the funcId.<br >
+	<br />
+	funcId-Functions:<br />
+	<table border="0">
+	<tr><td>1</td><td>Gets the window to the top and unlocks it. Locks all other windows in the same screen. Target must have the class <code>jdwindow</code>.</td></tr>
+	<tr><td>2</td><td>Initiates moving of a window. Target must have the class <code>jdwindow-top</code>.</td></tr>
+	<tr><td>3</td><td>Hides the WINDOW with the given target. Target must have the class <code>jdwindow</code>, <code>jdwindow-top</code>, <code>jdwindow-content</code>, <code>jdwindow-hide</code> or <code>jdwindow-hide-clicker</code>.</td></tr>
+	</table>
+	<hr />
+
+</body>
