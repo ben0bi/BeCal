@@ -1,7 +1,7 @@
 /* A jdwindow 
 	It contains all the other classes below in their own divs. 
 */
-/* .jdwindow  {} */
+.jdwindow  {pointer-events: auto;}
 
 /* This is the bar for moving a window around.
 	It is located on the top of the window.
