@@ -5,6 +5,7 @@
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<link rel="stylesheet" type="text/css" href="css/jdoor.css">
 	<link rel="stylesheet" type="text/css" href="css/jdoor_theme.css">
+	<link rel="stylesheet" type="text/css" href="css/anytime.5.2.0.css">	
 </head>
 <body>
 
@@ -15,7 +16,9 @@
 </div>
 <script src="js/jquery-3.3.1.min.js"></script>
 <script src="js/jdoor.js"></script>
+<script src="js/anytime.5.2.0.js"></script>
 <script src="js/BeCal.js"></script>
+
 <script>
 // resize the window.
 $(window).resize(function(){BeCal.globaltoday=BeCal.createMonthDisplay(BeCal.globaltoday);});
@@ -23,11 +26,35 @@ $(document).ready(function()
 {
 	// create the jdoor windows.
 	$.fn.jdoor.defaults.WindowHideIconContent ="&#9776;";
-	$.fn.jdoor.defaults.WindowTopBarHeight = 50;
+	$.fn.jdoor.defaults.WindowTopBarHeight = 20;
 	$.fn.jdoor.defaults.UseCookies = false; // we don't need the cookies.
-	$('#calOverlay').jdCreateWindow("createEntryWindow",100,100,500,200, '<input type="text" id="calInputName" placeholder="Titel hinzufügen"></input>', "Hallo");
-	showEntryWindow();
-	$('#createEntryWindow').hide();
+
+	BeCal.createPickers();
+	
+	txt="";
+	//$('#calOverlay').jdCreateWindow("selectTimeWindow",100,100,500,200, 'Datum & Zeit', txt);	
+	
+	//showEntryWindow();
+	//$('#createEntryWindow').hide();
+	
+	// TEST
+
+var e = new CalEntry();
+e.create(new Date(), new Date(), "Holla", "holldrio", "#FF3333");
+BeCal.entries.push(e);
+
+e = new CalEntry();
+var d=new Date();
+d.setDate(d.getDate()-30);
+var d2= new Date();
+d2.setDate(d2.getDate()-25);
+e.create(d, d2, "Holla2", "holldrio2");
+BeCal.entries.push(e);
+// END TEST
+
+// draw the screen.
+BeCal.getToday();
+
 });
 
 </script>
