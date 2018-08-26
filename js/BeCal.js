@@ -303,7 +303,7 @@ BeCal.createMonthDisplay=function(today)
 			var f = new CalDayField(mydate,posX,posY,calFieldWidth, calFieldHeight);
 			BeCal.fields.push(f);
 			var id=BeCal.fields.length-1; // id is the last index.
-			txt+='<div class="calField'+cl+'" style="top:'+posY+'px; left: '+posX+'px;" onclick="openEntryDialog('+id+'))"><br />&nbsp;'+dt+'</div>';
+			txt+='<div class="calField'+cl+'" style="top:'+posY+'px; left: '+posX+'px;" onclick="openEntryDialog('+id+')"><br />&nbsp;'+dt+'</div>';
 		}
 	}
 	
@@ -348,7 +348,7 @@ function openEntryDialog(becalfieldid)
 {
 	var f = BeCal.fields[becalfieldid];
 	var menuHeight = $('#calMenu').height()+$('.calDayField').height();
-	showEntryWindow(parseInt(f.top),parseInt(f.left)+menuHeight, jqEntry.width());
+	showEntryWindow(parseInt(f.left),parseInt(f.top)+menuHeight, f.width);
 }
 
 // show the entry window and set the focus to the input.
