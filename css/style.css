@@ -121,6 +121,15 @@ body
 	top: 130px;
 }
 
+/* div with the duration of the event. */
+#calEntryDurationDiv
+{
+	position: absolute;
+	left: 10px;
+	top: 130px;
+}
+
+/* an ok button. */
 .okBtn, okBtn:visited
 {
 	text-decoration: none;

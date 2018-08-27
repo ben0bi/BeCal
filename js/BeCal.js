@@ -43,6 +43,16 @@ Date.removeTime = function(dat)
 	return d;
 }
 
+/* set only the time of a specific date. */
+Date.setTime = function(date, time)
+{
+	var d = new Date(date);
+	d.setHours(time.getHours());
+	d.setMinutes(time.getMinutes());
+	d.setSeconds(time.getSeconds());
+	return d;
+}
+
 // a calendar event
 var CalEntry = function() 
 {
@@ -402,6 +412,114 @@ function showEntryWindow(posX=0, posY=0, entryWidth=0)
 	$('#calInputName').focus();
 }
 
+// restrict entry date inputs on change.
+var isChangingDateInput = false;
+BeCal.constrainDateInput=function()
+{
+	if(isChangingDateInput)
+	{
+//		console.log("already changing");
+		return;
+	}
+	isChangingDateInput=true;
+	
+	//console.log("CONSTRAINING DATE INPUT START");
+	// get the real dates.
+	var day1 = Date.setTime(AnyTime.getCurrent('calDateInput1'),AnyTime.getCurrent('calTimeInput1'));
+	var day2 = Date.setTime(AnyTime.getCurrent('calDateInput2'), AnyTime.getCurrent('calTimeInput2'));
+
+	// get the times.
+	var defaultConv = new AnyTime.Converter({format:'%H:%i'});
+	var time1 = defaultConv.parse($('#calTimeInput1').val());
+	var time2 = defaultConv.parse($('#calTimeInput2').val());
+	
+	/*
+	console.log("D1: "+day1);
+	console.log("D2: "+day2);
+	console.log("T1: "+time1);
+	console.log("T2: "+time2);
+	*/
+
+	// set the earliest date.
+	var earliestdate = new Date(day1);
+	earliestdate.setHours(0);
+	earliestdate.setMinutes(0);
+	earliestdate.setSeconds(1);
+	
+//	console.log("Setting earliest: "+earliestdate+" / "+time1);
+	AnyTime.setEarliest('calDateInput2', earliestdate);
+
+	// set the earliest time.	
+	if(Date.compareOnlyDate(day1,day2)==true)
+		AnyTime.setEarliest('calTimeInput2', time1);
+	else
+		AnyTime.setEarliest('calTimeInput2',defaultConv.parse("00:00"));
+	
+	$('#AnyTime--calDateInput2').hide();
+	$('#AnyTime--calTimeInput2').hide();	
+	isChangingDateInput=false;
+}
+
+// show duration of an event in the entry window.
+BeCal.showEntryDuration = function()
+{
+	var div = $('#calEntryDurationDiv');
+	var txt = "Dauer:";
+	var isBig = false;
+	var daytime1 = AnyTime.getCurrent('calDateInput1');
+	var daytime2 = AnyTime.getCurrent('calDateInput2');
+	var time1 = AnyTime.getCurrent('calTimeInput1');
+	var time2 = AnyTime.getCurrent('calTimeInput2');
+	daytime1=Date.setTime(daytime1,time1);
+	daytime2=Date.setTime(daytime2, time2);
+		
+	// return days.
+	var days = Date.daysBetween(daytime1, daytime2)-1;
+	daytime2.setDate(daytime1.getDate());
+	
+
+	if(days>=30)
+		isBig=">= "+parseInt(days/30)+" Monat/e";
+	
+	if(days>=364)
+		isBig=">= "+parseInt(days/364)+" Jahr/e";
+
+	// return hours
+	var hours = daytime2.getHours()-daytime1.getHours();
+	daytime2.setHours(daytime1.getHours());
+	
+	// return minutes
+	var minutes=daytime2.getMinutes()-daytime1.getMinutes();
+	daytime2.setMinutes(daytime1.getMinutes());
+	
+	// adjust times
+	if(minutes<0)
+	{
+		minutes=60-minutes;
+		hours-=1;
+	}
+	
+	if(hours<0)
+	{
+		hours=24 - hours;
+		days-=1;
+	}
+	
+	// show duration.
+	if(!isBig)
+	{
+		if(days>0)
+			txt+=days+"d";
+		if(hours>0 || (days>0 && minutes>0))
+			txt+=hours+"h";
+		if(minutes>0)
+			txt+=minutes+"min";
+	}else{
+		txt+=isBig;
+	}
+	div.html(txt);
+}
+
 // create the pickers for the windows.
 BeCal.createPickers=function()
 {
@@ -413,39 +531,37 @@ BeCal.createPickers=function()
 	txt+='<input type="text" id="calDateInput2" class="calInputDate" size="50" value="Sun., 30. Sept. 1967" />';
 	txt+='</td></tr></table>';
 	txt+='<div id="calEntryButtons"><a href="javascript:" class="okBtn">Speichern</a></div>';
+	txt+='<div id="calEntryDurationDiv"></div>';
 	$('#calOverlay').jdCreateWindow("createEntryWindow",100,100,500,200, '<input type="text" id="calInputName" placeholder="Titel hinzufügen"></input>', txt);
 
+	// create the pickers on the inputs.
 	AnyTime.picker( "calDateInput1", { format: "%a, %d. %b. %z", firstDOW: 0 } );
 	AnyTime.picker( "calTimeInput1", { format: "%H:%i" } );
 	AnyTime.picker( "calDateInput2", { format: "%a, %d. %b. %z", firstDOW: 0 } );
 	AnyTime.picker( "calTimeInput2", { format: "%H:%i" } );
 	
-	// restrict input on change.
-	function constrainDateInput()
-	{
-		var day = AnyTime.getCurrent('calDateInput1');
-		var hour = AnyTime.getCurrent('calTimeInput1');
-		day.setHours(hour.getHours());
-		day.setMinutes(hour.getMinutes());
-		day.setSeconds(0);
-		
-		// restrict dates. must restrict after each change.
-		AnyTime.setEarliest( "calDateInput2", day);
-		AnyTime.setEarliest( "calTimeInput2", day);
-		// add an hour to the date and set it as end date.
-		day.setHours(day.getHours()+1)
-		AnyTime.setCurrent("calDateInput2", day);
-		AnyTime.setCurrent("calTimeInput2", day);
-		$('#AnyTime--calDateInput2').hide();
-		$('#AnyTime--calTimeInput2').hide();
-	}
+	// show some stuff.
+	BeCal.showEntryDuration();
 	
+	// do something when the input fields change.
 	$('#calDateInput1').on('change', function()
 	{
-		constrainDateInput();
+		BeCal.constrainDateInput();
+		BeCal.showEntryDuration();
 	});
 	$('#calTimeInput1').on('change', function()
 	{
-		constrainDateInput();
+		BeCal.constrainDateInput();
+		BeCal.showEntryDuration();
+	});
+	$('#calDateInput2').on('change', function()
+	{
+		BeCal.constrainDateInput();
+		BeCal.showEntryDuration();
+	});
+	$('#calTimeInput2').on('change', function()
+	{
+		//BeCal.constrainDateInput();
+		BeCal.showEntryDuration();
 	});
 }

@@ -58,7 +58,7 @@
 
 var AnyTime = {
 
-    version: '5.2.0',
+    version: '5.2.2',
 
   	//=========================================================================
   	//  AnyTime.pad() pads a value with a specified number of zeroes and
@@ -2844,8 +2844,8 @@ AnyTime.picker = function( id, options ) {
 			else if ( this.dS )
 				fBtn = this.dS.find(cb);
 
-      this.setFocus(fBtn);
-      this.pos(event);
+			this.setFocus(fBtn);
+			this.pos(event);
 
 			}, // method showPkr
 
