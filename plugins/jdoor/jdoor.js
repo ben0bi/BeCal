@@ -387,9 +387,10 @@
 			pref = pref + "<div class='jdwindow' id='"+windowname+"' name='"+windowname+"' onmousedown='$(this).jdoor(1);' style='overflow: hidden; position:absolute; top:"+y+"px; left:"+x+"px; z-index:"+zi+"; "+width+" "+height+"'>";
 			pref = pref +"<div class='jdwindow-top' onmousedown='$(this).jdoor(2);' style='height:"+topbarheight+"px; display: block; z-index: 2;'>"+title+"</div>";
 			// makeup icon
-			pref = pref +"<div class='jdwindow-hide' style='width:"+topbarheight+"px; height:"+topbarheight+"px; z-index: 3;'>"+windowhidecontent+"</div>";
+			//pref = pref +"<div class='jdwindow-hide' style='width:"+topbarheight+"px; height:"+topbarheight+"px; z-index: 3;'>"+windowhidecontent+"</div>";
 			// the real button is transparent.
-			pref = pref +"<div class='jdwindow-hide-clicker' onclick='$(this).jdoor(3);' style='width:"+topbarheight+"px; height:"+topbarheight+"px; z-index: 4;'></div>";
+			//pref = pref +"<div class='jdwindow-hide-clicker' onclick='$(this).jdoor(3);' style='width:"+topbarheight+"px; height:"+topbarheight+"px; z-index: 4;'>"+windowhidecontent+"</div>";
+			pref = pref +"<div class='jdwindow-hide' onclick='$(this).jdoor(3);' style='width:"+topbarheight+"px; height:"+topbarheight+"px; z-index: 4;'>"+windowhidecontent+"</div>";
 
 			// maybe set width and height and scroll bars.
 			width="";

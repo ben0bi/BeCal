@@ -64,7 +64,13 @@ body
 	font-weight: bolder;
 	border-bottom: 1px dashed #FF0000;
 	font-size: 14pt;
-	padding-top: 5px;
+	/*padding-top: 5px;*/
+}
+
+/* the number of the day in a field. */
+.calDayNumber
+{
+	margin-top: 5px;
 }
 
 /* the whole content */
@@ -105,6 +111,30 @@ body
 	left: 0px;
 	z-index: 100;
 	pointer-events: none;
+}
+
+/* div with the save button on the entry field. */
+#calEntryButtons
+{
+	position: absolute;
+	right: 10px;
+	top: 130px;
+}
+
+.okBtn, okBtn:visited
+{
+	text-decoration: none;
+	padding: 10px;
+	background-color: #113311;
+	color: #FFFFFA;
+	border: 2px solid #333366;
+	border-radius: 5px;
+}
+
+.okBtn:hover
+{
+	text-decoration: none;
+	background-color: #336633;
 }
 
 /* the name of the month on the top. */
@@ -160,6 +190,7 @@ body
 	background-color: transparent;
 	border: 0;
 	text-align: center;
+	cursor: pointer;
 }
 
 .calInputMiddlestrich
@@ -204,6 +235,7 @@ body
 	padding-left: 5px;
 }
 
+/* marker at begin and end of an event. */
 .calEventMarker
 {
 	border-radius: 7px;
@@ -211,6 +243,7 @@ body
 	border: 2px solid #666699;
 }
 
+/* the advance month button. */
 .advBtn {color: #FFFFFA; text-decoration: none;}
 .advBtn:hover {color: #FFAA00;}
 .calBtn 
@@ -245,12 +278,17 @@ body
 #createEntryWindow .jdwindow-hide
 {
 	font-size: 25pt !important;
-	padding-left: 13px !important;
+	padding-left: 17px !important;
+	padding-top: 8px !important;
+	font-family: "calFont", sans-serif;
+	width: 50px !important;
+	height: 42px !important;
 }
 
-#createEntryWindow .jdwindow-hide,
+/*#createEntryWindow .jdwindow-hide,*/
 #createEntryWindow .jdwindow-hide-clicker
 {
 	width: 50px !important;
-	height: 50px !important;	
+	height: 50px !important;
+	padding-left: 17px;
 }

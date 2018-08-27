@@ -2785,6 +2785,13 @@ AnyTime.picker = function( id, options ) {
 			}, // method setCurrent
 
 		//---------------------------------------------------------------------
+		//  NEW FROM BEN0BITECH: .getCurrent() gets the current time.
+		//---------------------------------------------------------------------
+		getCurrent: function() {
+			return new Date(this.time);
+		}, // method getCurrent
+
+		//---------------------------------------------------------------------
 		//  .setEarliest() changes the earliest time.
 		//---------------------------------------------------------------------
 
@@ -3226,8 +3233,14 @@ AnyTime.picker = function( id, options ) {
 //=============================================================================
 
 AnyTime.setCurrent = function( id, newTime ) {
-  __pickers[id].setCurrent(newTime)
+  __pickers[id].setCurrent(newTime);
 	};
+	
+// NEW FROM BEN0BITECH: GET the time. Why isn't there a GET function?
+AnyTime.getCurrent = function(id)
+{
+	return __pickers[id].getCurrent();
+};
 
 
 //=============================================================================

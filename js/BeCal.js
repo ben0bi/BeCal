@@ -272,13 +272,13 @@ BeCal.createMonthDisplay=function(today)
 	
 	var txt="";
 	// create the day name fields.
-	txt+='<div class="calDayField" style="top: 0px; left: 0px;">&nbsp;So.</div>';
-	txt+='<div class="calDayField" style="top: 0px; left: '+(calFieldWidth)+'px;">&nbsp;Mo.</div>';
-	txt+='<div class="calDayField" style="top: 0px; left: '+(calFieldWidth*2)+'px;">&nbsp;Di.</div>';
-	txt+='<div class="calDayField" style="top: 0px; left: '+(calFieldWidth*3)+'px;">&nbsp;Mi.</div>';
-	txt+='<div class="calDayField" style="top: 0px; left: '+(calFieldWidth*4)+'px;">&nbsp;Do.</div>';
-	txt+='<div class="calDayField" style="top: 0px; left: '+(calFieldWidth*5)+'px;">&nbsp;Fr.</div>';
-	txt+='<div class="calDayField lastCalField" style="top: 0px; left: '+(calFieldWidth*6)+'px;">&nbsp;Sa.</div>';
+	txt+='<div class="calDayField" style="top: 0px; left: 0px;"><div class="calDayNumber">&nbsp;So.</div>';
+	txt+='<div class="calDayField" style="top: 0px; left: '+(calFieldWidth)+'px;"><div class="calDayNumber">&nbsp;Mo.</div></div>';
+	txt+='<div class="calDayField" style="top: 0px; left: '+(calFieldWidth*2)+'px;"><div class="calDayNumber">&nbsp;Di.</div></div>';
+	txt+='<div class="calDayField" style="top: 0px; left: '+(calFieldWidth*3)+'px;"><div class="calDayNumber">&nbsp;Mi.</div></div>';
+	txt+='<div class="calDayField" style="top: 0px; left: '+(calFieldWidth*4)+'px;"><div class="calDayNumber">&nbsp;Do.</div></div>';
+	txt+='<div class="calDayField" style="top: 0px; left: '+(calFieldWidth*5)+'px;"><div class="calDayNumber">&nbsp;Fr.</div></div>';
+	txt+='<div class="calDayField lastCalField" style="top: 0px; left: '+(calFieldWidth*6)+'px;"><div class="calDayNumber">&nbsp;Sa.</div></div>';
 	
 	// create each day field.
 	BeCal.fields = new Array();
@@ -288,7 +288,7 @@ BeCal.createMonthDisplay=function(today)
 		{
 			var mydate = Date.removeTime(monthBegin);
 			mydate.setDate(monthBegin.getDate()+(weeks*7 + days));
-			var posY = calFieldHeight*weeks+20;
+			var posY = calFieldHeight*weeks+26;
 			var posX = calFieldWidth*days;
 			var cl="";
 			if(days==6) cl=" lastCalField";
@@ -303,7 +303,7 @@ BeCal.createMonthDisplay=function(today)
 			var f = new CalDayField(mydate,posX,posY,calFieldWidth, calFieldHeight);
 			BeCal.fields.push(f);
 			var id=BeCal.fields.length-1; // id is the last index.
-			txt+='<div class="calField'+cl+'" style="top:'+posY+'px; left: '+posX+'px;" onclick="openEntryDialog('+id+')"><br />&nbsp;'+dt+'</div>';
+			txt+='<div class="calField'+cl+'" style="top:'+posY+'px; left: '+posX+'px;" onclick="openEntryDialog('+id+')"><div class="calDayNumber">&nbsp;'+dt+'</div></div>';
 		}
 	}
 	
@@ -347,6 +347,25 @@ function advanceMonth(amount)
 function openEntryDialog(becalfieldid) 
 {
 	var f = BeCal.fields[becalfieldid];
+	
+	var now = new Date();
+	var day = new Date(f.date);
+
+	// set the time to the day.
+	day.setHours(now.getHours());
+	day.setMinutes(now.getMinutes());
+	day.setSeconds(0);
+	
+	var day2 = new Date(day);
+	day2.setHours(day2.getHours()+1);
+	
+	// set the date fields.
+	AnyTime.setCurrent( "calDateInput1", day);
+	AnyTime.setCurrent( "calTimeInput1", day);
+	
+	AnyTime.setCurrent( "calDateInput2", day2);
+	AnyTime.setCurrent( "calTimeInput2", day2);
+	
 	var menuHeight = $('#calMenu').height()+$('.calDayField').height();
 	showEntryWindow(parseInt(f.left),parseInt(f.top)+menuHeight, f.width);
 }
@@ -354,6 +373,9 @@ function openEntryDialog(becalfieldid)
 // show the entry window and set the focus to the input.
 function showEntryWindow(posX=0, posY=0, entryWidth=0)
 {
+	// hide all time picker windows.
+	$(".AnyTime-win").each(function(){$(this).hide();});
+	
 	var win = $('#createEntryWindow');
 	var content = $('#calOverlay');
 	var w = win.width();
@@ -390,10 +412,40 @@ BeCal.createPickers=function()
 	txt+='<input type="text" id="calTimeInput2" class="calInputTime" value="12:34" /><br />';
 	txt+='<input type="text" id="calDateInput2" class="calInputDate" size="50" value="Sun., 30. Sept. 1967" />';
 	txt+='</td></tr></table>';
+	txt+='<div id="calEntryButtons"><a href="javascript:" class="okBtn">Speichern</a></div>';
 	$('#calOverlay').jdCreateWindow("createEntryWindow",100,100,500,200, '<input type="text" id="calInputName" placeholder="Titel hinzufügen"></input>', txt);
 
 	AnyTime.picker( "calDateInput1", { format: "%a, %d. %b. %z", firstDOW: 0 } );
 	AnyTime.picker( "calTimeInput1", { format: "%H:%i" } );
 	AnyTime.picker( "calDateInput2", { format: "%a, %d. %b. %z", firstDOW: 0 } );
 	AnyTime.picker( "calTimeInput2", { format: "%H:%i" } );
+	
+	// restrict input on change.
+	function constrainDateInput()
+	{
+		var day = AnyTime.getCurrent('calDateInput1');
+		var hour = AnyTime.getCurrent('calTimeInput1');
+		day.setHours(hour.getHours());
+		day.setMinutes(hour.getMinutes());
+		day.setSeconds(0);
+		
+		// restrict dates. must restrict after each change.
+		AnyTime.setEarliest( "calDateInput2", day);
+		AnyTime.setEarliest( "calTimeInput2", day);
+		// add an hour to the date and set it as end date.
+		day.setHours(day.getHours()+1)
+		AnyTime.setCurrent("calDateInput2", day);
+		AnyTime.setCurrent("calTimeInput2", day);
+		$('#AnyTime--calDateInput2').hide();
+		$('#AnyTime--calTimeInput2').hide();
+	}
+	
+	$('#calDateInput1').on('change', function()
+	{
+		constrainDateInput();
+	});
+	$('#calTimeInput1').on('change', function()
+	{
+		constrainDateInput();
+	});
 }

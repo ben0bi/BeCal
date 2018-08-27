@@ -27,6 +27,7 @@
 	position: absolute;
 	right: 0px;
 	top: 0px;
+	cursor: pointer;
 }
 
 /* This is the actual content of the window.
