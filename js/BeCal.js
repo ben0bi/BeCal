@@ -61,6 +61,7 @@ var CalEntry = function()
 	this.startDate = new Date();
 	this.endDate = new Date();
 	this.color = "#333366";
+	var m_id=-1;
 	
 	this.create = function(start, end, newtitle, newsummary="", newcolor = "") 
 	{
@@ -72,6 +73,8 @@ var CalEntry = function()
 			this.color="#333399";
 		else
 			this.color=newcolor;
+		m_id=CalEntry.arrID;
+		CalEntry.arrID++;
 	}
 	
 	// create the bar div and return it.
@@ -83,8 +86,11 @@ var CalEntry = function()
 		var realPosX = 0;
 		var width=0;
 		var height=10;
+		
+		var evtclass = "evt_"+m_id;
 
 		var result = "";
+
 		var firstDay = Date.removeTime(dayfields[0].date);					// first date on the table.
 		var lastDay = Date.removeTime(dayfields[dayfields.length-1].date);	// last date on the table.
 		var evtStartDay = Date.removeTime(this.startDate);					// start date of the event.
@@ -166,17 +172,17 @@ var CalEntry = function()
 						width+=newdayfield.width;
 						remainingDays-=1;
 						processed+=1;
-						console.log("Adding width at top: "+newdayfield.top+" @ "+newdayfield.date.toString());
+						//console.log("Adding width at top: "+newdayfield.top+" @ "+newdayfield.date.toString());
 					}else{
 						// *line break, leave the for loop.
 						if(firstone==true && evtStartDay>=firstDay)
 						{
-							result+='<div class="calEventBar calEventMarker" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+(posX+1)+'px; width:10px; height:'+height+'px;"></div>';
+							result+='<div onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMarker '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+(posX+1)+'px; width:10px; height:'+height+'px;"></div>';
 							posX+=5;
 							width-=5;
 							firstone = false;
 						}
-						result+='<div class="calEventBar" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+posX+'px; width:'+width+'px; height:'+height+'px;">'+this.title+'</div>';
+						result+='<div onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+posX+'px; width:'+width+'px; height:'+height+'px;">'+this.title+'</div>';
 						actualdate = Date.removeTime(nd);
 						console.log("--> (Processed "+processed+" Remaining "+remainingDays+") Setting date: "+nd.toString());
 						processed = 0;
@@ -195,7 +201,7 @@ var CalEntry = function()
 			// add the start marker.
 			if(firstone==true && evtStartDay>=firstDay)
 			{
-				result+='<div class="calEventBar calEventMarker" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+(posX+1)+'px; width:10px; height:'+height+'px;"></div>';
+				result+='<div onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMarker '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+(posX+1)+'px; width:10px; height:'+height+'px;"></div>';
 				posX+=5;
 				width-=5;
 				firstone = false;
@@ -205,17 +211,20 @@ var CalEntry = function()
 			if(evtEndDay<=lastDay)
 			{
 				width-=10;			
-				result+='<div class="calEventBar calEventMarker" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+(posX+width-4)+'px; width:10px; height:'+height+'px;"></div>';
+				result+='<div onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMarker '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+(posX+width-4)+'px; width:10px; height:'+height+'px;"></div>';
 			}
 			
-			result+='<div class="calEventBar" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+posX+'px; width:'+width+'px; height:'+height+'px;">'+this.title+'</div>';
+			// add the last bar (see above)
+			result+='<div onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+posX+'px; width:'+width+'px; height:'+height+'px;">'+this.title+'</div>';
 			
 			if(remainingDays<=0 && !newline)
 				done=true;
 		}
+		
 		return result;
 	}
 }
+CalEntry.arrID = 0;
 
 // a day field with its position and size.
 var CalDayField = function(day,x,y,w,h)
@@ -247,6 +256,15 @@ BeCal.getDayField = function(date, fields)
 			return fields[q];
 	}
 	return 0;
+}
+
+// mouse over an event, highlight all their bars.
+BeCal.evtMouseOver = function(evtid, mouseOut=false)
+{
+	if(mouseOut)
+		$('.evt_'+evtid).css('border-color', '#333366');
+	else
+		$('.evt_'+evtid).css('border-color', '#FFFFFA');
 }
 
 // today needs to be a date.
@@ -477,7 +495,6 @@ BeCal.showEntryDuration = function()
 	var days = Date.daysBetween(daytime1, daytime2)-1;
 	daytime2.setDate(daytime1.getDate());
 	
-
 	if(days>=30)
 		isBig=">= "+parseInt(days/30)+" Monat/e";
 	
@@ -530,7 +547,7 @@ BeCal.createPickers=function()
 	txt+='<input type="text" id="calTimeInput2" class="calInputTime" value="12:34" /><br />';
 	txt+='<input type="text" id="calDateInput2" class="calInputDate" size="50" value="Sun., 30. Sept. 1967" />';
 	txt+='</td></tr></table>';
-	txt+='<div id="calEntryButtons"><a href="javascript:" class="okBtn">Speichern</a></div>';
+	txt+='<div id="calEntryButtons"><a href="javascript:" class="okBtn" onclick="BeCal.createNewEntry()">Speichern</a></div>';
 	txt+='<div id="calEntryDurationDiv"></div>';
 	$('#calOverlay').jdCreateWindow("createEntryWindow",100,100,500,200, '<input type="text" id="calInputName" placeholder="Titel hinzufügen"></input>', txt);
 
@@ -564,4 +581,17 @@ BeCal.createPickers=function()
 		//BeCal.constrainDateInput();
 		BeCal.showEntryDuration();
 	});
+}
+
+/* Create a new entry. */
+BeCal.createNewEntry = function()
+{	
+	var e = new CalEntry();
+	var start=Date.setTime(AnyTime.getCurrent('calDateInput1'), AnyTime.getCurrent('calTimeInput1'));
+	var end=Date.setTime(AnyTime.getCurrent('calDateInput2'), AnyTime.getCurrent('calTimeInput2'));
+	e.create(start, end, "CREATED", "");
+	BeCal.entries.push(e);
+	
+	$('#createEntryWindow').hide();
+	BeCal.globaltoday=BeCal.createMonthDisplay(BeCal.globaltoday);
 }
