@@ -53,6 +53,8 @@ Date.setTime = function(date, time)
 	return d;
 }
 
+// ++++++++++++++++++++++++++++++++++++++++++++++++ ENDOF DATE
+
 // a calendar event
 var CalEntry = function() 
 {
@@ -80,34 +82,37 @@ var CalEntry = function()
 	// create the bar div and return it.
 	this.createMonthBars=function(dayfields)
 	{
-		var posX=0;
-		var posY=0;
-		var realPosY=0;
-		var realPosX = 0;
-		var width=0;
-		var height=10;
+		var posX=0;			// x position to calculate with.
+		var posY=0;			// y position to calculate with.
+		var realPosY=0;		// the real y position.
+		//var realPosX = 0;	// the real x position.
+		var width=0;		// the bar width.
+		var height=12;		// the bar height.
 		
-		var evtclass = "evt_"+m_id;
+		var evtclass = "evt_"+m_id;	// this bars own class.
 
-		var result = "";
+		var result = "";	// the returning html text.
 
 		var firstDay = Date.removeTime(dayfields[0].date);					// first date on the table.
 		var lastDay = Date.removeTime(dayfields[dayfields.length-1].date);	// last date on the table.
 		var evtStartDay = Date.removeTime(this.startDate);					// start date of the event.
 		var evtEndDay = Date.removeTime(this.endDate);						// end date of the event.
-		var actualdate = new Date(evtStartDay);							// actual date for the bars.
+		var actualdate = new Date(evtStartDay);								// actual date for the bars.
 		var mydayfield=dayfields[0];										// field on table for the actual date.
 		
+		// get a free slot between the two dates.
+		var myslot = BeCal.getFreeSlotBetween(evtStartDay,evtEndDay, BeCal.fields, true);
+		
 		// check if event is on table.
-		if(evtStartDay>lastDay || evtEndDay<firstDay)
+		if(evtStartDay>lastDay || evtEndDay<firstDay || myslot<0)
 		{
-			//console.log("-- event not on table --");
+			//console.log("-- event not on table or no free slot found --");
 			return result;
 		}
 		
 		var processed =0;
 		var turn = 0;
-		console.log("+++ Listing Event +++");
+		//console.log("+++ Listing Event +++");
 		
 		var done = false;
 		var firstone = true; // if this is set, it will add a border div to id.
@@ -116,7 +121,7 @@ var CalEntry = function()
 			turn+=1;
 			if(actualdate>evtEndDay)
 			{
-				console.log("-- aborting: actualdate > enddate--");
+				//console.log("-- aborting: actualdate > enddate--");
 				return result;
 			}
 	
@@ -127,8 +132,8 @@ var CalEntry = function()
 			// get the remaining days between the two dates.
 			var remainingDays = Date.daysBetween(actualdate, evtEndDay);
 			
-			console.log("------ Turn "+turn+" -------------------------");
-			console.log("Event lasts "+remainingDays+" day/s.\nStart: "+evtStartDay+"\nEnd: "+evtEndDay+"\nActual: "+actualdate);
+			//console.log("------ Turn "+turn+" -------------------------");
+			//console.log("Event lasts "+remainingDays+" day/s.\nStart: "+evtStartDay+"\nEnd: "+evtEndDay+"\nActual: "+actualdate);
 		
 			// get the dayfield for the actual date.
 			if(actualdate>=firstDay)
@@ -147,14 +152,13 @@ var CalEntry = function()
 
 			posX = mydayfield.left;
 			posY = mydayfield.top;
-			realPosX = posX;
-			realPosY=mydayfield.top+30;
+			//realPosX = posX;
+			realPosY=mydayfield.top+BeCal.calFieldTopHeight+(myslot*BeCal.evtSlotHeight);
 			
 			width = 0;
-			height = 15;
 		
-			console.log("X: "+parseInt(posX)+" Y: "+parseInt(posY));
-					
+			//console.log("X: "+parseInt(posX)+" Y: "+parseInt(posY));
+	
 			var r = remainingDays;
 			var newline=false;
 			width-=5; // include padding into the width.
@@ -174,17 +178,18 @@ var CalEntry = function()
 						processed+=1;
 						//console.log("Adding width at top: "+newdayfield.top+" @ "+newdayfield.date.toString());
 					}else{
-						// *line break, leave the for loop.
+						// * line break, leave the for loop.
 						if(firstone==true && evtStartDay>=firstDay)
 						{
-							result+='<div onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMarker '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+(posX+1)+'px; width:10px; height:'+height+'px;"></div>';
+							// maybe add the start marker.
+							result+='<div onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMarker calEventMouseOut '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+(posX+1)+'px; width:10px; height:'+height+'px;"></div>';
 							posX+=5;
 							width-=5;
 							firstone = false;
 						}
-						result+='<div onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+posX+'px; width:'+width+'px; height:'+height+'px;">'+this.title+'</div>';
+						result+='<div onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMouseOut calEventNoBorder '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+posX+'px; width:'+width+'px; height:'+height+'px;">'+this.title+'</div>';
 						actualdate = Date.removeTime(nd);
-						console.log("--> (Processed "+processed+" Remaining "+remainingDays+") Setting date: "+nd.toString());
+						//console.log("--> (Processed "+processed+" Remaining "+remainingDays+") Setting date: "+nd.toString());
 						processed = 0;
 						newline = true;
 						break;
@@ -201,7 +206,7 @@ var CalEntry = function()
 			// add the start marker.
 			if(firstone==true && evtStartDay>=firstDay)
 			{
-				result+='<div onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMarker '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+(posX+1)+'px; width:10px; height:'+height+'px;"></div>';
+				result+='<div onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMarker calEventMouseOut '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+(posX+1)+'px; width:10px; height:'+height+'px;"></div>';
 				posX+=5;
 				width-=5;
 				firstone = false;
@@ -211,21 +216,26 @@ var CalEntry = function()
 			if(evtEndDay<=lastDay)
 			{
 				width-=10;			
-				result+='<div onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMarker '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+(posX+width-4)+'px; width:10px; height:'+height+'px;"></div>';
+				result+='<div onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMarker calEventMouseOut '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+(posX+width-4)+'px; width:10px; height:'+height+'px;"></div>';
 			}
 			
 			// add the last bar (see above)
-			result+='<div onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+posX+'px; width:'+width+'px; height:'+height+'px;">'+this.title+'</div>';
+			result+='<div onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMouseOut calEventNoBorder '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+posX+'px; width:'+width+'px; height:'+height+'px;">'+this.title+'</div>';
 			
 			if(remainingDays<=0 && !newline)
 				done=true;
-		}
-		
+		}	
 		return result;
 	}
 }
 CalEntry.arrID = 0;
 
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ENDOF CALENTRY
+
+// how many slots can be in a day field?
+BeCal.evtMaxSlots = 5;			// maximum slots. will be set on each render.
+BeCal.evtSlotHeight = 17;		// height of one slot in pixels.
+BeCal.calFieldTopHeight = 20;	// height of the top bar with the day number of a calender field.
 // a day field with its position and size.
 var CalDayField = function(day,x,y,w,h)
 {
@@ -234,7 +244,35 @@ var CalDayField = function(day,x,y,w,h)
 	this.left = x;
 	this.width = w;
 	this.height = h;
+	
+	// the slots are used to draw events above each other.
+	var slots = new Array(BeCal.evtMaxSlots);
+	var clearSlots = function()
+	{
+		for(i=0;i<slots.length;i++)
+			slots[i]=false;
+	}
+	
+	// return a slot.
+	this.isSlotOccupied = function(index)
+	{
+		if(index>=0 && index<slots.length)
+			return slots[index];
+		// unknown slots are always occupied. ;)
+		return true;
+	}
+	
+	// set a slot value.
+	this.occupySlot=function(index, occupy = true)
+	{
+		if(index>=0 && index<slots.length)
+			slots[index]=occupy;		
+	}
+	
+	clearSlots();
 }
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ENDOF CALDAYFIELD
 
 // the list with all calendar entries.
 BeCal.entries = new Array();
@@ -258,13 +296,82 @@ BeCal.getDayField = function(date, fields)
 	return 0;
 }
 
+// return a slot index number which is free on all days between the two dates.
+// returns -1 if no slot was found.
+BeCal.getFreeSlotBetween = function(date1, date2, fields, occupyslots=false)
+{
+	// get start and end on the fields.
+	var startField = fields[0];
+	var endField = fields[fields.length-1];
+	
+	var startFieldDate = startField.date;
+	var endFieldDate = endField.date;
+	
+	// the indexes for checking the slots.
+	var startIndex = 0;
+	var endIndex = fields.length-1;
+	
+	// get the index of the start field.
+	if(date1>startFieldDate || date2<endFieldDate)
+	{
+		for(i=0;i<fields.length;i++)
+		{
+			var f = fields[i];
+			if(Date.compareOnlyDate(date1,f.date)==true)
+				startIndex = i;
+			if(Date.compareOnlyDate(date2,f.date)==true)
+				endIndex = i;			
+		}
+	}
+	console.log("Start & End index for slot calculation: "+startIndex+" / "+endIndex);
+	
+	// now check for all slots.
+	var returnslot = -1;
+	for(slot=0;slot<BeCal.evtMaxSlots;slot++)
+	{
+		var found = false;
+		console.log("Search for slot "+slot+" / IDX: "+startIndex+" - "+endIndex);
+		for(idx=startIndex;idx<=endIndex;idx++)
+		{
+			if(fields[idx].isSlotOccupied(slot)==true)
+			{
+				found = true;
+				break; // break the second for.
+			}
+		}
+		// no occupation found, set the slot.
+		if(found==false)
+		{
+			returnslot=slot;
+			break; // break the first for.
+		}
+	}
+	
+	// maybe occupy the found slot.
+	if(returnslot>=0 && (occupyslots==true || occupyslots>=1))
+	{
+		console.log("OCCUPYING");
+		for(idx=startIndex;idx<=endIndex;idx++)
+		{
+			fields[idx].occupySlot(returnslot,true);
+		}
+	}
+	
+	console.log("Returning slot: "+returnslot);
+	return returnslot;
+}
+
 // mouse over an event, highlight all their bars.
 BeCal.evtMouseOver = function(evtid, mouseOut=false)
 {
 	if(mouseOut)
-		$('.evt_'+evtid).css('border-color', '#333366');
-	else
-		$('.evt_'+evtid).css('border-color', '#FFFFFA');
+	{
+		$('.evt_'+evtid).removeClass('calEventMouseOver');
+		$('.evt_'+evtid).addClass('calEventMouseOut');
+	}else{
+		$('.evt_'+evtid).removeClass('calEventMouseOut');
+		$('.evt_'+evtid).addClass('calEventMouseOver');
+	}
 }
 
 // today needs to be a date.
@@ -310,6 +417,15 @@ BeCal.createMonthDisplay=function(today)
 	
 	// create each day field.
 	BeCal.fields = new Array();
+	
+	// set the max slots.
+	if(calFieldHeight-BeCal.calFieldTopHeight>0)
+		BeCal.evtMaxSlots = parseInt((calFieldHeight-BeCal.calFieldTopHeight) / BeCal.evtSlotHeight); // one is left for the multievent link.
+	else
+		BeCal.evtMaxSlots = 1;
+		
+	console.log("Max Slots: "+BeCal.evtMaxSlots);
+	
 	for(weeks=0;weeks<5;weeks++)
 	{  
 		for(days=0;days<7;days++)
