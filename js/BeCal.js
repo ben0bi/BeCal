@@ -247,8 +247,10 @@ var CalDayField = function(day,x,y,w,h)
 	
 	// the slots are used to draw events above each other.
 	var slots = new Array(BeCal.evtMaxSlots);
+	this.hiddenEventCount = 0;
 	var clearSlots = function()
 	{
+		this.hiddenEventCount = 0;
 		for(i=0;i<slots.length;i++)
 			slots[i]=false;
 	}
@@ -348,12 +350,18 @@ BeCal.getFreeSlotBetween = function(date1, date2, fields, occupyslots=false)
 	}
 	
 	// maybe occupy the found slot.
-	if(returnslot>=0 && (occupyslots==true || occupyslots>=1))
+	if(occupyslots==true || occupyslots>=1)
 	{
-		console.log("OCCUPYING");
-		for(idx=startIndex;idx<=endIndex;idx++)
+		if(returnslot > -1)
 		{
-			fields[idx].occupySlot(returnslot,true);
+			console.log("OCCUPYING");
+			for(idx=startIndex;idx<=endIndex;idx++)
+			{
+				fields[idx].occupySlot(returnslot,true);
+			}
+		}else{
+			console.log("ADDING HIDDEN EVENT");
+			fields[idx].hiddenEventCount+=1;
 		}
 	}
 	
@@ -419,12 +427,14 @@ BeCal.createMonthDisplay=function(today)
 	BeCal.fields = new Array();
 	
 	// set the max slots.
+	BeCal.evtMaxSlots = 0;
 	if(calFieldHeight-BeCal.calFieldTopHeight>0)
-		BeCal.evtMaxSlots = parseInt((calFieldHeight-BeCal.calFieldTopHeight) / BeCal.evtSlotHeight); // one is left for the multievent link.
-	else
-		BeCal.evtMaxSlots = 1;
-		
-	console.log("Max Slots: "+BeCal.evtMaxSlots);
+		BeCal.evtMaxSlots = parseInt((calFieldHeight-BeCal.calFieldTopHeight) / BeCal.evtSlotHeight)-1; // one is left for the multievent link.
+	
+	if(BeCal.evtMaxSlots<0)
+		BeCal.evtMaxSlots=0;
+	
+	console.log("----- Max Slots: "+BeCal.evtMaxSlots);
 	
 	for(weeks=0;weeks<5;weeks++)
 	{  
@@ -447,19 +457,34 @@ BeCal.createMonthDisplay=function(today)
 			var f = new CalDayField(mydate,posX,posY,calFieldWidth, calFieldHeight);
 			BeCal.fields.push(f);
 			var id=BeCal.fields.length-1; // id is the last index.
-			txt+='<div class="calField'+cl+'" style="top:'+posY+'px; left: '+posX+'px;" onclick="openEntryDialog('+id+')"><div class="calDayNumber">&nbsp;'+dt+'</div></div>';
+			txt+='<div class="calField'+cl+'" style="top:'+posY+'px; left: '+posX+'px;" onclick="openEntryDialog('+id+')">';
+			txt+='<div class="calDayNumber">&nbsp;'+dt+'</div>';
+			txt+='<div class="calDayHiddenEvents" id="calDayHiddenEvt_'+id+'">&nbsp;+ 0</div>';
+			txt+='</div>';
 		}
 	}
 	
-	// at last, create all the events.
+	// create all the event bars.
 	for(e=0;e<BeCal.entries.length;e++)
 	{
 		var event = BeCal.entries[e];
 		txt+=event.createMonthBars(BeCal.fields);
 	}
 	
+	// create the html.
 	$("#calContent").html(txt);
 	
+	// set hidden event numbers.
+	for(i=0;i<BeCal.fields.length;i++)
+	{
+		var f = BeCal.fields[i];
+		if(f.hiddenEventCount>0)
+			$('#calDayHiddenEvt_'+i).html("+ "+f.hiddenEventCount);
+		else
+			$('#calDayHiddenEvt_'+i).html("");
+	}
+	
+	// create width and height.
 	$(".calDayField").each(function()
 	{
 		$(this).width(calFieldWidth);
