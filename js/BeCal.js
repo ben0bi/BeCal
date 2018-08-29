@@ -325,14 +325,12 @@ BeCal.getFreeSlotBetween = function(date1, date2, fields, occupyslots=false)
 				endIndex = i;			
 		}
 	}
-	console.log("Start & End index for slot calculation: "+startIndex+" / "+endIndex);
 	
 	// now check for all slots.
 	var returnslot = -1;
 	for(slot=0;slot<BeCal.evtMaxSlots;slot++)
 	{
 		var found = false;
-		console.log("Search for slot "+slot+" / IDX: "+startIndex+" - "+endIndex);
 		for(idx=startIndex;idx<=endIndex;idx++)
 		{
 			if(fields[idx].isSlotOccupied(slot)==true)
@@ -352,16 +350,14 @@ BeCal.getFreeSlotBetween = function(date1, date2, fields, occupyslots=false)
 	// maybe occupy the found slot.
 	if(occupyslots==true || occupyslots>=1)
 	{
-		if(returnslot > -1)
+		for(idx=startIndex;idx<=endIndex;idx++)
 		{
-			console.log("OCCUPYING");
-			for(idx=startIndex;idx<=endIndex;idx++)
+			if(returnslot > -1)
 			{
 				fields[idx].occupySlot(returnslot,true);
+			}else{
+				fields[idx].hiddenEventCount+=1;
 			}
-		}else{
-			console.log("ADDING HIDDEN EVENT");
-			fields[idx].hiddenEventCount+=1;
 		}
 	}
 	
@@ -387,6 +383,8 @@ BeCal.createMonthDisplay=function(today)
 {
 	var myMonth = today.getMonth();
 	var realToday = Date.removeTime(new Date());
+	
+	var calDayNameFieldHeight = 26;
 
 	// build menu.
 	var mt = "";
@@ -410,7 +408,7 @@ BeCal.createMonthDisplay=function(today)
 
 	// get and set widht and height.
 	$('#calContent').height($('#content').height()-$('#calMenu').height()-11);
-	var calFieldHeight = ($("#calContent").height()-20)*0.2;	
+	var calFieldHeight = ($("#calContent").height()-calDayNameFieldHeight)*0.2;	
 	var calFieldWidth =$("#calContent").width()*(1.0/7.0);
 	
 	var txt="";
@@ -436,13 +434,14 @@ BeCal.createMonthDisplay=function(today)
 	
 	console.log("----- Max Slots: "+BeCal.evtMaxSlots);
 	
+	// draw each day field and create its array member.
 	for(weeks=0;weeks<5;weeks++)
 	{  
 		for(days=0;days<7;days++)
 		{
 			var mydate = Date.removeTime(monthBegin);
 			mydate.setDate(monthBegin.getDate()+(weeks*7 + days));
-			var posY = calFieldHeight*weeks+26;
+			var posY = calFieldHeight*weeks+calDayNameFieldHeight;
 			var posX = calFieldWidth*days;
 			var cl="";
 			if(days==6) cl=" lastCalField";
@@ -459,7 +458,7 @@ BeCal.createMonthDisplay=function(today)
 			var id=BeCal.fields.length-1; // id is the last index.
 			txt+='<div class="calField'+cl+'" style="top:'+posY+'px; left: '+posX+'px;" onclick="openEntryDialog('+id+')">';
 			txt+='<div class="calDayNumber">&nbsp;'+dt+'</div>';
-			txt+='<div class="calDayHiddenEvents" id="calDayHiddenEvt_'+id+'">&nbsp;+ 0</div>';
+			txt+='<div class="calDayHiddenEvents" id="calDayHiddenEvtWrapper_'+id+'"><div id="calDayHiddenEvt_'+id+'" class="calDayHiddenEventContent">&nbsp;+ 0</div></div>';
 			txt+='</div>';
 		}
 	}
@@ -479,9 +478,13 @@ BeCal.createMonthDisplay=function(today)
 	{
 		var f = BeCal.fields[i];
 		if(f.hiddenEventCount>0)
+		{
 			$('#calDayHiddenEvt_'+i).html("+ "+f.hiddenEventCount);
-		else
+			$('#calDayHiddenEvtWrapper_'+i).show();
+		}else{
 			$('#calDayHiddenEvt_'+i).html("");
+			$('#calDayHiddenEvtWrapper_'+i).hide();
+		}
 	}
 	
 	// create width and height.
