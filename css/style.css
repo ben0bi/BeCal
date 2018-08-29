@@ -95,7 +95,7 @@ body
 	text-align: right;
 	width: 100%;
 	overflow: hidden;
-	background-color: #113311;
+	background-color: transparent;
 }
 .calDayHiddenEventContent
 {
@@ -163,6 +163,14 @@ body
 	position: absolute;
 	left: 10px;
 	top: 130px;
+}
+
+/* the color picker position on the entry window. */
+#calEntryColorPickerDiv
+{
+	position: relative;
+	left: 10px;
+	top: 10px;
 }
 
 /* an ok button. */

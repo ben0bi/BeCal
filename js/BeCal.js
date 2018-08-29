@@ -62,7 +62,7 @@ var CalEntry = function()
 	this.summary = "";
 	this.startDate = new Date();
 	this.endDate = new Date();
-	this.color = "#333366";
+	this.color = BeCal.evtDefaultColor;
 	var m_id=-1;
 	
 	this.create = function(start, end, newtitle, newsummary="", newcolor = "") 
@@ -72,7 +72,7 @@ var CalEntry = function()
 		this.startDate = start;
 		this.endDate = end;
 		if(newcolor=="")
-			this.color="#333399";
+			this.color=BeCal.evtDefaultColor;
 		else
 			this.color=newcolor;
 		m_id=CalEntry.arrID;
@@ -82,12 +82,12 @@ var CalEntry = function()
 	// create the bar div and return it.
 	this.createMonthBars=function(dayfields)
 	{
-		var posX=0;			// x position to calculate with.
-		var posY=0;			// y position to calculate with.
-		var realPosY=0;		// the real y position.
-		//var realPosX = 0;	// the real x position.
-		var width=0;		// the bar width.
-		var height=12;		// the bar height.
+		var posX=0;						// x position to calculate with.
+		var posY=0;						// y position to calculate with.
+		var realPosY=0;					// the real y position.
+		//var realPosX = 0;				// the real x position.
+		var width=0;					// the bar width.
+		var height=BeCal.evtHeight;		// the bar height.
 		
 		var evtclass = "evt_"+m_id;	// this bars own class.
 
@@ -235,8 +235,11 @@ CalEntry.arrID = 0;
 // how many slots can be in a day field?
 BeCal.evtMaxSlots = 5;			// maximum slots. will be set on each render.
 BeCal.evtSlotHeight = 17;		// height of one slot in pixels.
+BeCal.evtHeight = 12;			// height of an event (without borders)
 BeCal.calFieldTopHeight = 20;	// height of the top bar with the day number of a calender field.
+BeCal.evtDefaultColor = "#333399";
 // a day field with its position and size.
+
 var CalDayField = function(day,x,y,w,h)
 {
 	this.date = Date.removeTime(day);
@@ -691,8 +694,11 @@ BeCal.createPickers=function()
 	txt+='<input type="text" id="calTimeInput2" class="calInputTime" value="12:34" /><br />';
 	txt+='<input type="text" id="calDateInput2" class="calInputDate" size="50" value="Sun., 30. Sept. 1967" />';
 	txt+='</td></tr></table>';
+	txt+='<div id="calEntryColorPickerDiv"><input id="calEntryColorPicker" /></div>';
 	txt+='<div id="calEntryButtons"><a href="javascript:" class="okBtn" onclick="BeCal.createNewEntry()">Speichern</a></div>';
 	txt+='<div id="calEntryDurationDiv"></div>';
+	
+	// create the window.
 	$('#calOverlay').jdCreateWindow("createEntryWindow",100,100,500,200, '<input type="text" id="calInputName" placeholder="Titel hinzufügen"></input>', txt);
 
 	// create the pickers on the inputs.
@@ -700,6 +706,20 @@ BeCal.createPickers=function()
 	AnyTime.picker( "calTimeInput1", { format: "%H:%i" } );
 	AnyTime.picker( "calDateInput2", { format: "%a, %d. %b. %z", firstDOW: 0 } );
 	AnyTime.picker( "calTimeInput2", { format: "%H:%i" } );
+	
+	$('#calEntryColorPicker').spectrum({
+		color: BeCal.evtDefaultColor,
+		showPaletteOnly: true,
+		togglePaletteOnly: true,
+		togglePaletteMoreText: '==>',
+		togglePaletteLessText: '<==',
+    palette: [
+        ["#336","#363","#633","#663","#636","#366"],
+        ["#339","#393","#933","#993","#939","#399"],
+        ["#33A","#3A3","#A33","#AA3","#A3A","#3AA"],
+        ["#33F","#3F3","#F33","#FF3","#F3F","#3FF"],
+    ]
+	});
 	
 	// show some stuff.
 	BeCal.showEntryDuration();
@@ -730,6 +750,7 @@ BeCal.createPickers=function()
 /* Create a new entry. */
 BeCal.createNewEntry = function()
 {	
+	// create the entry with the date from the window.
 	var e = new CalEntry();
 	var start=Date.setTime(AnyTime.getCurrent('calDateInput1'), AnyTime.getCurrent('calTimeInput1'));
 	var end=Date.setTime(AnyTime.getCurrent('calDateInput2'), AnyTime.getCurrent('calTimeInput2'));

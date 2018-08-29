@@ -255,12 +255,12 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
 
 .sp-container {
     border-radius: 0;
-    background-color: #ECECEC;
+    background-color: #111133;
     border: solid 1px #f0c49B;
     padding: 0;
 }
 .sp-container, .sp-container button, .sp-container input, .sp-color, .sp-hue, .sp-clear {
-    font: normal 12px "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
+    font: 'calFont', sans-serif;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     -ms-box-sizing: border-box;
@@ -370,14 +370,13 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     display:inline-block;
     *zoom: 1;
     *display: inline;
-    border: solid 1px #91765d;
-    background: #eee;
-    color: #333;
+    border: solid 2px #FFFFFA;
+    background: #111133;
+    color: #FFFFFA;
     vertical-align: middle;
 }
 .sp-replacer:hover, .sp-replacer.sp-active {
-    border-color: #F0C49B;
-    color: #111;
+    border-color: #336633;
 }
 .sp-replacer.sp-disabled {
     cursor:default;
