@@ -684,6 +684,16 @@ BeCal.showEntryDuration = function()
 	div.html(txt);
 }
 
+// the new entry color picker changed, change the color. ;)
+BeCal.evtNewEntryColor = '#00FF00';
+function entryColorPickerChanged(col)
+{
+	BeCal.evtNewEntryColor = col.toHexString();
+	var entrywindow=$('#createEntryWindow');
+	var topbar = entrywindow.find('.jdwindow-top');
+	topbar.css('background-color', col);
+}
+
 // create the pickers for the windows.
 BeCal.createPickers=function()
 {
@@ -707,12 +717,22 @@ BeCal.createPickers=function()
 	AnyTime.picker( "calDateInput2", { format: "%a, %d. %b. %z", firstDOW: 0 } );
 	AnyTime.picker( "calTimeInput2", { format: "%H:%i" } );
 	
+	// this is the color picker.
 	$('#calEntryColorPicker').spectrum({
 		color: BeCal.evtDefaultColor,
 		showPaletteOnly: true,
 		togglePaletteOnly: true,
 		togglePaletteMoreText: '==>',
 		togglePaletteLessText: '<==',
+		clickoutFiresChange: true,
+		change: function(color) 
+		{
+			entryColorPickerChanged(color);
+		},
+		move: function(color)
+		{
+			entryColorPickerChanged(color);
+		},
     palette: [
         ["#336","#363","#633","#663","#636","#366"],
         ["#339","#393","#933","#993","#939","#399"],
@@ -754,7 +774,7 @@ BeCal.createNewEntry = function()
 	var e = new CalEntry();
 	var start=Date.setTime(AnyTime.getCurrent('calDateInput1'), AnyTime.getCurrent('calTimeInput1'));
 	var end=Date.setTime(AnyTime.getCurrent('calDateInput2'), AnyTime.getCurrent('calTimeInput2'));
-	e.create(start, end, "CREATED", "");
+	e.create(start, end, "CREATED", "", BeCal.evtNewEntryColor);
 	BeCal.entries.push(e);
 	
 	$('#createEntryWindow').hide();
