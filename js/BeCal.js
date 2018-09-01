@@ -628,7 +628,7 @@ BeCal.constrainDateInput=function()
 // show duration of an event in the entry window.
 BeCal.showEntryDuration = function()
 {
-	var div = $('#calEntryDurationDiv');
+	var durationdivs = $('.calEntryDurationDiv');
 	var txt = "Dauer:";
 	var isBig = false;
 	var daytime1 = AnyTime.getCurrent('calDateInput1');
@@ -681,7 +681,7 @@ BeCal.showEntryDuration = function()
 	}else{
 		txt+=isBig;
 	}
-	div.html(txt);
+	durationdivs.each(function() {$(this).html(txt);});
 }
 
 // the new entry color picker changed, change the color. ;)
@@ -695,8 +695,9 @@ function entryColorPickerChanged(col)
 }
 
 // create the pickers for the windows.
-BeCal.createPickers=function()
+BeCal.createUI=function()
 {
+	// create the window for a new entry.
 	var txt='<table border="0"><tr><td>';
 	txt+='<input type="text" id="calTimeInput1" class="calInputTime" value="12:34" /><br />';
 	txt+='<input type="text" id="calDateInput1" class="calInputDate" size="50" value="Sun., 30. Sept. 1967" />';
@@ -706,11 +707,15 @@ BeCal.createPickers=function()
 	txt+='</td></tr></table>';
 	txt+='<div id="calEntryColorPickerDiv"><input id="calEntryColorPicker" /></div>';
 	txt+='<div id="calEntryButtons"><a href="javascript:" class="okBtn" onclick="BeCal.createNewEntry()">Speichern</a></div>';
-	txt+='<div id="calEntryDurationDiv"></div>';
+	txt+='<div class="calEntryDurationDiv"></div>';
 	
-	// create the window.
-	$('#calOverlay').jdCreateWindow("createEntryWindow",100,100,500,200, '<input type="text" id="calInputName" placeholder="Titel hinzufügen"></input>', txt);
+	$('#calOverlay').jdCreateWindow("createEntryWindow",100,100,500,200, '<input type="text" id="calInputName" class="calTitleName" placeholder="Titel hinzufügen"></input>', txt);
 
+	// create the window for a new entry.
+	var txt2= "";
+	txt2+='<div class="calEntryDurationDiv">Dauer: 0h</div>';
+	$('#calOverlay').jdCreateWindow("showEntryWindow",100,100,500,200, '<div id="calShowName" class="calTitleName">Event Titel</div>', txt2);
+	
 	// create the pickers on the inputs.
 	AnyTime.picker( "calDateInput1", { format: "%a, %d. %b. %z", firstDOW: 0 } );
 	AnyTime.picker( "calTimeInput1", { format: "%H:%i" } );

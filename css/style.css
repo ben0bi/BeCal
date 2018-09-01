@@ -158,7 +158,7 @@ body
 }
 
 /* div with the duration of the event. */
-#calEntryDurationDiv
+.calEntryDurationDiv
 {
 	position: absolute;
 	left: 10px;
@@ -206,15 +206,21 @@ body
 	top: 10px;
 }
 
-/* the input with the title of the event on the create entry window. */
-#calInputName
+/* font settings of the input with the title of the event on the create entry window. 
+	also the title of the show entry window. */
+.calTitleName
 {
 	font-family: 'calFont', sans-serif;
 	font-size: 15pt;
-	background-color: transparent;
 	color: #FFFFFA;
+	padding-top: 15px;	
+	background-color: transparent;
 	border: 0;
-	padding-top: 15px;
+}
+
+/* this is the specific input for the title. */
+#calInputName
+{
 	width: 80%;
 }
 
@@ -319,7 +325,7 @@ body
 /* SPECIFICS FOR SINGLE WINDOWS. */
 
 /* top bar of entry window */
-#createEntryWindow .jdwindow-top
+#createEntryWindow .jdwindow-top, #showEntryWindow .jdwindow-top
 {
 	height: 50px !important;
 }
@@ -330,7 +336,7 @@ body
 }
 
 /* top icon of entry window */
-#createEntryWindow .jdwindow-hide
+#createEntryWindow .jdwindow-hide, #showEntryWindow .jdwindow-hide
 {
 	font-size: 25pt !important;
 	padding-left: 17px !important;
@@ -341,7 +347,7 @@ body
 }
 
 /*#createEntryWindow .jdwindow-hide,*/
-#createEntryWindow .jdwindow-hide-clicker
+#createEntryWindow .jdwindow-hide-clicker, , #showEntryWindow .jdwindow-hide-clicker
 {
 	width: 50px !important;
 	height: 50px !important;
