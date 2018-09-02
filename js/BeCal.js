@@ -182,12 +182,12 @@ var CalEntry = function()
 						if(firstone==true && evtStartDay>=firstDay)
 						{
 							// maybe add the start marker.
-							result+='<div onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMarker calEventMouseOut '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+(posX+1)+'px; width:10px; height:'+height+'px;"></div>';
+							result+='<div onclick="BeCal.openEventViewDialog('+m_id+');" onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMarker calEventMouseOut '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+(posX+1)+'px; width:10px; height:'+height+'px;"></div>';
 							posX+=5;
 							width-=5;
 							firstone = false;
 						}
-						result+='<div onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMouseOut calEventNoBorder '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+posX+'px; width:'+width+'px; height:'+height+'px;">'+this.title+'</div>';
+						result+='<div onclick="BeCal.openEventViewDialog('+m_id+');" onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMouseOut calEventNoBorder '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+posX+'px; width:'+width+'px; height:'+height+'px;">'+this.title+'</div>';
 						actualdate = Date.removeTime(nd);
 						//console.log("--> (Processed "+processed+" Remaining "+remainingDays+") Setting date: "+nd.toString());
 						processed = 0;
@@ -206,7 +206,7 @@ var CalEntry = function()
 			// add the start marker.
 			if(firstone==true && evtStartDay>=firstDay)
 			{
-				result+='<div onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMarker calEventMouseOut '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+(posX+1)+'px; width:10px; height:'+height+'px;"></div>';
+				result+='<div onclick="BeCal.openEventViewDialog('+m_id+');" onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMarker calEventMouseOut '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+(posX+1)+'px; width:10px; height:'+height+'px;"></div>';
 				posX+=5;
 				width-=5;
 				firstone = false;
@@ -216,11 +216,11 @@ var CalEntry = function()
 			if(evtEndDay<=lastDay)
 			{
 				width-=10;			
-				result+='<div onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMarker calEventMouseOut '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+(posX+width-4)+'px; width:10px; height:'+height+'px;"></div>';
+				result+='<div onclick="BeCal.openEventViewDialog('+m_id+');" onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMarker calEventMouseOut '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+(posX+width-4)+'px; width:10px; height:'+height+'px;"></div>';
 			}
 			
 			// add the last bar (see above)
-			result+='<div onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMouseOut calEventNoBorder '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+posX+'px; width:'+width+'px; height:'+height+'px;">'+this.title+'</div>';
+			result+='<div onclick="BeCal.openEventViewDialog('+m_id+');" onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMouseOut calEventNoBorder '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+posX+'px; width:'+width+'px; height:'+height+'px;">'+this.title+'</div>';
 			
 			if(remainingDays<=0 && !newline)
 				done=true;
@@ -305,6 +305,8 @@ BeCal.getDayField = function(date, fields)
 // returns -1 if no slot was found.
 BeCal.getFreeSlotBetween = function(date1, date2, fields, occupyslots=false)
 {
+	console.log("Getting free slots between: "+date1+" to " +date2);
+	
 	// get start and end on the fields.
 	var startField = fields[0];
 	var endField = fields[fields.length-1];
@@ -316,8 +318,25 @@ BeCal.getFreeSlotBetween = function(date1, date2, fields, occupyslots=false)
 	var startIndex = 0;
 	var endIndex = fields.length-1;
 	
-	// get the index of the start field.
-	if(date1>startFieldDate || date2<endFieldDate)
+	// dates are out of scope.
+	if(date1>endFieldDate)
+		return -1;
+	if(date2<startFieldDate)
+		return -1;
+
+	// get indexes for the dates.
+	for(i=0;i<fields.length;i++)
+	{
+		var f = fields[i];
+		if(Date.compareOnlyDate(date1,f.date)==true)
+			startIndex = i;
+		if(Date.compareOnlyDate(date2,f.date)==true)
+			endIndex = i;			
+	}
+
+	console.log("IDX: "+startIndex+" to "+endIndex);
+		
+	/*if(date1>=startFieldDate || date2<=endFieldDate)
 	{
 		for(i=0;i<fields.length;i++)
 		{
@@ -327,7 +346,9 @@ BeCal.getFreeSlotBetween = function(date1, date2, fields, occupyslots=false)
 			if(Date.compareOnlyDate(date2,f.date)==true)
 				endIndex = i;			
 		}
-	}
+	}else{
+		return -1;
+	}*/
 	
 	// now check for all slots.
 	var returnslot = -1;
@@ -359,12 +380,13 @@ BeCal.getFreeSlotBetween = function(date1, date2, fields, occupyslots=false)
 			{
 				fields[idx].occupySlot(returnslot,true);
 			}else{
+				console.log("hidden "+idx);
 				fields[idx].hiddenEventCount+=1;
 			}
 		}
 	}
 	
-	console.log("Returning slot: "+returnslot);
+	//console.log("Returning slot: "+returnslot);
 	return returnslot;
 }
 
@@ -384,6 +406,7 @@ BeCal.evtMouseOver = function(evtid, mouseOut=false)
 // today needs to be a date.
 BeCal.createMonthDisplay=function(today)
 {
+	console.log("--- creating month display ---")
 	var myMonth = today.getMonth();
 	var realToday = Date.removeTime(new Date());
 	
@@ -435,7 +458,7 @@ BeCal.createMonthDisplay=function(today)
 	if(BeCal.evtMaxSlots<0)
 		BeCal.evtMaxSlots=0;
 	
-	console.log("----- Max Slots: "+BeCal.evtMaxSlots);
+	// console.log("----- Max Slots: "+BeCal.evtMaxSlots);
 	
 	// draw each day field and create its array member.
 	for(weeks=0;weeks<5;weeks++)
@@ -518,6 +541,30 @@ function advanceMonth(amount)
 	return BeCal.globaltoday;
 }
 
+// show the entry window to show an event (show mode)
+BeCal.openEventViewDialog=function(eventid)
+{
+	var evt = BeCal.entries[eventid];
+	
+	var left=10;
+	var top = 10;
+	var menuHeight = $('#calMenu').height()+$('.calDayField').height();
+	
+	// it is an old entry, so we show the show stuff and hide the input stuff (show mode).
+	$('#calNewEntryMenuDiv').hide();
+	$('#calEntryShowDiv').show();
+	
+	$('#calTitleInputDiv').hide();
+	$('#calTitleShowDiv').show();
+	
+	$('#calTitleShowDiv').html(evt.title);
+	
+	// set the event color.
+	BeCal.changeEntryWindowEvtColor(evt.color);
+	
+	showEntryWindow(parseInt(left),parseInt(top)+menuHeight, 1);
+}
+
 // show the new entry window at the desired position near the field where you clicked.
 function openEntryDialog(becalfieldid) 
 {
@@ -543,12 +590,14 @@ function openEntryDialog(becalfieldid)
 	
 	var menuHeight = $('#calMenu').height()+$('.calDayField').height();
 	
-	// it is a new entry, so we show the input stuff and hide the show stuff.
+	// it is a new entry, so we show the input stuff and hide the show stuff (entry mode).
 	$('#calNewEntryMenuDiv').show();
 	$('#calEntryShowDiv').hide();
 	
 	$('#calTitleInputDiv').show();
 	$('#calTitleShowDiv').hide();
+	
+	BeCal.changeEntryWindowEvtColor(BeCal.evtNewEntryColor);
 	
 	showEntryWindow(parseInt(f.left),parseInt(f.top)+menuHeight, f.width);
 }
@@ -691,9 +740,15 @@ BeCal.evtNewEntryColor = '#00FF00';
 function entryColorPickerChanged(col)
 {
 	BeCal.evtNewEntryColor = col.toHexString();
+	BeCal.changeEntryWindowEvtColor(BeCal.evtNewEntryColor);
+}
+
+// change color of top bar in the entry/show window.
+BeCal.changeEntryWindowEvtColor=function(col)
+{
 	var entrywindow=$('#createEntryWindow');
 	var topbar = entrywindow.find('.jdwindow-top');
-	topbar.css('background-color', col);
+	topbar.css('background-color', col);	
 }
 
 // create the pickers for the windows.
@@ -710,10 +765,9 @@ BeCal.createUI=function()
 	txt+='<div id="calEntryColorPickerDiv"><input id="calEntryColorPicker" /></div>';
 	txt+='<div id="calEntryButtons"><a href="javascript:" class="okBtn" onclick="BeCal.createNewEntry()">Speichern</a></div>';
 	txt+='</div><div id="calEntryShowDiv">';
+	// window for the show stuff.
 
 	txt+='SHOW THE ENTRY';
-	// window for the show stuff.
-	
 	txt+='</div>';
 	
 	txt+='<div class="calEntryDurationDiv"></div>';
@@ -721,7 +775,7 @@ BeCal.createUI=function()
 	// add the title stuff.
 	var title ='<div id="calTitleInputDiv">';
 	title+='<input type="text" id="calInputName" class="calTitleName" placeholder="Titel hinzufügen"></input>';
-	title+='</div><div id="calTitleShowDiv"> EVENT TITLE </div>';
+	title+='</div><div id="calTitleShowDiv" class="calTitleName"> EVENT TITLE </div>';
 	
 	$('#calOverlay').jdCreateWindow("createEntryWindow",100,100,500,200, title, txt);
 	
@@ -732,6 +786,7 @@ BeCal.createUI=function()
 	AnyTime.picker( "calTimeInput2", { format: "%H:%i" } );
 	
 	// this is the color picker.
+	BeCal.evtNewEntryColor = BeCal.evtDefaultColor;
 	$('#calEntryColorPicker').spectrum({
 		color: BeCal.evtDefaultColor,
 		showPaletteOnly: true,
