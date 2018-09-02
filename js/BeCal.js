@@ -334,7 +334,7 @@ BeCal.getFreeSlotBetween = function(date1, date2, fields, occupyslots=false)
 			endIndex = i;			
 	}
 
-	console.log("IDX: "+startIndex+" to "+endIndex);
+	//console.log("IDX: "+startIndex+" to "+endIndex);
 		
 	// now check for all slots.
 	var returnslot = -1;
@@ -447,6 +447,9 @@ BeCal.createMonthDisplay=function(today)
 	// console.log("----- Max Slots: "+BeCal.evtMaxSlots);
 	
 	// draw each day field and create its array member.
+	var startScreenDate = new Date(Date.removeTime(monthBegin));
+	var endScreenDate = new Date(startScreenDate);
+	endScreenDate.setDate(startScreenDate.getDate()+35);
 	for(weeks=0;weeks<5;weeks++)
 	{  
 		for(days=0;days<7;days++)
@@ -476,9 +479,10 @@ BeCal.createMonthDisplay=function(today)
 	}
 	
 	// create all the event bars.
-	for(e=0;e<BeCal.entries.length;e++)
+	var sortedFields = BeCal.sortEventsByLength(BeCal.entries, startScreenDate, endScreenDate);
+	for(e=0;e<sortedFields.length;e++)
 	{
-		var event = BeCal.entries[e];
+		var event = sortedFields[e];
 		txt+=event.createMonthBars(BeCal.fields);
 	}
 	
@@ -516,6 +520,51 @@ BeCal.createMonthDisplay=function(today)
 
 // get the month of today.
 BeCal.getToday=function() {BeCal.globaltoday = BeCal.createMonthDisplay(new Date());}
+
+// sort the entrys by length.
+BeCal.sortEventsByLength =function(entries, startDate, endDate)
+{
+	console.log("Sorting between "+startDate+" / "+endDate);
+	var arr = new Array();
+	// first get all entries in range.
+	for(var i = 0;i<entries.length;i++)
+	{
+		var e = entries[i];
+		if(e.startDate<=endDate && e.endDate>=startDate)
+			arr.push(e);
+	}
+	
+	// now sort them all by length.
+	var arr2 = new Array();
+	if(arr.length>1)
+	{
+		var found = true;
+		while(found==true)
+		{
+			// reset found.
+			found = false;
+			for(var i=0;i<arr.length-1;i++)
+			{
+				var a1 = arr[i];
+				var a2 = arr[i+1];
+				
+				var d1 = Date.daysBetween(a1.startDate, a1.endDate);
+				var d2 = Date.daysBetween(a2.startDate, a2.endDate);
+				
+				// maybe switch the values.
+				if(d2 > d1) // the more days, the further up we go.
+				{
+					console.log("Switching "+d1+a1.title+" with "+d2+a2.title);
+					arr[i]=a2;
+					arr[i+1]=a1;
+					found = true;
+					break;
+				}
+			}
+		}
+	}
+	return arr;
+}
 
 // advance the month.
 function advanceMonth(amount)
