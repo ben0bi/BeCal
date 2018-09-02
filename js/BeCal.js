@@ -542,6 +542,14 @@ function openEntryDialog(becalfieldid)
 	AnyTime.setCurrent( "calTimeInput2", day2);
 	
 	var menuHeight = $('#calMenu').height()+$('.calDayField').height();
+	
+	// it is a new entry, so we show the input stuff and hide the show stuff.
+	$('#calNewEntryMenuDiv').show();
+	$('#calEntryShowDiv').hide();
+	
+	$('#calTitleInputDiv').show();
+	$('#calTitleShowDiv').hide();
+	
 	showEntryWindow(parseInt(f.left),parseInt(f.top)+menuHeight, f.width);
 }
 
@@ -573,7 +581,8 @@ function showEntryWindow(posX=0, posY=0, entryWidth=0)
 	win.css('left', posX+'px');
 	win.css('top', posY+'px');
 	
-	$('#createEntryWindow').show();
+	win.show();
+	win.focus();
 	$('#calInputName').focus();
 }
 
@@ -597,13 +606,6 @@ BeCal.constrainDateInput=function()
 	var defaultConv = new AnyTime.Converter({format:'%H:%i'});
 	var time1 = defaultConv.parse($('#calTimeInput1').val());
 	var time2 = defaultConv.parse($('#calTimeInput2').val());
-	
-	/*
-	console.log("D1: "+day1);
-	console.log("D2: "+day2);
-	console.log("T1: "+time1);
-	console.log("T2: "+time2);
-	*/
 
 	// set the earliest date.
 	var earliestdate = new Date(day1);
@@ -628,7 +630,7 @@ BeCal.constrainDateInput=function()
 // show duration of an event in the entry window.
 BeCal.showEntryDuration = function()
 {
-	var durationdivs = $('.calEntryDurationDiv');
+	var durationdiv = $('.calEntryDurationDiv');
 	var txt = "Dauer:";
 	var isBig = false;
 	var daytime1 = AnyTime.getCurrent('calDateInput1');
@@ -681,7 +683,7 @@ BeCal.showEntryDuration = function()
 	}else{
 		txt+=isBig;
 	}
-	durationdivs.each(function() {$(this).html(txt);});
+	durationdiv.each(function() {$(this).html(txt);});
 }
 
 // the new entry color picker changed, change the color. ;)
@@ -698,7 +700,7 @@ function entryColorPickerChanged(col)
 BeCal.createUI=function()
 {
 	// create the window for a new entry.
-	var txt='<table border="0"><tr><td>';
+	var txt='<div id="calNewEntryMenuDiv"><table border="0"><tr><td>';
 	txt+='<input type="text" id="calTimeInput1" class="calInputTime" value="12:34" /><br />';
 	txt+='<input type="text" id="calDateInput1" class="calInputDate" size="50" value="Sun., 30. Sept. 1967" />';
 	txt+='</td><td><div class="calInputMiddlestrich">-</div></td><td>';
@@ -707,14 +709,21 @@ BeCal.createUI=function()
 	txt+='</td></tr></table>';
 	txt+='<div id="calEntryColorPickerDiv"><input id="calEntryColorPicker" /></div>';
 	txt+='<div id="calEntryButtons"><a href="javascript:" class="okBtn" onclick="BeCal.createNewEntry()">Speichern</a></div>';
+	txt+='</div><div id="calEntryShowDiv">';
+
+	txt+='SHOW THE ENTRY';
+	// window for the show stuff.
+	
+	txt+='</div>';
+	
 	txt+='<div class="calEntryDurationDiv"></div>';
 	
-	$('#calOverlay').jdCreateWindow("createEntryWindow",100,100,500,200, '<input type="text" id="calInputName" class="calTitleName" placeholder="Titel hinzufügen"></input>', txt);
-
-	// create the window for a new entry.
-	var txt2= "";
-	txt2+='<div class="calEntryDurationDiv">Dauer: 0h</div>';
-	$('#calOverlay').jdCreateWindow("showEntryWindow",100,100,500,200, '<div id="calShowName" class="calTitleName">Event Titel</div>', txt2);
+	// add the title stuff.
+	var title ='<div id="calTitleInputDiv">';
+	title+='<input type="text" id="calInputName" class="calTitleName" placeholder="Titel hinzufügen"></input>';
+	title+='</div><div id="calTitleShowDiv"> EVENT TITLE </div>';
+	
+	$('#calOverlay').jdCreateWindow("createEntryWindow",100,100,500,200, title, txt);
 	
 	// create the pickers on the inputs.
 	AnyTime.picker( "calDateInput1", { format: "%a, %d. %b. %z", firstDOW: 0 } );
