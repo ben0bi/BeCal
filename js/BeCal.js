@@ -336,20 +336,6 @@ BeCal.getFreeSlotBetween = function(date1, date2, fields, occupyslots=false)
 
 	console.log("IDX: "+startIndex+" to "+endIndex);
 		
-	/*if(date1>=startFieldDate || date2<=endFieldDate)
-	{
-		for(i=0;i<fields.length;i++)
-		{
-			var f = fields[i];
-			if(Date.compareOnlyDate(date1,f.date)==true)
-				startIndex = i;
-			if(Date.compareOnlyDate(date2,f.date)==true)
-				endIndex = i;			
-		}
-	}else{
-		return -1;
-	}*/
-	
 	// now check for all slots.
 	var returnslot = -1;
 	for(slot=0;slot<BeCal.evtMaxSlots;slot++)
