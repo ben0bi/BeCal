@@ -366,7 +366,7 @@ BeCal.getFreeSlotBetween = function(date1, date2, fields, occupyslots=false)
 			{
 				fields[idx].occupySlot(returnslot,true);
 			}else{
-				console.log("hidden "+idx);
+				//console.log("hidden "+idx);
 				fields[idx].hiddenEventCount+=1;
 			}
 		}
@@ -471,9 +471,9 @@ BeCal.createMonthDisplay=function(today)
 			var f = new CalDayField(mydate,posX,posY,calFieldWidth, calFieldHeight);
 			BeCal.fields.push(f);
 			var id=BeCal.fields.length-1; // id is the last index.
-			txt+='<div class="calField'+cl+'" style="top:'+posY+'px; left: '+posX+'px;" onclick="BeCal.openEntryDialog('+id+')">';
+			txt+='<div class="calField'+cl+'" style="top:'+posY+'px; left: '+posX+'px;" onclick="BeCal.openEntryDialog('+id+');">';
 			txt+='<div class="calDayNumber">&nbsp;'+dt+'</div>';
-			txt+='<div class="calDayHiddenEvents" id="calDayHiddenEvtWrapper_'+id+'"><div id="calDayHiddenEvt_'+id+'" class="calDayHiddenEventContent">&nbsp;+ 0</div></div>';
+			txt+='<div class="calDayHiddenEvents" id="calDayHiddenEvtWrapper_'+id+'" onclick="BeCal.showHiddenEventView('+id+');"><div id="calDayHiddenEvt_'+id+'" class="calDayHiddenEventContent">&nbsp;+ 0</div></div>';
 			txt+='</div>';
 		}
 	}
@@ -512,6 +512,13 @@ BeCal.createMonthDisplay=function(today)
 	{
 		$(this).width(calFieldWidth);
 		$(this).height(calFieldHeight);
+	});
+	
+	// stop hidden events from clicking through
+	$('.calDayHiddenEvents').click(function(e) 
+	{
+		// prevent the mouse from clicking through.
+		e.stopPropagation();
 	});
 	
 	// return the given date + x?	
@@ -650,13 +657,22 @@ BeCal.openEntryDialog =function(becalfieldid)
 	BeCal.changeEntryWindowEvtColor(BeCal.evtNewEntryColor);
 	
 	showEntryWindow(parseInt(f.left),parseInt(f.top)+menuHeight, f.width);
+	$('#calInputName').focus();
 }
 
-// show the entry window and set the focus to the input.
-function showEntryWindow(posX=0, posY=0, entryWidth=0)
+BeCal.hideAllWindows=function()
 {
 	// hide all time picker windows.
 	$(".AnyTime-win").each(function(){$(this).hide();});
+	
+	$('#otherEntriesWindow').hide();
+	$('#createEntryWindow').hide();	
+}
+
+// show the entry window.
+function showEntryWindow(posX=0, posY=0, entryWidth=0)
+{
+	BeCal.hideAllWindows();
 	
 	var win = $('#createEntryWindow');
 	var content = $('#calOverlay');
@@ -682,7 +698,14 @@ function showEntryWindow(posX=0, posY=0, entryWidth=0)
 	
 	win.show();
 	win.focus();
-	$('#calInputName').focus();
+	console.log("showwin");
+}
+
+// show the window with all the hidden events from a day in it.
+BeCal.showHiddenEventView=function(dayfieldid)
+{
+	console.log("DFID: "+dayfieldid);
+	$('#otherEntriesWindow').show();
 }
 
 // restrict entry date inputs on change.

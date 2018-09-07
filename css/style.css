@@ -96,6 +96,7 @@ body
 	width: 100%;
 	overflow: hidden;
 	background-color: transparent;
+	z-index: 5;
 }
 .calDayHiddenEventContent
 {
