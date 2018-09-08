@@ -660,6 +660,7 @@ BeCal.openEntryDialog =function(becalfieldid)
 	$('#calInputName').focus();
 }
 
+/* hide all UI windows. */
 BeCal.hideAllWindows=function()
 {
 	// hide all time picker windows.
@@ -705,7 +706,22 @@ function showEntryWindow(posX=0, posY=0, entryWidth=0)
 BeCal.showHiddenEventView=function(dayfieldid)
 {
 	console.log("DFID: "+dayfieldid);
-	$('#otherEntriesWindow').show();
+	BeCal.hideAllWindows();
+	
+	var win = $('#otherEntriesWindow');
+	var dayfield = BeCal.fields[dayfieldid];
+	var txt='';
+	for(var i=0;i<BeCal.entries.length;i++)
+	{
+		var e = BeCal.entries[i];
+		if(Date.removeTime(e.startDate)<=Date.removeTime(dayfield.date) && Date.removeTime(e.endDate)>=Date.removeTime(dayfield.date))
+		{
+			txt+='<div id="hiddenEventDiv_'+e.m_id+'>'+e.title+'</div>';
+		}
+	}
+	win.jdHTML(txt);
+	
+	win.show();
 }
 
 // restrict entry date inputs on change.
