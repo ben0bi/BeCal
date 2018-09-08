@@ -716,7 +716,7 @@ BeCal.showHiddenEventView=function(dayfieldid)
 		var e = BeCal.entries[i];
 		if(Date.removeTime(e.startDate)<=Date.removeTime(dayfield.date) && Date.removeTime(e.endDate)>=Date.removeTime(dayfield.date))
 		{
-			txt+='<div id="hiddenEventDiv_'+e.m_id+'>'+e.title+'</div>';
+			txt+='<div id="hiddenEventDiv_'+e.m_id+'" class="calHiddenEvent">'+e.title+'</div>';
 		}
 	}
 	win.jdHTML(txt);

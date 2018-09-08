@@ -292,10 +292,23 @@ body
 	border: 2px solid #FFFFFA;
 }
 
-.calEventMouseOut
+.calEventMouseOut {border: 2px solid #666699; }
+
+/* an event in the hidden event window. */
+.calHiddenEvent
 {
+	position: relative;
+	width: 190px;
+	z-index: 5;
 	border: 2px solid #666699;
+	font-family: 'calFontSmall', sans-serif;
+	font-size: 8pt;
+	padding-left: 5px;
+	overflow: hidden;
+	border-radius: 7px;
+	margin-top: 1px;
 }
+.calHiddenEvent:hover {border: 2px solid #FFFFFA;}
 
 /* no border at the edges. */
 .calEventNoBorder
