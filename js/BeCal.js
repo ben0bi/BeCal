@@ -709,17 +709,30 @@ BeCal.showHiddenEventView=function(dayfieldid)
 	BeCal.hideAllWindows();
 	
 	var win = $('#otherEntriesWindow');
+	var div = $('#otherEntriesDiv');
 	var dayfield = BeCal.fields[dayfieldid];
 	var txt='';
+	var count = 0;
 	for(var i=0;i<BeCal.entries.length;i++)
 	{
 		var e = BeCal.entries[i];
 		if(Date.removeTime(e.startDate)<=Date.removeTime(dayfield.date) && Date.removeTime(e.endDate)>=Date.removeTime(dayfield.date))
 		{
 			txt+='<div id="hiddenEventDiv_'+e.m_id+'" class="calHiddenEvent">'+e.title+'</div>';
+			count+=1;
 		}
 	}
 	win.jdHTML(txt);
+	
+	// adjust window size.
+	var winheight = count * 17;
+	if(winheight>180)
+		winheight = 180;
+	win.height(20+winheight);
+	var content = win.find('.jdwindow-content');
+	content.height(winheight);
+	content.parent().height(winheight);
+	div.height(winheight);
 	
 	win.show();
 }
@@ -903,7 +916,7 @@ BeCal.createUI=function()
 	// the other entries window.
 	title ="Weitere";
 	txt='<div id="otherEntriesDiv"></div>';
-	$('#calOverlay').jdCreateWindow("otherEntriesWindow",100,100,200,300, title, txt);	
+	$('#calOverlay').jdCreateWindow("otherEntriesWindow",100,100,200,20, title, txt);	
 
 	// *************************************************************
 		
