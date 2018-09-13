@@ -64,6 +64,7 @@ var CalEntry = function()
 	this.endDate = new Date();
 	this.color = BeCal.evtDefaultColor;
 	var m_id=-1;
+	this.getID = function() {return m_id;};
 	
 	this.create = function(start, end, newtitle, newsummary="", newcolor = "") 
 	{
@@ -579,13 +580,13 @@ function advanceMonth(amount)
 	var dt = BeCal.globaltoday;
 	dt.setMonth(dt.getMonth()+amount);
 	BeCal.globaltoday = BeCal.createMonthDisplay(dt);
-	//$("#createEntryWindow").jdShow();
 	return BeCal.globaltoday;
 }
 
 // show the entry window to show an event (show mode)
 BeCal.openEventViewDialog = function(eventid)
 {
+	console.log("EVT ID: "+eventid);
 	var evt = BeCal.entries[eventid];
 	
 	var left=10;
@@ -697,9 +698,8 @@ function showEntryWindow(posX=0, posY=0, entryWidth=0)
 	win.css('left', posX+'px');
 	win.css('top', posY+'px');
 	
-	win.show();
+	win.jdShow();
 	win.focus();
-	console.log("showwin");
 }
 
 // show the window with all the hidden events from a day in it.
@@ -718,14 +718,14 @@ BeCal.showHiddenEventView=function(dayfieldid)
 		var e = BeCal.entries[i];
 		if(Date.removeTime(e.startDate)<=Date.removeTime(dayfield.date) && Date.removeTime(e.endDate)>=Date.removeTime(dayfield.date))
 		{
-			txt+='<div id="hiddenEventDiv_'+e.m_id+'" class="calHiddenEvent">'+e.title+'</div>';
+			txt+='<div id="hiddenEventDiv_'+e.getID()+'" class="calHiddenEvent" style="background-color:'+e.color+';" onclick="BeCal.openEventViewDialog('+e.getID()+')">'+e.title+'</div>';
 			count+=1;
 		}
 	}
 	win.jdHTML(txt);
 	
 	// adjust window size.
-	var winheight = count * 17;
+	/*var winheight = count * 17;
 	if(winheight>180)
 		winheight = 180;
 	win.height(20+winheight);
@@ -733,8 +733,10 @@ BeCal.showHiddenEventView=function(dayfieldid)
 	content.height(winheight);
 	content.parent().height(winheight);
 	div.height(winheight);
+	*/
 	
-	win.show();
+	win.jdShow();
+	win.focus();
 }
 
 // restrict entry date inputs on change.
@@ -916,7 +918,7 @@ BeCal.createUI=function()
 	// the other entries window.
 	title ="Weitere";
 	txt='<div id="otherEntriesDiv"></div>';
-	$('#calOverlay').jdCreateWindow("otherEntriesWindow",100,100,200,20, title, txt);	
+	$('#calOverlay').jdCreateWindow("otherEntriesWindow",100,100,200,-200, title, txt);	
 
 	// *************************************************************
 		
