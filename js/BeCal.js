@@ -586,7 +586,7 @@ function advanceMonth(amount)
 // show the entry window to show an event (show mode)
 BeCal.openEventViewDialog = function(eventid)
 {
-	console.log("EVT ID: "+eventid);
+	//console.log("EVT ID: "+eventid);
 	var evt = BeCal.entries[eventid];
 	
 	var left=10;
@@ -705,7 +705,7 @@ function showEntryWindow(posX=0, posY=0, entryWidth=0)
 // show the window with all the hidden events from a day in it.
 BeCal.showHiddenEventView=function(dayfieldid)
 {
-	console.log("DFID: "+dayfieldid);
+	//console.log("DFID: "+dayfieldid);
 	BeCal.hideAllWindows();
 	
 	var win = $('#otherEntriesWindow');
@@ -723,17 +723,6 @@ BeCal.showHiddenEventView=function(dayfieldid)
 		}
 	}
 	win.jdHTML(txt);
-	
-	// adjust window size.
-	/*var winheight = count * 17;
-	if(winheight>180)
-		winheight = 180;
-	win.height(20+winheight);
-	var content = win.find('.jdwindow-content');
-	content.height(winheight);
-	content.parent().height(winheight);
-	div.height(winheight);
-	*/
 	
 	win.jdShow();
 	win.focus();
@@ -844,6 +833,11 @@ BeCal.showEntryDuration = function(date1=false, date2=false)
 			txt+=hours+"h";
 		if(minutes>0)
 			txt+=minutes+"min";
+		
+		if(days==hours==minutes==0)
+		{
+			txt = "Zeitlos"
+		}
 	}else{
 		txt+=isBig;
 	}
@@ -873,7 +867,7 @@ BeCal.createNewEntry = function()
 	var e = new CalEntry();
 	var start=Date.setTime(AnyTime.getCurrent('calDateInput1'), AnyTime.getCurrent('calTimeInput1'));
 	var end=Date.setTime(AnyTime.getCurrent('calDateInput2'), AnyTime.getCurrent('calTimeInput2'));
-	e.create(start, end, "CREATED", "", BeCal.evtNewEntryColor);
+	e.create(start, end, $('#calInputName').val(), "", BeCal.evtNewEntryColor);
 	BeCal.entries.push(e);
 	
 	$('#createEntryWindow').hide();
