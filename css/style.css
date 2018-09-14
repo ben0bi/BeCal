@@ -150,14 +150,6 @@ body
 	pointer-events: none;
 }
 
-/* div with the save button on the entry field. */
-#calEntryButtons
-{
-	position: absolute;
-	right: 10px;
-	top: 130px;
-}
-
 /* div with the duration of the event. */
 .calEntryDurationDiv
 {
@@ -174,9 +166,18 @@ body
 	top: 10px;
 }
 
+/* div with the save/edit/cancel buttons on the entry/show field. */
+.calEntryButtons
+{
+	position: absolute;
+	right: 10px;
+	top: 120px;
+}
+
 /* an ok button. */
 .okBtn, okBtn:visited
 {
+	display: inline-block;
 	text-decoration: none;
 	padding: 10px;
 	background-color: #113311;
@@ -189,6 +190,18 @@ body
 {
 	text-decoration: none;
 	background-color: #336633;
+}
+
+/* this button has an edit pencil in it. */
+.editBtn
+{
+	width: 44px;
+	height: 44px;
+	padding: 0px !important;
+	border-radius: 22px !important;
+	background-image: url("../img/edit.png");
+	background-repeat: no-repeat;
+	background-position: center;
 }
 
 /* the name of the month on the top. */

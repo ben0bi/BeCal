@@ -886,7 +886,7 @@ BeCal.createUI=function()
 	txt+='<input type="text" id="calDateInput2" class="calInputDate calInputMouseOver" size="50" value="Sun., 30. Sept. 1967" />';
 	txt+='</td></tr></table>';
 	txt+='<div id="calEntryColorPickerDiv"><input id="calEntryColorPicker" /></div>';
-	txt+='<div id="calEntryButtons"><a href="javascript:" class="okBtn" onclick="BeCal.createNewEntry()">Speichern</a></div>';
+	txt+='<div id="calEntryButtons" class="calEntryButtons"><a href="javascript:" class="okBtn" onclick="BeCal.createNewEntry()">Speichern</a></div>';
 	txt+='</div><div id="calEntryShowDiv">';
 	// window for the show stuff.
 	txt+='<table border="0"><tr><td>';
@@ -896,6 +896,7 @@ BeCal.createUI=function()
 	txt+='<div id="calTimeShow2" class="calInputTime"></div>';
 	txt+='<div id="calDateShow2" class="calInputDate"></div>';
 	txt+='</td></tr></table>';
+	txt+='<div class="calEntryButtons"><a href="" class="okBtn editBtn"></a></div>';
 
 	txt+='</div>';
 	
@@ -915,7 +916,7 @@ BeCal.createUI=function()
 	$('#calOverlay').jdCreateWindow("otherEntriesWindow",100,100,200,-200, title, txt);	
 
 	// *************************************************************
-		
+
 	// create the pickers on the inputs.
 	AnyTime.picker( "calDateInput1", { format: "%a, %d. %b. %z", firstDOW: 0 } );
 	AnyTime.picker( "calTimeInput1", { format: "%H:%i" } );
@@ -971,4 +972,7 @@ BeCal.createUI=function()
 		//BeCal.constrainDateInput();
 		BeCal.showEntryDuration();
 	});
+	
+	// hide all the created UI windows.
+	$('#calOverlay').jdHideAllWindows();
 }
