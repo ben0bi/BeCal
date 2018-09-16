@@ -514,6 +514,7 @@ BeCal.createMonthDisplay=function(today)
 		$(this).width(calFieldWidth);
 		$(this).height(calFieldHeight);
 	});
+*/
 	
 	// stop hidden events from clicking through
 	$('.calDayHiddenEvents').click(function(e) 
@@ -878,6 +879,7 @@ BeCal.createNewEntry = function()
 BeCal.createUI=function()
 {
 	// create the window for a new entry.
+	// becalUIeditEntryContainer
 	var txt='<div id="calNewEntryMenuDiv"><table border="0"><tr><td>';
 	txt+='<input type="text" id="calTimeInput1" class="calInputTime calInputMouseOver" value="12:34" /><br />';
 	txt+='<input type="text" id="calDateInput1" class="calInputDate calInputMouseOver" size="50" value="Sun., 30. Sept. 1967" />';
