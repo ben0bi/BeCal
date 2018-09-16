@@ -507,6 +507,9 @@ var BeCal = function(contentdivid)
 				$('#becalDayHiddenEvtWrapper_'+i).hide();
 			}
 		}
+		
+		// stop hidden events from clicking through
+		$('.becalDayHiddenEvents').click(function(e) {e.stopPropagation();});
 
 		return returnDate;
 	};
@@ -687,7 +690,7 @@ var BeCal = function(contentdivid)
 		// *************************************************************
 		// the other entries window.
 		title ="Weitere";
-		txt='<div id="'+BeCal.otherEntriesDiv+'"></div>';
+		txt='<div id="'+BeCal.divNameOtherEntries+'"></div>';
 		$('#'+BeCal.divNameOverlay).jdCreateWindow(BeCal.otherEntriesWindow,100,100,200,-200, title, txt);
 		
 		// *************************************************************
@@ -874,8 +877,44 @@ var BeCal = function(contentdivid)
 	{
 		var dt = m_renderDate;
 		dt.setMonth(dt.getMonth()+amount);
-		m_renderdate = createMonthDisplay(dt);
+		m_renderdate = this.render(dt);
 		return m_renderDate;
+	};
+	
+	// show the window with all hidden events for a dayfield.
+	this.showHiddenEventView=function(dayfieldid)
+	{
+		//console.log("DFID: "+dayfieldid);
+		hideAllWindows();
+	
+		var win = $('#'+BeCal.otherEntriesWindow);
+		var div = $('#'+BeCal.divNameOtherEntries);
+		var dayfield = m_datefieldArray[dayfieldid];
+		var txt='';
+		var count = 0;
+		for(var i=0;i<m_eventArray.length;i++)
+		{
+			var e = m_eventArray[i];
+			if(Date.removeTime(e.startDate)<=Date.removeTime(dayfield.date) && Date.removeTime(e.endDate)>=Date.removeTime(dayfield.date))
+			{
+				txt+='<div id="becalHiddenEventDiv_'+e.getID()+'" class="becalHiddenEvent" style="background-color:'+e.color+';" onclick="BeCal.openEventViewDialog('+e.getID()+')">'+e.title+'</div>';
+				count+=1;
+			}
+		}
+		win.jdHTML(txt);
+
+		win.jdShow();
+		win.focus();
+	};
+	
+	// hide all UI windows.
+	var hideAllWindows = function()
+	{
+		// hide all time picker windows.
+		$(".AnyTime-win").each(function(){$(this).hide();});
+	
+		$('#'+BeCal.otherEntriesWindow).hide();
+		$('#'+BeCal.editEntryWindow).hide();	
 	};
 	
 	// INIT
@@ -915,6 +954,13 @@ BeCal.advanceMonth = function(amount)
 {
 	if(BeCal.instance!=null)
 		return BeCal.instance.advanceMonth(amount);
+};
+
+// show the window with all the hidden events from a day in it.
+BeCal.showHiddenEventView=function(dayfieldid)
+{
+	if(BeCal.instance!=null)
+		BeCal.instance.showHiddenEventView(dayfieldid);
 };
 
 // TEXT MONTH NAMES ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

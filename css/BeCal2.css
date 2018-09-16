@@ -258,6 +258,7 @@
 	overflow: hidden;
 	background-color: transparent;
 	z-index: 5;
+	cursor: pointer;
 }
 .becalDayHiddenEventContent
 {
@@ -265,6 +266,7 @@
 	text-align: right;
 	top: 5px;
 	right: 5px;
+	cursor: pointer;
 }
 .becalDayHiddenEvents:hover
 {
@@ -307,7 +309,23 @@
 	border-right: 0;
 }
 
+/* an event in the hidden event window. */
+.becalHiddenEvent
+{
+	position: relative;
+	width: 172px;
+	z-index: 5;
+	border: 2px solid #666699;
+	font-family: 'calFontSmall', sans-serif;
+	font-size: 8pt;
+	padding-left: 5px;
+	overflow: hidden;
+	border-radius: 7px;
+	margin-top: 1px;
+}
+.becalHiddenEvent:hover {border: 2px solid #FFFFFA;}
 /* div with the hidden events in it. */
+
 #becalOtherEntriesDiv
 {
 	position: absolute;
@@ -318,7 +336,7 @@
 	max-width: 100%;
 	max-height: 200px;
 	overflow-x: hidden;
-	overflow-y: auto;
+	overflow-y: scroll;
 }
 
 /* SPECIFICS FOR SINGLE WINDOWS. */
