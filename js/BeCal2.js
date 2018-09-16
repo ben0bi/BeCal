@@ -389,8 +389,8 @@ var BeCal = function(contentdivid)
 		mt = '<div id="'+BeCal.divNameTopbarDate+'">'+BeCal.monthNamesL[renderdate.getMonth()]+" "+renderdate.getFullYear()+"</div>";
 		mt+='<div id="'+BeCal.divNameTopbarAdvancer+'">';
 		mt+='<a href="javascript:" class="becalAdvanceBtn becalBtn" onclick="BeCal.getToday();">Heute</a>';
-		mt+='<a href="javascript:" class="becalAdvanceBtn" onclick="advanceMonth(-1);">&nbsp;&lt;&nbsp;</a>';
-		mt+='<a href="javascript:" class="becalAdvanceBtn" onclick="advanceMonth(1);">&nbsp;&gt;&nbsp;</a>';
+		mt+='<a href="javascript:" class="becalAdvanceBtn" onclick="BeCal.advanceMonth(-1);">&nbsp;&lt;&nbsp;</a>';
+		mt+='<a href="javascript:" class="becalAdvanceBtn" onclick="BeCal.advanceMonth(1);">&nbsp;&gt;&nbsp;</a>';
 		mt+='</div>';
 		$('#'+BeCal.divNameTopMenu).html(mt);
 		
@@ -868,6 +868,15 @@ var BeCal = function(contentdivid)
 		// set the divs content.
 		durationdiv.each(function() {$(this).html(txt);});
 	};
+
+	// advance the actual month about some amount.
+	this.advanceMonth = function(amount)
+	{
+		var dt = m_renderDate;
+		dt.setMonth(dt.getMonth()+amount);
+		m_renderdate = createMonthDisplay(dt);
+		return m_renderDate;
+	};
 	
 	// INIT
 	if(BeCal.instance == null)
@@ -885,21 +894,28 @@ BeCal.createNewEventBtnPressed = function()
 {
 	if(BeCal.instance!=null)
 		BeCal.instance.createNewEventBtnPressed();
-}
+};
 
 // get the actual date.
 BeCal.getToday = function()
 {
 	if(BeCal.instance!=null)
 		BeCal.instance.getToday();
-}
+};
 
 // render the stored date
 BeCal.render = function()
 {
 	if(BeCal.instance!=null)
 		BeCal.instance.render(BeCal.instance.getRenderDate());
-}
+};
+
+// advance the month
+BeCal.advanceMonth = function(amount)
+{
+	if(BeCal.instance!=null)
+		return BeCal.instance.advanceMonth(amount);
+};
 
 // TEXT MONTH NAMES ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

@@ -388,7 +388,7 @@ BeCal.evtMouseOver = function(evtid, mouseOut=false)
 		$('.evt_'+evtid).removeClass('calEventMouseOut');
 		$('.evt_'+evtid).addClass('calEventMouseOver');
 	}
-}
+};
 
 // today needs to be a date.
 BeCal.createMonthDisplay=function(today)
