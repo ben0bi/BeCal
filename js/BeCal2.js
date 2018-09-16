@@ -59,6 +59,7 @@ Date.setTime = function(date, time)
 
 var BeCalEvent = function()
 {
+	var me = this;
 	this.title = "Ohne Titel";				// title of the event.
 	this.summary = "";						// summary of the event. (NOT YET USED)
 	this.startDate = new Date();			// start date of the event.
@@ -70,21 +71,26 @@ var BeCalEvent = function()
 	// create the event.
 	this.create = function(start, end, newtitle, newsummary="", newcolor = "") 
 	{
-		this.title = newtitle;
-		this.summary = newsummary;
-		this.startDate = new Date(start);
-		this.endDate = new Date(end);
+		me.title = newtitle;
+		me.summary = newsummary;
+		me.startDate = new Date(start);
+		me.endDate = new Date(end);
 		if(newcolor=="")
-			this.color=BeCal.eventDefaultColor;
+			me.color=BeCal.eventDefaultColor;
 		else
-			this.color=newcolor;
+			me.color=newcolor;
 		
 		// assign an unique id.
 		m_id=BeCalEvent.arrID;
-		BeCalEvent.arrID++;
-	}
+		BeCalEvent.arrID++;		
+	};
 	
 	// create the bar div and return it.
+	var getBarDivText=function(text, x,y,width, height, addclass = "")
+	{
+		var txt='<div onclick="BeCal.openEventViewDialog('+m_id+');" onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="becalEventBar '+addclass+' becalEventMouseOut evt_'+m_id+'" style="background-color:'+me.color+'; top:'+y+'px; left:'+x+'px; width:'+width+'px; height:'+height+'px;">'+text+'</div>';
+		return txt;
+	};
 	
 	// TODO: UNCOMMENT
 	this.createMonthBars=function(calendar)
@@ -97,8 +103,6 @@ var BeCalEvent = function()
 		//var realPosX = 0;					// the real x position.
 		var width=0;						// the bar width.
 		var height=BeCal.eventBarHeight;	// the bar height.
-		
-		var evtclass = "evt_"+m_id;			// this bars own class.
 
 		var result = "";	// the returning html text.
 
@@ -111,7 +115,7 @@ var BeCalEvent = function()
 		
 		// get a free slot between the two dates.
 		var myslot = calendar.getFreeSlotBetween(evtStartDay,evtEndDay, true);
-/*		
+		
 		// check if event is on table.
 		if(evtStartDay>lastDay || evtEndDay<firstDay || myslot<0)
 		{
@@ -146,7 +150,7 @@ var BeCalEvent = function()
 		
 			// get the dayfield for the actual date.
 			if(actualdate>=firstDay)
-				mydayfield = BeCal.getDayField(actualdate,BeCal.fields);
+				mydayfield = calendar.getDayField(actualdate);
 			else
 				mydayfield=dayfields[0];
 		
@@ -162,12 +166,12 @@ var BeCalEvent = function()
 			posX = mydayfield.left;
 			posY = mydayfield.top;
 			//realPosX = posX;
-			realPosY=mydayfield.top+BeCal.calFieldTopHeight+(myslot*BeCal.evtSlotHeight);
+			realPosY=mydayfield.top+BeCal.calendarFieldTopHeight+(myslot*BeCal.eventSlotHeight);
 			
 			width = 0;
 		
 			//console.log("X: "+parseInt(posX)+" Y: "+parseInt(posY));
-	
+			
 			var r = remainingDays;
 			var newline=false;
 			width-=5; // include padding into the width.
@@ -176,7 +180,7 @@ var BeCalEvent = function()
 				var nd = Date.removeTime(actualdate);
 				nd.setDate(nd.getDate()+w);
 				
-				var newdayfield = BeCal.getDayField(nd, BeCal.fields);
+				var newdayfield = calendar.getDayField(nd);
 				if(newdayfield!=0)
 				{
 					// check if the new day field is aligned with my day field.
@@ -188,15 +192,19 @@ var BeCalEvent = function()
 						//console.log("Adding width at top: "+newdayfield.top+" @ "+newdayfield.date.toString());
 					}else{
 						// * line break, leave the for loop.
+						// add the first marker.
 						if(firstone==true && evtStartDay>=firstDay)
 						{
 							// maybe add the start marker.
-							result+='<div onclick="BeCal.openEventViewDialog('+m_id+');" onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMarker calEventMouseOut '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+(posX+1)+'px; width:10px; height:'+height+'px;"></div>';
+//							result+='<div onclick="BeCal.openEventViewDialog('+m_id+');" onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMarker calEventMouseOut '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+(posX+1)+'px; width:10px; height:'+height+'px;"></div>';
+							result += getBarDivText("", posX+1, realPosY, 10, height, "becalEventMarker");
 							posX+=5;
 							width-=5;
 							firstone = false;
 						}
-						result+='<div onclick="BeCal.openEventViewDialog('+m_id+');" onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMouseOut calEventNoBorder '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+posX+'px; width:'+width+'px; height:'+height+'px;">'+this.title+'</div>';
+						// add the bar.
+						//result+='<div onclick="BeCal.openEventViewDialog('+m_id+');" onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMouseOut calEventNoBorder '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+posX+'px; width:'+width+'px; height:'+height+'px;">'+this.title+'</div>';
+						result += getBarDivText(this.title, posX, realPosY, width, height, "becalEventNoBorder");
 						actualdate = Date.removeTime(nd);
 						//console.log("--> (Processed "+processed+" Remaining "+remainingDays+") Setting date: "+nd.toString());
 						processed = 0;
@@ -215,7 +223,8 @@ var BeCalEvent = function()
 			// add the start marker.
 			if(firstone==true && evtStartDay>=firstDay)
 			{
-				result+='<div onclick="BeCal.openEventViewDialog('+m_id+');" onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMarker calEventMouseOut '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+(posX+1)+'px; width:10px; height:'+height+'px;"></div>';
+				//result+='<div onclick="BeCal.openEventViewDialog('+m_id+');" onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMarker calEventMouseOut '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+(posX+1)+'px; width:10px; height:'+height+'px;"></div>';
+				result += getBarDivText("", posX+1, realPosY, 10, height, "becalEventMarker");
 				posX+=5;
 				width-=5;
 				firstone = false;
@@ -225,20 +234,23 @@ var BeCalEvent = function()
 			if(evtEndDay<=lastDay)
 			{
 				width-=10;			
-				result+='<div onclick="BeCal.openEventViewDialog('+m_id+');" onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMarker calEventMouseOut '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+(posX+width-4)+'px; width:10px; height:'+height+'px;"></div>';
+//				result+='<div onclick="BeCal.openEventViewDialog('+m_id+');" onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMarker calEventMouseOut '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+(posX+width-4)+'px; width:10px; height:'+height+'px;"></div>';
+				result += getBarDivText("", posX+width-4, realPosY, 10, height, "becalEventMarker");
 			}
 			
 			// add the last bar (see above)
-			result+='<div onclick="BeCal.openEventViewDialog('+m_id+');" onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMouseOut calEventNoBorder '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+posX+'px; width:'+width+'px; height:'+height+'px;">'+this.title+'</div>';
+			//result+='<div onclick="BeCal.openEventViewDialog('+m_id+');" onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="calEventBar calEventMouseOut calEventNoBorder '+evtclass+'" style="background-color: '+this.color+'; top:'+realPosY+'px; left:'+posX+'px; width:'+width+'px; height:'+height+'px;">'+this.title+'</div>';
+			result += getBarDivText(this.title, posX, realPosY, width, height, "becalEventNoBorder");
 			
 			if(remainingDays<=0 && !newline)
 				done=true;
 		}
-
-		*/		
+		// return the html text.
 		return result;
 	}
 }
+// next unique id for an event.
+BeCalEvent.arrID = 0;
 
 // A DAY FIELD IN THE UI +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -318,7 +330,19 @@ var BeCal = function(contentdivid)
 				return m_eventArray[i];
 		}
 		return null;
-	}
+	};
+	
+	// get the day field associated to a date.
+	this.getDayField = function(searchdate)
+	{
+		var fields = m_datefieldArray;
+		for(var q=0;q<fields.length;q++)
+		{
+			if(Date.compareOnlyDate(searchdate,fields[q].date)==true)
+				return fields[q];
+		}
+		return 0;
+	};
 	
 	// get the actual date and draw the screen with the given state.
 	this.getToday = function() {m_renderDate = this.render(new Date());};
