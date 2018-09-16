@@ -88,10 +88,10 @@ var BeCalEvent = function()
 	// create the bar div and return it.
 	var getBarDivText=function(text, x,y,width, height, addclass = "")
 	{
-		var txt='<div onclick="BeCal.openEventViewDialog('+m_id+');" onmouseover="BeCal.evtMouseOver('+m_id+');" onmouseout="BeCal.evtMouseOver('+m_id+', true);" class="becalEventBar '+addclass+' becalEventMouseOut evt_'+m_id+'" style="background-color:'+me.color+'; top:'+y+'px; left:'+x+'px; width:'+width+'px; height:'+height+'px;">'+text+'</div>';
+		var txt='<div onclick="BeCal.openEventViewDialog('+m_id+');" onmouseover="BeCalEvent.eventMouseOver('+m_id+');" onmouseout="BeCalEvent.eventMouseOver('+m_id+', true);" class="becalEventBar '+addclass+' becalEventMouseOut evt_'+m_id+'" style="background-color:'+me.color+'; top:'+y+'px; left:'+x+'px; width:'+width+'px; height:'+height+'px;">'+text+'</div>';
 		return txt;
 	};
-	
+
 	// TODO: UNCOMMENT
 	this.createMonthBars=function(calendar)
 	{
@@ -251,6 +251,20 @@ var BeCalEvent = function()
 }
 // next unique id for an event.
 BeCalEvent.arrID = 0;
+
+// mouse is over an event bar.
+BeCalEvent.eventMouseOver=function(evtid, mouseOut=false)
+{
+	if(mouseOut)
+	{
+		$('.evt_'+evtid).removeClass('becalEventMouseOver');
+		$('.evt_'+evtid).addClass('becalEventMouseOut');
+	}else{
+		$('.evt_'+evtid).removeClass('becalEventMouseOut');
+		$('.evt_'+evtid).addClass('becalEventMouseOver');
+	}
+
+};
 
 // A DAY FIELD IN THE UI +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
