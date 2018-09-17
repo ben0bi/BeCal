@@ -464,7 +464,7 @@ var BeCal = function(contentdivid)
 				var id=m_datefieldArray.length-1; // id is the last index.
 		
 				// add some html
-				txt+='<div class="becalField'+cl+'" style="top:'+posY+'px; left: '+posX+'px;" onclick="BeCal.openEntryDialog('+id+');">';
+				txt+='<div class="becalField'+cl+'" style="top:'+posY+'px; left: '+posX+'px;" onclick="BeCal.openEditDialog('+id+');">';
 				txt+='<div class="becalDayNumber">&nbsp;'+dt+'</div>';
 				txt+='<div class="becalDayHiddenEvents" id="becalDayHiddenEvtWrapper_'+id+'" onclick="BeCal.showHiddenEventView('+id+');">';
 				txt+='<div id="becalDayHiddenEvt_'+id+'" class="becalDayHiddenEventContent">&nbsp;+ 0</div></div>';
@@ -917,6 +917,61 @@ var BeCal = function(contentdivid)
 		$('#'+BeCal.editEntryWindow).hide();	
 	};
 	
+	// change color of top bar in the entry/show window.
+	var changeEntryWindowEvtColor=function(col)
+	{
+		console.log("Changing entry window top bar color to "+col+".");
+		var entrywindow=$('#'+BeCal.editEntryWindow);
+		var topbar = entrywindow.find('.jdwindow-top');
+		topbar.css('background-color', col);	
+	};
+	
+	// show the edit window.
+	var showEditWindow = function(fieldx, fieldy, fieldwidth)
+	{
+		console.log("TODO: show edit window.");
+	};
+	
+	// open the edit entry dialog.
+	this.openEditDialog = function(datefieldid)
+	{
+		var f = m_datefieldArray[datefieldid];
+	
+		var now = new Date();
+		var day = new Date(f.date);
+
+		// set the time to the day.
+		day.setHours(now.getHours());
+		day.setMinutes(now.getMinutes());
+		day.setSeconds(0);
+	
+		// set the end time one hour later.
+		var day2 = new Date(day);
+		day2.setHours(day2.getHours()+1);
+	
+		// set the date fields.
+		AnyTime.setCurrent( BeCal.inputNameDate1, day);
+		AnyTime.setCurrent( BeCal.inputNameTime1, day);
+
+		AnyTime.setCurrent( BeCal.inputNameDate2, day2);
+		AnyTime.setCurrent( BeCal.inputNameTime2, day2);
+	
+		var menuHeight = $('#'+BeCal.divNameTopMenu).height()+$('.becalDayField').height();
+	
+		// it is a new entry, so we show the input stuff and hide the show stuff (entry mode).
+		$('#'+BeCal.divNameEditContainer).show();
+		$('#'+BeCal.divNameShowContainer).hide();
+	
+		// same with the title.
+		$('#'+BeCal.divNameEditTitle).show();
+		$('#'+BeCal.divNameShowTitle).hide();
+	
+		changeEntryWindowEvtColor(me.newEntryColor);
+	
+		showEditWindow(parseInt(f.left),parseInt(f.top)+menuHeight, f.width);
+		$('#'+BeCal.inputNameEventTitle).focus();
+	};
+	
 	// INIT
 	if(BeCal.instance == null)
 	{	
@@ -961,6 +1016,13 @@ BeCal.showHiddenEventView=function(dayfieldid)
 {
 	if(BeCal.instance!=null)
 		BeCal.instance.showHiddenEventView(dayfieldid);
+};
+
+// open the edit entry dialog.
+BeCal.openEditDialog = function(dayfieldid)
+{
+	if(BeCal.instance!=null)
+		BeCal.instance.openEditDialog(dayfieldid);
 };
 
 // TEXT MONTH NAMES ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
