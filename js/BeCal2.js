@@ -711,11 +711,11 @@ var BeCal = function(contentdivid)
 			clickoutFiresChange: true,
 			change: function(color) 
 			{
-				entryColorPickerChanged(color);
+				editColorPickerChanged(color);
 			},
 			move: function(color)
 			{
-				entryColorPickerChanged(color);
+				editColorPickerChanged(color);
 			},
 		palette: [
 				["#336","#363","#633","#663","#636","#366"],
@@ -927,9 +927,42 @@ var BeCal = function(contentdivid)
 	};
 	
 	// show the edit window.
-	var showEditWindow = function(fieldx, fieldy, fieldwidth)
+	var showEditWindow = function(posX, posY, entryWidth)
 	{
-		console.log("TODO: show edit window.");
+		hideAllWindows();
+	
+		var win = $('#'+BeCal.editEntryWindow);
+		var content = $('#'+BeCal.divNameOverlay);
+		var w = win.width();
+		var h = win.height();
+		var cw=content.width();
+		var ch=content.height();
+	
+		// set window position
+		posX += entryWidth*0.75;
+		if(posX+w>cw)
+			posX=posX-w-entryWidth*0.5;
+		if(posY+h>ch)
+			posY=ch-h-4;
+		
+		if(posX<0)
+			posX=0;
+		if(posY<0)
+			posY=0;
+
+		win.css('left', posX+'px');
+		win.css('top', posY+'px');
+
+		// show the window.
+		win.jdShow();
+		win.focus();
+	};
+	
+	// the color picker of the edit window changed.
+	var editColorPickerChanged = function(col)
+	{
+		me.newEntryColor = col.toHexString();
+		changeEntryWindowEvtColor(me.newEntryColor);
 	};
 	
 	// open the edit entry dialog.
