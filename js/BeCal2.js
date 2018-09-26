@@ -884,9 +884,12 @@ var BeCal = function(contentdivid)
 	{
 		//console.log("DFID: "+dayfieldid);
 		hideAllWindows();
-	
+		
+		// get windows and content and stuff.
 		var win = $('#'+BeCal.otherEntriesWindow);
 		var div = $('#'+BeCal.divNameOtherEntries);
+		var content = $('#'+BeCal.divNameOverlay);
+			
 		var dayfield = m_datefieldArray[dayfieldid];
 		var txt='';
 		var count = 0;
@@ -901,6 +904,35 @@ var BeCal = function(contentdivid)
 		}
 		win.jdHTML(txt);
 
+	// adjust window position.
+		// get mouse position
+		var mouse = $().Mouse();
+		var mouseX = mouse.x;
+		var mouseY = mouse.y;
+		
+		// get some values.
+		var w = win.width();
+		var h = win.height();
+		var cw=content.width();
+		var ch=content.height();	
+	
+		mouseY -= ($('#content').height()-ch)+h; // first is the top bar height, second is the window height.
+		
+		// constrain values
+		if(mouseX+w>cw)
+			mouseX=mouseX-w;
+		if(mouseY+h>ch)
+			mouseY=ch-h-4;
+		
+		if(mouseX<0)
+			mouseX=0;
+		if(mouseY<0)
+			mouseY=0;
+
+		// set position
+		win.css('left', mouseX+'px');
+		win.css('top', mouseY+'px');
+		
 		win.jdShow();
 		win.focus();
 	};
@@ -1048,6 +1080,21 @@ var BeCal = function(contentdivid)
 	
 		// show the window.
 		showEditWindow(parseInt(left),parseInt(top)+menuHeight, 1);
+	};
+	
+	// create a new event from the data in the edit window.
+	this.createNewEventBtnPressed = function()
+	{
+		// create the entry with the date from the window.
+		var e = new BeCalEvent();
+		var start=Date.setTime(AnyTime.getCurrent(BeCal.inputNameDate1), AnyTime.getCurrent(BeCal.inputNameTime1));
+		var end=Date.setTime(AnyTime.getCurrent(BeCal.inputNameDate2), AnyTime.getCurrent(BeCal.inputNameTime2));
+		e.create(start, end, $('#'+BeCal.inputNameEventTitle).val(), "", this.newEntryColor);
+		m_eventArray.push(e);
+	
+		$('#'+BeCal.editEntryWindow).hide();
+		$('#'+BeCal.inputNameEventTitle).val("");
+		m_renderDate=this.render(m_renderDate);
 	};
 	
 	// INIT
