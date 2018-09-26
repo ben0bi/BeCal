@@ -1046,9 +1046,9 @@ var BeCal = function(contentdivid)
 			return;
 		}
 		
-		var left=10;
-		var top = 10;
-		var menuHeight = $('#'+BeCal.divNameTopMenu).height()+$('.becalDayField').height();
+		var left=$().Mouse().x;
+		var top=$().Mouse().y;
+		//var menuHeight = $('#'+BeCal.divNameTopMenu).height()+$('.becalDayField').height();
 	
 		// it is an old entry, so we show the show stuff and hide the input stuff (show mode).
 		$('#'+BeCal.divNameEditContainer).hide();
@@ -1079,7 +1079,7 @@ var BeCal = function(contentdivid)
 		changeEntryWindowEvtColor(evt.color);
 	
 		// show the window.
-		showEditWindow(parseInt(left),parseInt(top)+menuHeight, 1);
+		showEditWindow(parseInt(left),parseInt(top), 1);
 	};
 	
 	// create a new event from the data in the edit window.
