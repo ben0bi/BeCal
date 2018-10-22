@@ -61,6 +61,12 @@ Date.setTime = function(date, time)
 var BeCalEvent = function()
 {
 	var me = this;
+	
+	// DB stuff
+	var m_dbID = -1;							// DBid < 0 = new entry
+	var m_hasChanged = false;					// has the entry changed (also if the entry is new)
+	
+	// ENTRY DATA
 	this.title = "Ohne Titel";				// title of the event.
 	this.summary = "";						// summary of the event. (NOT YET USED)
 	this.startDate = new Date();			// start date of the event.
@@ -81,9 +87,21 @@ var BeCalEvent = function()
 		else
 			me.color=newcolor;
 		
+		// dbID has to be <0
+		m_dbID = -1;
+		m_hasChanged = true;
+		
 		// assign an unique id.
 		m_id=BeCalEvent.arrID;
 		BeCalEvent.arrID++;		
+	};
+	
+	// create the entry from a database entry. This sets the dbid to >0 and haschanged to false.
+	this.createFromDB = function(dbid,start, end, newtitle, newsummary, newcolor)
+	{
+		me.create(start, end, newtitle, newsummary, newcolor);
+		m_dbID = dbid;
+		m_hasChanged = false;
 	};
 	
 	// create the bar div and return it.
@@ -93,7 +111,7 @@ var BeCalEvent = function()
 		return txt;
 	};
 
-	// TODO: UNCOMMENT
+	// create bars in the month view.
 	this.createMonthBars=function(calendar)
 	{
 		var dayfields = calendar.getDateFields();	// get the day fields from the calendar.
