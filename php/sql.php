@@ -24,6 +24,7 @@ class SQL
 		}
 		return $output;
 	}
+
 /* Translate text from SQL */
 	public static function sqlToText($txt)
 	{
@@ -36,34 +37,34 @@ class SQL
 			switch($char)
 			{
 				case '%': $trigger=$trigger+1;break;
-				case "1": 
-					$t="1"; 
-					if($trigger==2) {$t='"';} 
-					$output=$output.$t; 
+				case "1":
+					$t="1";
+					if($trigger==2) {$t='"';}
+					$output=$output.$t;
 					$trigger=0;
 					break;
 				case "2":
-					$t="2"; 
-					if($trigger==2) {$t="'";} 
-					$output=$output.$t; 
+					$t="2";
+					if($trigger==2) {$t="'";}
+					$output=$output.$t;
 					$trigger=0;
 					break;
 				case "3":
-					$t="3"; 
-					if($trigger==2) {$t="`";} 
-					$output=$output.$t; 
+					$t="3";
+					if($trigger==2) {$t="`";}
+					$output=$output.$t;
 					$trigger=0;
 					break;
 				case "4":
-					$t="4"; 
-					if($trigger==2) {$t="´";} 
-					$output=$output.$t; 
+					$t="4";
+					if($trigger==2) {$t="´";}
+					$output=$output.$t;
 					$trigger=0;
 					break;
 				case "5":
-					$t="4"; 
-					if($trigger==2) {$t=chr(13);} 
-					$output=$output.$t; 
+					$t="4";
+					if($trigger==2) {$t=chr(13);}
+					$output=$output.$t;
 					$trigger=0;
 					break;
 				default:
@@ -79,50 +80,41 @@ class SQL
 	}
 
 /* Table Names */
-/*	public static $table_comicpage="comicpage";
-	public static $table_blogpost="blogpost";
+/*	public static $table_calendarevent="calendarevents";
+	//public static $table_blogpost="blogpost";
 
 /* Page navigating queries. */
-/*	public static function query_page_getAfterOrEqual($id) 
+/*	public static function query_page_getAfterOrEqual($id)
 		{return "SELECT * FROM ".SQL::$table_comicpage." WHERE `pageorder` >= $id ORDER BY `pageorder` ASC LIMIT 1;";}
-	public static function query_page_getBeforeOrEqual($id) 
+	public static function query_page_getBeforeOrEqual($id)
 		{return "SELECT * FROM ".SQL::$table_comicpage." WHERE `pageorder` <= $id ORDER BY `pageorder` DESC LIMIT 1;";}
 	public static function query_page_getFirst() {return "SELECT * FROM ".SQL::$table_comicpage." ORDER BY `pageorder` ASC LIMIT 1;";}
 	public static function query_page_getLast() {return "SELECT * FROM ".SQL::$table_comicpage." ORDER BY `pageorder` DESC LIMIT 1;";}
 
 /* Archive queries */
 /*	public static function query_archives() {return "SELECT * FROM ".SQL::$table_comicpage." WHERE 1 ORDER BY `pageorder` DESC;";}
-	public static function getAllAfterPageorder($pageorder) 
+	public static function getAllAfterPageorder($pageorder)
 		{return "SELECT * FROM ".SQL::$table_comicpage." WHERE `pageorder` > \"$pageorder\"";}
 
 /* Create and update queries */
-/*	public static function insert_page($title, $filename, $pageorder)
+	public static function insert_event($title, $startdate, $enddate)
 	{
-		$createdate=date('Y-m-d H:i:s');
+		//$createdate=date('Y-m-d H:i:s');
 		$title=SQL::textToSQL($title);
-		return "INSERT INTO ".self::$table_comicpage.' (`title`, `image`, `pageorder`, `createdate`) VALUES("'.$title.'", "'.$filename.'", "'.$pageorder.'", "'.$createdate.'");';
+		return "INSERT INTO ".self::$table_calendarevents.' (`title`, `startdate`, `enddate`) VALUES("'.$title.'", "'.$startdate.'", "'.$enddate.'");';
 	}
-
-	public static function insert_blogpost($id, $title, $text)
-	{
-		$createdate=date('Y-m-d H:i:s');
-		$title=SQL::textToSQL($title);
-		$text=SQL::textToSQL($text);
-		return "INSERT INTO ".self::$table_blogpost.' (`comicpage_id`, `title`, `text`, `createdate`) VALUES("'.$id.'", "'.$title.'", "'.$text.'", "'.$createdate.'");';
-	}
-
 
 /* Global Queries */
-	public static function delete_from_table($tablename,$what, $value) 
+	public static function delete_from_table($tablename,$what, $value)
 		{return 'DELETE FROM '.$tablename.' WHERE `'.$what.'` = "'.$value.'";';}
-	public static function select_from_table($tablename,$what, $value) 
+	public static function select_from_table($tablename,$what, $value)
 		{return 'SELECT * FROM '.$tablename.' WHERE `'.$what.'` = "'.$value.'";';}
-	public static function select_from_table_idASC($tablename,$what, $value) 
+	public static function select_from_table_idASC($tablename,$what, $value)
 		{return 'SELECT * FROM '.$tablename.' WHERE `'.$what.'` = "'.$value.'" ORDER BY `id` ASC;';}
-	public static function select_from_table_idDESC($tablename,$what, $value) 
+	public static function select_from_table_idDESC($tablename,$what, $value)
 		{return 'SELECT * FROM '.$tablename.' WHERE `'.$what.'` = "'.$value.'" ORDER BY `id` DESC;';}
 	public static function select_all($fromtable) {return 'SELECT * FROM '.$fromtable.';';}
-	public static function update_single_value($table, $what, $whatvalue, $where,$wherevalue) 
+	public static function update_single_value($table, $what, $whatvalue, $where,$wherevalue)
 		{
 			$whatvalue=SQL::textToSQL($whatvalue);
 			$wherevalue=SQL::textToSQL($wherevalue);
