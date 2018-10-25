@@ -142,11 +142,11 @@ class SQL
 	// closes the database connection
 	public static function closeConnection()
 	{
-		if(self::$db_connection!=-1)
-		{
+		//if(self::$db_connection!=-1)
+		//{
 			mysqli_close(SQL::$db_connection);
 			self::$db_connection=-1;
-		}
+		//}
 	}
 
 	// make an sql query and return the result.
@@ -166,14 +166,14 @@ class SQL
 	// get the first row of a result.
 	public static function getFirstRow($result)
 	{
-		if($result==-1)
-			return -1;
+		if(!$result)
+			return false;
 
 		while($row=mysqli_fetch_object($result))
 		{
 			//return first row.
 			return $row;
 		}
-		return -1;
+		return false;
 	}
 }
