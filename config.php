@@ -5,3 +5,6 @@ $db_user = "BeCal";
 $db_pass = "ben0biCalendar";
 $db_name = "BeCal";
 
+// Tables
+$table_calendarevents = "calendarevents";
+

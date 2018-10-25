@@ -103,6 +103,18 @@ class SQL
 		$title=SQL::textToSQL($title);
 		return "INSERT INTO ".self::$table_calendarevents.' (`title`, `startdate`, `enddate`) VALUES("'.$title.'", "'.$startdate.'", "'.$enddate.'");';
 	}
+	
+/* Get all dates between two dates. */
+	public static function getCalendarEventsBetween($startdate, $enddate)
+	{
+		global $table_calendarevents;
+		
+		SQL::openConnection();
+		$query = 'SELECT * FROM '.$table_calendarevents.' WHERE `startdate` <= "'.$enddate.'" AND `enddate` >= "'.$startdate.'"';
+		$result = SQL::query($query);
+		SQL::closeConnection();
+		return $result;
+	}
 
 /* Global Queries */
 	public static function delete_from_table($tablename,$what, $value)
