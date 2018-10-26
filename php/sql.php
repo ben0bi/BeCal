@@ -103,12 +103,12 @@ class SQL
 		$title=SQL::textToSQL($title);
 		return "INSERT INTO ".self::$table_calendarevents.' (`title`, `startdate`, `enddate`) VALUES("'.$title.'", "'.$startdate.'", "'.$enddate.'");';
 	}
-	
+
 /* Get all dates between two dates. */
 	public static function getCalendarEventsBetween($startdate, $enddate)
 	{
 		global $table_calendarevents;
-		
+
 		SQL::openConnection();
 		$query = 'SELECT * FROM '.$table_calendarevents.' WHERE `startdate` <= "'.$enddate.'" AND `enddate` >= "'.$startdate.'"';
 		$result = SQL::query($query);
@@ -154,10 +154,10 @@ class SQL
 	// closes the database connection
 	public static function closeConnection()
 	{
-		//if(self::$db_connection!=-1)
+		//if(SQL::$db_connection!=-1)
 		//{
 			mysqli_close(SQL::$db_connection);
-			self::$db_connection=-1;
+			SQL::$db_connection=-1;
 		//}
 	}
 

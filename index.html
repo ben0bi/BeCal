@@ -7,20 +7,69 @@
 	<link rel="stylesheet" type="text/css" href="plugins/anytime/anytime.5.2.0.css" />
 	<link rel="stylesheet" type="text/css" href="plugins/spectrum/spectrum.css" />
 
-	<link rel="stylesheet" type="text/css" href="css/BeCal2.css" />
+	<link rel="stylesheet" type="text/css" href="css/BeCal.css" />
 	<link rel="stylesheet" type="text/css" href="css/style.css" />	
 </head>
 <body>
 
 <div id ="content"></div>
+<div id="blocker"><div id="blockercontent">Bitte warten, ich arbeite..</div></div>
 
 <script src="js/jquery-3.3.1.min.js"></script>
 <script src="plugins/jdoor/jdoor.js"></script>
 <script src="plugins/anytime/anytime.5.2.0.js"></script>
 <script src="plugins/spectrum/spectrum.js"></script>
-<script src="js/BeCal2.js"></script>
+<script src="js/BeCal.js"></script>
 
 <script>
+/*
+	Table structure:
+		calendarevents
+			id - BIGINT - primary key
+			title - TEXT
+			startdate - DATETIME
+			enddate - DATETIME
+			userid - BIGINT
+			eventtype - INT
+			summary - TEXT
+			color - VARCHAR(10) - html #rrggbb
+*/
+
+function hideBlocker() {$('#blocker').hide();}
+function showBlocker() {$('#blocker').show();}
+
+function loadEvents(calendar)
+{
+	showBlocker();
+	var url = 'php/ajax_getdates.php';
+	var data = null;
+	var success = function(data)
+	{
+		console.log("event loading result:" +data);
+		for(var i=0;i<data.length;i++)
+		{
+			var d = data[i];
+			var startd = new Date(d.startdate);
+			var endd = new Date(d.enddate);
+			console.log(i+":"+d.title+" from "+d.startdate+" to "+d.enddate);
+			console.log(" -> from "+startd+" to "+endd);
+			calendar.createEvent(startd, endd, d.title, d.summary, d.color);
+		}
+		calendar.getToday();
+		hideBlocker();
+	}
+	
+	console.log("Loading events..");
+	$.ajax({
+		type: 'POST',
+		url: url,
+		data: data,
+		success: success,
+		dataType: 'json'
+	});
+	console.log("Endof Loading Events.");
+}
+
 // resize the window.
 $(window).resize(function(){BeCal.render();});
 $(document).ready(function()
@@ -33,37 +82,7 @@ $(document).ready(function()
 	// create the calendar.
 	var calendar = new BeCal('#content');
 	//BeCal.createUI();
-	
-	// TEST
-	calendar.createEvent(new Date(), new Date(), "Holla1", "holldrio", "#FF3333");
-	calendar.createEvent(new Date(), new Date(), "Holla2", "holldrio", "#FF3333");
-	calendar.createEvent(new Date(), new Date(), "Holla3", "holldrio", "#FF3333");
-	calendar.createEvent(new Date(), new Date(), "Holla4", "holldrio", "#FF3333");
-	calendar.createEvent(new Date(), new Date(), "Holla5", "holldrio", "#FF3333");
-	calendar.createEvent(new Date(), new Date(), "Holla6", "holldrio", "#FF3333");
-	calendar.createEvent(new Date(), new Date(), "Holla7", "holldrio", "#FF3333");
-	calendar.createEvent(new Date(), new Date(), "Holla8", "holldrio", "#FF3333");
-	calendar.createEvent(new Date(), new Date(), "Holla9", "holldrio", "#FF3333");
-	calendar.createEvent(new Date(), new Date(), "Holla10", "holldrio", "#FF9922");
-	calendar.createEvent(new Date(), new Date(), "Holla1", "holldrio", "#FF6699");
-
-	var d1=new Date();
-	d1.setDate(d1.getDate()-3);
-	var d2= new Date();
-	d2.setDate(d2.getDate()+1);
-
-	calendar.createEvent(d1, d2, "L1", "holldrio", "#FF6699");
-	
-	d1=new Date();
-	d1.setDate(d1.getDate()-10);
-	d2= new Date();
-	d2.setDate(d2.getDate()-2);
-	calendar.createEvent(d1, d2, "L2", "holldrio", "#FF6699");
-// END TEST
-
-	// draw the screen.
-	calendar.getToday();
-
+	loadEvents(calendar);	
 });
 
 </script>
