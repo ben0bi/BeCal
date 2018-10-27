@@ -24,7 +24,7 @@ Date.daysBetween = function( date1, date2 ) {
 
   // Convert back to days and return
   return Math.round(difference_ms/one_day)+1; 
-}
+};
 
 // set just the day, month and year of a date, not the time.
 Date.compareOnlyDate=function(d1,d2)
@@ -32,7 +32,7 @@ Date.compareOnlyDate=function(d1,d2)
 	if(d1.getDate()==d2.getDate() && d1.getMonth()==d2.getMonth() && d1.getFullYear()==d2.getFullYear())
 		return true;
 	return false;
-}
+};
 
 // set the time parameters to 0,0,1,0
 Date.removeTime = function(dat)
@@ -43,7 +43,7 @@ Date.removeTime = function(dat)
 	d.setSeconds(1);
 	d.setMilliseconds(0);
 	return d;
-}
+};
 
 /* set only the time of a specific date. */
 Date.setTime = function(date, time)
@@ -53,7 +53,28 @@ Date.setTime = function(date, time)
 	d.setMinutes(time.getMinutes());
 	d.setSeconds(time.getSeconds());
 	return d;
-}
+};
+
+// create an sql datetime string from a date.
+Date.toSQL = function(datetime)
+{
+	var year = datetime.getFullYear();
+	var month = datetime.getMonth()+1;
+	var day = datetime.getDate();
+	var hour = datetime.getHours();
+	var minute=datetime.getMinutes();
+	
+	if(month<10)
+		month="0"+month;
+	if(day<10)
+		day="0"+day;
+	if(hour<10)
+		hour="0"+hour;
+	if(minute<10)
+		minute="0"+minute;
+	
+	return year+"-"+month+"-"+day+"T"+hour+":"+minute+":00.000";	
+};
 
 // EVENT STRUCTURE ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -829,12 +850,12 @@ var BeCal = function(contentdivid)
 			var time2 = AnyTime.getCurrent(BeCal.inputNameTime2);
 			daytime1=Date.setTime(daytime1,time1);
 			daytime2=Date.setTime(daytime2, time2);
-			console.log("Got time from input.");
+			//console.log("Got time from input.");
 		}else{
 			// get times from the parameters.
 			daytime1=new Date(date1);
 			daytime2=new Date(date2);
-			console.log("Got time from parameters. ;)");
+			//console.log("Got time from parameters. ;)");
 		}
 	
 		// return days.
@@ -878,8 +899,7 @@ var BeCal = function(contentdivid)
 			if(minutes>0)
 				txt+=minutes+"min";
 
-			console.log(">D:"+days+" H:"+hours+" M:"+minutes);
-
+			//console.log(">D:"+days+" H:"+hours+" M:"+minutes);
 			
 			if(days==0 && hours==0 && minutes==0)
 			{

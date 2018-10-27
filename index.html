@@ -35,14 +35,53 @@
 			color - VARCHAR(10) - html #rrggbb
 */
 
+// show and hide blocker functions.
 function hideBlocker() {$('#blocker').hide();}
 function showBlocker() {$('#blocker').show();}
 
+// load events between two dates.
 function loadEvents(calendar)
 {
 	showBlocker();
 	var url = 'php/ajax_getdates.php';
 	var data = null;
+	var success = function(data)
+	{
+		console.log("event loading result:" +data);
+		for(var i=0;i<data.length;i++)
+		{
+			var d = data[i];
+			var startd = new Date(d.startdate);
+			var endd = new Date(d.enddate);
+			console.log(i+":"+d.title+" from "+d.startdate+" to "+d.enddate);
+			console.log(" -> from "+startd+" to "+endd);
+			calendar.createEvent(startd, endd, d.title, d.summary, d.color);
+		}
+		calendar.getToday();
+		hideBlocker();
+	}
+	
+	console.log("Loading events..");
+	$.ajax({
+		type: 'POST',
+		url: url,
+		data: data,
+		success: success,
+		dataType: 'json'
+	});
+	console.log("Endof Loading Events.");
+}
+
+function loadEvents2(calendar, startdate, enddate)
+{
+	showBlocker();
+	
+	// create SQL strings from the dates.
+	var d1 = Date.toSQL(startdate);
+	var d2 = Date.toSQL(enddate);
+	
+	var url = 'php/ajax_getdates.php';
+	var data = {startdate: d1, enddate: d2};
 	var success = function(data)
 	{
 		console.log("event loading result:" +data);
@@ -81,8 +120,9 @@ $(document).ready(function()
 
 	// create the calendar.
 	var calendar = new BeCal('#content');
-	//BeCal.createUI();
-	loadEvents(calendar);	
+	//loadEvents(calendar);
+	
+	loadEvents2(calendar,new Date(), new Date());
 });
 
 </script>
