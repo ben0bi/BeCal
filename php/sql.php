@@ -97,11 +97,13 @@ class SQL
 		{return "SELECT * FROM ".SQL::$table_comicpage." WHERE `pageorder` > \"$pageorder\"";}
 
 /* Create and update queries */
-	public static function insert_event($title, $startdate, $enddate)
+	public static function insert_event($title, $startdate, $enddate, $color, $summary)
 	{
+		global $table_calendarevents;
 		//$createdate=date('Y-m-d H:i:s');
 		$title=SQL::textToSQL($title);
-		return "INSERT INTO ".self::$table_calendarevents.' (`title`, `startdate`, `enddate`) VALUES("'.$title.'", "'.$startdate.'", "'.$enddate.'");';
+		$summary=SQL::textToSQL($summary);
+		return "INSERT INTO ".$table_calendarevents.' (`title`, `startdate`, `enddate`, `color`, `summary`) VALUES("'.$title.'", "'.$startdate.'", "'.$enddate.'", "'.$color.'", "'.$summary.'");';
 	}
 
 /* Get all dates between two dates. */

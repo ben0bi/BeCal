@@ -15,6 +15,8 @@ $result = SQL::getCalendarEventsBetween($startdate,$enddate);
 $arr = [];
 while($row=mysqli_fetch_object($result))
 {
+	$row->title=SQL::SQLtoText($row->title);
+	$row->summary=SQL::SQLtoText($row->summary);
 	$arr[] = $row;
 }
 

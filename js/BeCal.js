@@ -1,5 +1,10 @@
 /* Ben0bis Calendar, V2. */
 
+// show and hide UI-blocker functions.
+function hideBlocker() {$('#blocker').hide();}
+function showBlocker() {$('#blocker').show();}
+hideBlocker();
+
 // DATE FUNCTIONS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 // this function is copied from stackoverflow. It calculates the days between two dates.
@@ -85,7 +90,8 @@ var BeCalEvent = function()
 	
 	// DB stuff
 	var m_dbID = -1;							// DBid < 0 = new entry
-	var m_hasChanged = false;					// has the entry changed (also if the entry is new)
+	this.getDBID = function() {return m_dbID;}
+	//var m_hasChanged = false;					// has the entry changed (also if the entry is new)
 	
 	// ENTRY DATA
 	this.title = "Ohne Titel";				// title of the event.
@@ -108,9 +114,9 @@ var BeCalEvent = function()
 		else
 			me.color=newcolor;
 		
-		// dbID has to be <0
+		// dbID has to be <0 if the event is new.
 		m_dbID = -1;
-		m_hasChanged = true;
+		//m_hasChanged = true;
 		
 		// assign an unique id.
 		m_id=BeCalEvent.arrID;
@@ -122,7 +128,7 @@ var BeCalEvent = function()
 	{
 		me.create(start, end, newtitle, newsummary, newcolor);
 		m_dbID = dbid;
-		m_hasChanged = false;
+		//m_hasChanged = false;
 	};
 	
 	// create the bar div and return it.
@@ -298,7 +304,6 @@ BeCalEvent.eventMouseOver=function(evtid, mouseOut=false)
 		$('.evt_'+evtid).removeClass('becalEventMouseOut');
 		$('.evt_'+evtid).addClass('becalEventMouseOver');
 	}
-
 };
 
 // A DAY FIELD IN THE UI +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -363,11 +368,101 @@ var BeCal = function(contentdivid)
 	// color for a new entry.
 	this.newEntryColor = BeCal.eventDefaultColor;
 	
+	// DB FUNCTIONS
+	var loadEventsBetween = function(startdate, enddate, successFunc)
+	{
+		showBlocker();
+	
+		// create SQL strings from the dates.
+		var d1 = Date.toSQL(startdate);
+		var d2 = Date.toSQL(enddate);
+	
+		// set up the php request.
+		var url = 'php/ajax_getEvents.php';
+		var data = {startdate: d1, enddate: d2};
+		var success = function(data)
+		{
+			console.log(data.length+" events loaded.");
+			me.clearEvents();
+			for(var i=0;i<data.length;i++)
+			{
+				var d = data[i];
+				var startd = new Date(d.startdate);
+				var endd = new Date(d.enddate);
+				//console.log(i+":"+d.title+" from "+d.startdate+" to "+d.enddate);
+				//console.log(" -> from "+startd+" to "+endd);
+				me.createDBEvent(d.id, startd, endd, d.title, d.summary, d.color);
+			}
+			// do something.
+			successFunc();
+			hideBlocker();
+		}
+
+		// send the ajax request.
+		$.ajax({
+			type: 'POST',
+			url: url,
+			data: data,
+			success: success,
+			dataType: 'json'
+		});
+	};
+
+	// save an event to the DB.
+	var saveToDB = function(becalevt)
+	{
+		showBlocker();
+		// create SQL strings from the dates.
+		var d1 = Date.toSQL(becalevt.startDate);
+		var d2 = Date.toSQL(becalevt.endDate);
+	
+		// set up the php request.
+		var url = 'php/ajax_CUD_event.php';
+		var data = {dbid: becalevt.getDBID(),
+					startdate: d1,
+					enddate: d2,
+					title: becalevt.title,
+					summary: becalevt.summary,
+					color: becalevt.color,
+					CUD: 'create'};			// the CUD event to do.
+					// ^if CUD == 'create', it will create OR update an object.
+					// if CUD == 'delete', it will delete the object.
+		
+		// success function.
+		var success = function(data)
+		{
+			console.log("CUD event result:" +data);
+			m_renderDate=me.render(m_renderDate);
+			// hideBlocker(); render will load all events..
+		}
+
+		$.ajax({
+			type: 'POST',
+			url: url,
+			data: data,
+			success: success,
+			dataType: 'text'
+		});		
+	}
+	
+	// ENDOF DB FUNCTIONS
+	
+	this.clearEvents = function() {m_eventArray = new Array();};
+	
 	// create an event and add it to the list.
 	this.createEvent = function(startdate, enddate, title, summary="", color = "")
 	{
 		var e = new BeCalEvent();
 		e.create(startdate,enddate,title, summary, color);
+		m_eventArray.push(e);
+		return e;
+	};
+	
+	// create an event from the DB.
+	this.createDBEvent = function(dbid, startdate, enddate, title, summary="", color="")
+	{
+		var e = new BeCalEvent();
+		e.createFromDB(dbid, startdate, enddate, title, summary, color);
 		m_eventArray.push(e);
 		return e;
 	};
@@ -509,45 +604,49 @@ var BeCal = function(contentdivid)
 			}
 		}
 
-		// create all the event bars.
-		var sortedFields = sortEventsByLength(startScreenDate, endScreenDate);
-		for(e=0;e<sortedFields.length;e++)
+		// load the events asyncronous.
+		loadEventsBetween(startScreenDate, endScreenDate, function()
 		{
-			var event = sortedFields[e];
-			txt+=event.createMonthBars(me);
-		}
-	
-		// create the html.
-		$('#'+BeCal.divNameContent).html(txt);
-		
-		// create width and height.
-		$(".becalDayField").each(function()
-		{
-			$(this).width(calFieldWidth);
-		});
-		$(".becalField").each(function()
-		{
-			$(this).width(calFieldWidth);
-			$(this).height(calFieldHeight);
-		});
-		
-		// set hidden event numbers.
-		for(i=0;i<m_datefieldArray.length;i++)
-		{
-			var f = m_datefieldArray[i];
-			if(f.hiddenEventCount>0)
+			// create all the event bars.
+			var sortedFields = sortEventsByLength(startScreenDate, endScreenDate);
+			for(e=0;e<sortedFields.length;e++)
 			{
-				$('#becalDayHiddenEvt_'+i).html("+ "+f.hiddenEventCount);
-				$('#becalDayHiddenEvtWrapper_'+i).show();
-			}else{
-				$('#becalDayHiddenEvt_'+i).html("");
-				$('#becalDayHiddenEvtWrapper_'+i).hide();
+				var event = sortedFields[e];
+				txt+=event.createMonthBars(me);
 			}
-		}
+	
+			// create the html.
+			$('#'+BeCal.divNameContent).html(txt);
 		
-		// stop hidden events from clicking through
-		$('.becalDayHiddenEvents').click(function(e) {e.stopPropagation();});
-
+			// create width and height.
+			$(".becalDayField").each(function()
+			{
+				$(this).width(calFieldWidth);
+			});
+			$(".becalField").each(function()
+			{
+				$(this).width(calFieldWidth);
+				$(this).height(calFieldHeight);
+			});
+		
+			// set hidden event numbers.
+			for(i=0;i<m_datefieldArray.length;i++)
+			{
+				var f = m_datefieldArray[i];
+				if(f.hiddenEventCount>0)
+				{
+					$('#becalDayHiddenEvt_'+i).html("+ "+f.hiddenEventCount);
+					$('#becalDayHiddenEvtWrapper_'+i).show();
+				}else{
+					$('#becalDayHiddenEvt_'+i).html("");
+					$('#becalDayHiddenEvtWrapper_'+i).hide();
+				}
+			}
+		
+			// stop hidden events from clicking through
+			$('.becalDayHiddenEvents').click(function(e) {e.stopPropagation();});
+		});
+		
 		return returnDate;
 	};
 	
@@ -709,7 +808,7 @@ var BeCal = function(contentdivid)
 				txt+='<div id="'+BeCal.showNameDate2+'" class="becalInputDate"></div>';
 			txt+='</td></tr></table>';
 			txt+='<div class="becalEditButtonDiv">';
-				txt+='<a href="" class="becalOkBtn becalEditBtn"></a>';
+				txt+='<a href="javascript:" class="becalOkBtn becalEditBtn"></a>';
 			txt+='</div>';
 		txt+='</div>';
 		
@@ -1137,7 +1236,8 @@ var BeCal = function(contentdivid)
 	
 		$('#'+BeCal.editEntryWindow).hide();
 		$('#'+BeCal.inputNameEventTitle).val("");
-		m_renderDate=this.render(m_renderDate);
+		
+		saveToDB(e);		
 	};
 	
 	// INIT
@@ -1198,7 +1298,7 @@ BeCal.openEventViewDialog = function(eventid)
 {
 	if(BeCal.instance!=null)
 		BeCal.instance.openEventViewDialog(eventid)
-}
+};
 
 // TEXT MONTH NAMES ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
