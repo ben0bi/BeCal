@@ -25,6 +25,9 @@ body
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
+	background: url('../img/background.jpg');
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
 }
 
 /* this one blocks the whole content when someting will be made with the db. */
@@ -36,6 +39,9 @@ body
 	width: 100%;
 	height: 100%;
 	background-color: #663300;
+	background: url('../img/blocker_background.png');
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
 	z-index: 10000;
 	overflow: hidden;
 }

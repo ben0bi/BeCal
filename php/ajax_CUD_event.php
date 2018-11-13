@@ -12,6 +12,7 @@ $enddate=$_POST['enddate'];
 $title=$_POST['title'];
 $summary=$_POST['summary'];
 $color=$_POST['color'];
+$eventtype=$_POST['eventtype'];
 
 echo("TO DB: $CUD $dbid $startdate $enddate $title $summary $color");
 
@@ -22,7 +23,7 @@ SQL::openConnection();
 if($CUD=='create')
 {
 	if($dbid==-1)
-		SQL::query(SQL::insert_event($title, $startdate, $enddate, $color, $summary));
+		SQL::query(SQL::insert_event($title, $startdate, $enddate, $eventtype, $color, $summary));
 	else
 		echo("** update event not yet functional. **");
 	//echo "..done.<br>";

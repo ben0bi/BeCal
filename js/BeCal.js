@@ -99,16 +99,23 @@ var BeCalEvent = function()
 	this.startDate = new Date();			// start date of the event.
 	this.endDate = new Date();				// end date of the event.
 	this.color = BeCal.eventDefaultColor;	// color of the event bars.
+	this.eventtype = 0;						// event type:
+											// 0: calendar event.
+											// 1: TODO, Not done yet.
+											// 2: TODO, DONE!
+	this.userid = 0;						// The creator user id.
 	var m_id=-1;							// internal unique id for fast search and stuff.
 	this.getID = function() {return m_id;};	// return the unique id.
 	
 	// create the event.
-	this.create = function(start, end, newtitle, newsummary="", newcolor = "") 
+	this.create = function(start, end, newtype, newtitle, newsummary="", newcolor = "") 
 	{
 		me.title = newtitle;
 		me.summary = newsummary;
 		me.startDate = new Date(start);
 		me.endDate = new Date(end);
+		me.eventtype = newtype;
+		
 		if(newcolor=="")
 			me.color=BeCal.eventDefaultColor;
 		else
@@ -120,13 +127,15 @@ var BeCalEvent = function()
 		
 		// assign an unique id.
 		m_id=BeCalEvent.arrID;
-		BeCalEvent.arrID++;		
+		BeCalEvent.arrID++;	
+
+console.log("New entry with title: "+newtitle);
 	};
 	
 	// create the entry from a database entry. This sets the dbid to >0 and haschanged to false.
-	this.createFromDB = function(dbid,start, end, newtitle, newsummary, newcolor)
+	this.createFromDB = function(dbid,start, end, newtype, newtitle, newsummary, newcolor)
 	{
-		me.create(start, end, newtitle, newsummary, newcolor);
+		me.create(start, end, newtype, newtitle, newsummary, newcolor);
 		m_dbID = dbid;
 		//m_hasChanged = false;
 	};
@@ -391,7 +400,7 @@ var BeCal = function(contentdivid)
 				var endd = new Date(d.enddate);
 				//console.log(i+":"+d.title+" from "+d.startdate+" to "+d.enddate);
 				//console.log(" -> from "+startd+" to "+endd);
-				me.createDBEvent(d.id, startd, endd, d.title, d.summary, d.color);
+				me.createDBEvent(d.id, startd, endd,d.eventtype, d.title, d.summary, d.color);
 			}
 			// do something.
 			successFunc();
@@ -424,6 +433,7 @@ var BeCal = function(contentdivid)
 					title: becalevt.title,
 					summary: becalevt.summary,
 					color: becalevt.color,
+					eventtype: becalevt.eventtype,
 					CUD: 'create'};			// the CUD event to do.
 					// ^if CUD == 'create', it will create OR update an object.
 					// if CUD == 'delete', it will delete the object.
@@ -450,19 +460,19 @@ var BeCal = function(contentdivid)
 	this.clearEvents = function() {m_eventArray = new Array();};
 	
 	// create an event and add it to the list.
-	this.createEvent = function(startdate, enddate, title, summary="", color = "")
+	this.createEvent = function(startdate, enddate, eventtype, title, summary="", color = "")
 	{
 		var e = new BeCalEvent();
-		e.create(startdate,enddate,title, summary, color);
+		e.create(startdate, enddate, eventtype, title, summary, color);
 		m_eventArray.push(e);
 		return e;
 	};
 	
 	// create an event from the DB.
-	this.createDBEvent = function(dbid, startdate, enddate, title, summary="", color="")
+	this.createDBEvent = function(dbid, startdate, enddate, eventtype, title, summary="", color="")
 	{
 		var e = new BeCalEvent();
-		e.createFromDB(dbid, startdate, enddate, title, summary, color);
+		e.createFromDB(dbid, startdate, enddate, eventtype, title, summary, color);
 		m_eventArray.push(e);
 		return e;
 	};
@@ -1231,7 +1241,7 @@ var BeCal = function(contentdivid)
 		var e = new BeCalEvent();
 		var start=Date.setTime(AnyTime.getCurrent(BeCal.inputNameDate1), AnyTime.getCurrent(BeCal.inputNameTime1));
 		var end=Date.setTime(AnyTime.getCurrent(BeCal.inputNameDate2), AnyTime.getCurrent(BeCal.inputNameTime2));
-		e.create(start, end, $('#'+BeCal.inputNameEventTitle).val(), "", this.newEntryColor);
+		e.create(start, end, 0, $('#'+BeCal.inputNameEventTitle).val(), "", this.newEntryColor);
 		m_eventArray.push(e);
 	
 		$('#'+BeCal.editEntryWindow).hide();
