@@ -165,6 +165,25 @@
 	background-color: #336633;
 }
 
+/* a "bad" button, like for deletion of stuff or such. */
+.becalBadBtn, .becalBadBtn:visited
+{
+	display: inline-block;
+	text-decoration: none;
+	padding: 10px;
+	background-color: #331111;
+	color: #FFFFFA;
+	border: 2px solid #333366;
+	border-radius: 5px;
+}
+
+.becalBadBtn:hover
+{
+	text-decoration: none;
+	background-color: #663333;
+}
+
+
 /* this button has an edit pencil in it. */
 .becalEditBtn
 {
@@ -176,6 +195,19 @@
 	background-repeat: no-repeat;
 	background-position: center;
 }
+
+/* this button has a red pencil rubber in it. */
+.becalDeleteBtn
+{
+	width: 40px;
+	height: 40px;
+	padding: 0px !important;
+	border-radius: 20px !important;
+	background-image: url("../img/delete.png");
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
 
 /* the advance buttons. */
 .becalAdvanceBtn {color: #FFFFFA; text-decoration: none;}

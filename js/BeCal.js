@@ -129,7 +129,7 @@ var BeCalEvent = function()
 		m_id=BeCalEvent.arrID;
 		BeCalEvent.arrID++;	
 
-console.log("New entry with title: "+newtitle);
+console.log("New entry with title: "+newtitle); 
 	};
 	
 	// create the entry from a database entry. This sets the dbid to >0 and haschanged to false.
@@ -817,9 +817,10 @@ var BeCal = function(contentdivid)
 				txt+='<div id="'+BeCal.showNameTime2+'" class="becalInputTime"></div>';
 				txt+='<div id="'+BeCal.showNameDate2+'" class="becalInputDate"></div>';
 			txt+='</td></tr></table>';
-			txt+='<div class="becalEditButtonDiv">';
+			txt+='<div class="becalEditButtonDiv"><nobr>';
+				txt+='<a href="javascript:" class="becalBadBtn becalDeleteBtn"></a>&nbsp;';
 				txt+='<a href="javascript:" class="becalOkBtn becalEditBtn"></a>';
-			txt+='</div>';
+			txt+='</nobr></div>';
 		txt+='</div>';
 		
 		// show the duration of the event.
