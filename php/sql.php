@@ -105,6 +105,12 @@ class SQL
 		$summary=SQL::textToSQL($summary);
 		return "INSERT INTO ".$table_calendarevents.' (`title`, `startdate`, `enddate`, `eventtype`, `color`, `summary`) VALUES("'.$title.'", "'.$startdate.'", "'.$enddate.'", "'.$eventtype.'", "'.$color.'", "'.$summary.'");';
 	}
+/* delete an event. */
+	public static function delete_event($id)
+	{
+		global $table_calendarevents;
+		return SQL::delete_from_table($table_calendarevents,'id',$id);
+	}
 
 /* Get all dates between two dates. */
 	public static function getCalendarEventsBetween($startdate, $enddate)

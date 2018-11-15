@@ -129,7 +129,7 @@ var BeCalEvent = function()
 		m_id=BeCalEvent.arrID;
 		BeCalEvent.arrID++;	
 
-console.log("New entry with title: "+newtitle); 
+//console.log("New entry with title: "+newtitle); 
 	};
 	
 	// create the entry from a database entry. This sets the dbid to >0 and haschanged to false.
@@ -443,7 +443,44 @@ var BeCal = function(contentdivid)
 		{
 			console.log("CUD event result:" +data);
 			m_renderDate=me.render(m_renderDate);
-			// hideBlocker(); render will load all events..
+			// hideBlocker(); render will load all events and show blocker in the meanwhile
+		}
+
+		$.ajax({
+			type: 'POST',
+			url: url,
+			data: data,
+			success: success,
+			dataType: 'text'
+		});		
+	}
+
+	// save an event to the DB.
+	var removeFromDB = function(becalevt)
+	{
+		showBlocker();
+		// create SQL strings from the dates.
+	
+		// set up the php request.
+		// we only need the db id but CUD will read all the other values.
+		var url = 'php/ajax_CUD_event.php';
+		var data = {dbid: becalevt.getDBID(),
+					startdate: '0',
+					enddate: '0',
+					title: '0',
+					summary: '0',
+					color: '0',
+					eventtype: 0,
+					CUD: 'delete'};			// the CUD event to do.
+					// ^if CUD == 'create', it will create OR update an object.
+					// if CUD == 'delete', it will delete the object.
+		
+		// success function.
+		var success = function(data)
+		{
+			console.log("CUD event result:" +data);
+			m_renderDate=me.render(m_renderDate);
+			// hideBlocker(); render will load all events and show blocker in the meanwhile.
 		}
 
 		$.ajax({
@@ -818,7 +855,7 @@ var BeCal = function(contentdivid)
 				txt+='<div id="'+BeCal.showNameDate2+'" class="becalInputDate"></div>';
 			txt+='</td></tr></table>';
 			txt+='<div class="becalEditButtonDiv"><nobr>';
-				txt+='<a href="javascript:" class="becalBadBtn becalDeleteBtn"></a>&nbsp;';
+				txt+='<a href="javascript:" class="becalBadBtn becalDeleteBtn" onclick="BeCal.deleteEventBtnPressed()"></a>&nbsp;';
 				txt+='<a href="javascript:" class="becalOkBtn becalEditBtn"></a>';
 			txt+='</nobr></div>';
 		txt+='</div>';
@@ -1189,13 +1226,16 @@ var BeCal = function(contentdivid)
 	};
 	
 	// open the dialog to show the event view.
+	m_selectedEvent = null;
 	this.openEventViewDialog = function(eventid)
 	{
 		var evt = me.getEventByID(eventid);
+		m_selectedEvent = evt;
 		//var evt = BeCal.entries[eventid];
 		if(evt==null)
 		{
 			console.log("FATAL: Event with id "+eventid+" not found.");
+			m_selectedEvent = null;
 			return;
 		}
 		
@@ -1251,6 +1291,17 @@ var BeCal = function(contentdivid)
 		saveToDB(e);		
 	};
 	
+	// delete a selected element.
+	this.deleteEventBtnPressed = function()
+	{
+		if(m_selectedEvent!=null)
+			removeFromDB(m_selectedEvent);
+		m_selectedEvent = null;
+		
+		$('#'+BeCal.editEntryWindow).hide();
+		$('#'+BeCal.inputNameEventTitle).val("");
+	};
+	
 	// INIT
 	if(BeCal.instance == null)
 	{	
@@ -1267,6 +1318,13 @@ BeCal.createNewEventBtnPressed = function()
 {
 	if(BeCal.instance!=null)
 		BeCal.instance.createNewEventBtnPressed();
+};
+
+// delete a selected event.
+BeCal.deleteEventBtnPressed = function()
+{
+	if(BeCal.instance!=null)
+		BeCal.instance.deleteEventBtnPressed();
 };
 
 // get the actual date.

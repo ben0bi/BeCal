@@ -20,6 +20,8 @@ $title=SQL::textToSQL($title);
 $summary=SQL::textToSQL($summary);
 
 SQL::openConnection();
+
+// create or update an entry.
 if($CUD=='create')
 {
 	if($dbid==-1)
@@ -28,6 +30,16 @@ if($CUD=='create')
 		echo("** update event not yet functional. **");
 	//echo "..done.<br>";
 	echo(" DB write done.");
+}
+
+// delete an entry.
+if($CUD=='delete')
+{
+	if($dbid>0)
+		SQL::query(SQL::delete_event($dbid));
+	else
+		echo ("Delete failed: DBID <= 0 [$dbid]");
+	echo("DB deletion done.");
 }
 
 SQL::closeConnection();
