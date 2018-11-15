@@ -856,7 +856,7 @@ var BeCal = function(contentdivid)
 			txt+='</td></tr></table>';
 			txt+='<div class="becalEditButtonDiv"><nobr>';
 				txt+='<a href="javascript:" class="becalBadBtn becalDeleteBtn" onclick="BeCal.deleteEventBtnPressed()"></a>&nbsp;';
-				txt+='<a href="javascript:" class="becalOkBtn becalEditBtn"></a>';
+				txt+='<a href="javascript:" class="becalOkBtn becalEditBtn" onclick="BeCal.updateEventBtnPressed()"></a>';
 			txt+='</nobr></div>';
 		txt+='</div>';
 		
@@ -1291,9 +1291,17 @@ var BeCal = function(contentdivid)
 		saveToDB(e);		
 	};
 	
+	// update an event.
+	this.updateEventBtnPressed = function()
+	{
+		console.log("Updating event.");
+		// XHEREX
+	};
+	
 	// delete a selected element.
 	this.deleteEventBtnPressed = function()
 	{
+		// selectedevent will be set when you click on an existing event.
 		if(m_selectedEvent!=null)
 			removeFromDB(m_selectedEvent);
 		m_selectedEvent = null;
@@ -1318,6 +1326,13 @@ BeCal.createNewEventBtnPressed = function()
 {
 	if(BeCal.instance!=null)
 		BeCal.instance.createNewEventBtnPressed();
+};
+
+// update an existing event.
+BeCal.updateEventBtnPressed = function()
+{
+	if(BeCal.instance!=null)
+		BeCal.instance.updateEventBtnPressed();
 };
 
 // delete a selected event.
