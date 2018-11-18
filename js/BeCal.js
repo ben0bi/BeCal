@@ -841,7 +841,7 @@ var BeCal = function(contentdivid)
 			txt+='</td></tr></table>';
 			txt+='<div id="'+BeCal.divNameColorPicker+'"><input id="'+BeCal.inputNameColorPicker+'" /></div>';
 			txt+='<div class="becalEditButtonDiv" id="'+BeCal.divNameEditContainer+'">';
-				txt+='<a href="javascript:" class="becalOkBtn" onclick="BeCal.createNewEventBtnPressed()">Speichern</a>';
+				txt+='<a href="javascript:" class="becalOkBtn becalEditBtn" onclick="BeCal.createNewEventBtnPressed()"></a>';
 			txt+='</div>';
 			
 			// NEW: just the buttons for the show stuff, not more.
