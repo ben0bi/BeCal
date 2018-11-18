@@ -97,6 +97,8 @@ class SQL
 		{return "SELECT * FROM ".SQL::$table_comicpage." WHERE `pageorder` > \"$pageorder\"";}
 
 /* Create and update queries */
+
+// create a new calendar event.
 	public static function insert_event($title, $startdate, $enddate, $eventtype, $color, $summary)
 	{
 		global $table_calendarevents;
@@ -105,6 +107,17 @@ class SQL
 		$summary=SQL::textToSQL($summary);
 		return "INSERT INTO ".$table_calendarevents.' (`title`, `startdate`, `enddate`, `eventtype`, `color`, `summary`) VALUES("'.$title.'", "'.$startdate.'", "'.$enddate.'", "'.$eventtype.'", "'.$color.'", "'.$summary.'");';
 	}
+
+// update an existing calendar event.
+	public static function update_event($dbid, $title, $startdate, $enddate, $eventtype, $color, $summary)
+	{
+		global $table_calendarevents;
+		//$createdate=date('Y-m-d H:i:s');
+		$title=SQL::textToSQL($title);
+		$summary=SQL::textToSQL($summary);
+		return 'UPDATE '.$table_calendarevents.' SET `title` = "'.$title.'", `startdate` = "'.$startdate.'", `enddate` = "'.$enddate.'", `eventtype` = "'.$eventtype.'", `color` = "'.$color.'", `summary` = "'.$summary.'" WHERE `id` = "'.$dbid.'";';
+	}
+	
 /* delete an event. */
 	public static function delete_event($id)
 	{

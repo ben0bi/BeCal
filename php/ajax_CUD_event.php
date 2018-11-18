@@ -27,7 +27,8 @@ if($CUD=='create')
 	if($dbid==-1)
 		SQL::query(SQL::insert_event($title, $startdate, $enddate, $eventtype, $color, $summary));
 	else
-		echo("** update event not yet functional. **");
+		SQL::query(SQL::update_event($dbid, $title, $startdate, $enddate, $eventtype, $color, $summary));
+		//echo("** update event not yet functional. **");
 	//echo "..done.<br>";
 	echo(" DB write done.");
 }

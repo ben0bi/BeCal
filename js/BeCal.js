@@ -831,7 +831,7 @@ var BeCal = function(contentdivid)
 		// create the windows.
 		// create the html for the edit entry view.
 		txt ="";
-		txt+='<div id="'+BeCal.divNameEditContainer+'">';
+		txt+='<div>';
 			txt+='<table border="0"><tr><td>';
 				txt+='<input type="text" id="'+BeCal.inputNameTime1+'" class="becalInputTime becalInputMouseOver" value="12:34" /><br />';
 				txt+='<input type="text" id="'+BeCal.inputNameDate1+'" class="becalInputDate becalInputMouseOver" size="50" value="Sun., 30. Sept. 1967" />';
@@ -840,13 +840,20 @@ var BeCal = function(contentdivid)
 				txt+='<input type="text" id="'+BeCal.inputNameDate2+'" class="becalInputDate becalInputMouseOver" size="50" value="Sun., 30. Sept. 1967" />';
 			txt+='</td></tr></table>';
 			txt+='<div id="'+BeCal.divNameColorPicker+'"><input id="'+BeCal.inputNameColorPicker+'" /></div>';
-			txt+='<div class="becalEditButtonDiv">';
+			txt+='<div class="becalEditButtonDiv" id="'+BeCal.divNameEditContainer+'">';
 				txt+='<a href="javascript:" class="becalOkBtn" onclick="BeCal.createNewEventBtnPressed()">Speichern</a>';
 			txt+='</div>';
+			
+			// NEW: just the buttons for the show stuff, not more.
+			txt+='<div class="becalEditButtonDiv" id="'+BeCal.divNameShowContainer+'"><nobr>';
+				txt+='<a href="javascript:" class="becalBadBtn becalDeleteBtn" onclick="BeCal.deleteEventBtnPressed()"></a>&nbsp;';
+				txt+='<a href="javascript:" class="becalOkBtn becalEditBtn" onclick="BeCal.updateEventBtnPressed()"></a>';
+			txt+='</nobr></div>';
+			
 		txt+='</div>';
 		
 		// window for the show stuff.
-		txt+='<div id="'+BeCal.divNameShowContainer+'">';
+	/*	txt+='<div>';
 			txt+='<table border="0"><tr><td>';
 				txt+='<div id="'+BeCal.showNameTime1+'" class="becalInputTime"></div>';
 				txt+='<div id="'+BeCal.showNameDate1+'" class="becalInputDate"></div>';
@@ -854,11 +861,12 @@ var BeCal = function(contentdivid)
 				txt+='<div id="'+BeCal.showNameTime2+'" class="becalInputTime"></div>';
 				txt+='<div id="'+BeCal.showNameDate2+'" class="becalInputDate"></div>';
 			txt+='</td></tr></table>';
-			txt+='<div class="becalEditButtonDiv"><nobr>';
+			txt+='<div class="becalEditButtonDiv" id="'+BeCal.divNameShowContainer+'"><nobr>';
 				txt+='<a href="javascript:" class="becalBadBtn becalDeleteBtn" onclick="BeCal.deleteEventBtnPressed()"></a>&nbsp;';
 				txt+='<a href="javascript:" class="becalOkBtn becalEditBtn" onclick="BeCal.updateEventBtnPressed()"></a>';
 			txt+='</nobr></div>';
 		txt+='</div>';
+		*/
 		
 		// show the duration of the event.
 		txt+='<div class="becalEntryDurationDiv"></div>';
@@ -866,7 +874,7 @@ var BeCal = function(contentdivid)
 		// create the title.
 		var title ='<div id="'+BeCal.divNameEditTitle+'">';
 			title+='<input type="text" id="'+BeCal.inputNameEventTitle+'" class="becalInputEventName w80" placeholder="Titel hinzufügen"></input>';
-		title+='</div><div id="'+BeCal.divNameShowTitle+'" class="becalInputEventName"> EVENT TITLE </div>';
+		title+='</div>'; //<div id="'+BeCal.divNameShowTitle+'" class="becalInputEventName"> EVENT TITLE </div>';
 		
 		// create the window.
 		$('#'+BeCal.divNameOverlay).jdCreateWindow(BeCal.editEntryWindow,100,100,500,200, title, txt);
@@ -1140,7 +1148,7 @@ var BeCal = function(contentdivid)
 	// change color of top bar in the entry/show window.
 	var changeEntryWindowEvtColor=function(col)
 	{
-		console.log("Changing entry window top bar color to "+col+".");
+		//console.log("Changing entry window top bar color to "+col+".");
 		var entrywindow=$('#'+BeCal.editEntryWindow);
 		var topbar = entrywindow.find('.jdwindow-top');
 		topbar.css('background-color', col);	
@@ -1213,13 +1221,18 @@ var BeCal = function(contentdivid)
 	
 		// it is a new entry, so we show the input stuff and hide the show stuff (entry mode).
 		$('#'+BeCal.divNameEditContainer).show();
-		$('#'+BeCal.divNameShowContainer).hide();
+
+		// NEW: No show stuff anymore, just the menu
+		 $('#'+BeCal.divNameShowContainer).hide();
 	
 		// same with the title.
-		$('#'+BeCal.divNameEditTitle).show();
-		$('#'+BeCal.divNameShowTitle).hide();
+		//$('#'+BeCal.divNameEditTitle).show();
+		
+		// NEW: No show stuff anymore
+		// $('#'+BeCal.divNameShowTitle).hide();
 	
 		changeEntryWindowEvtColor(me.newEntryColor);
+		$('#'+BeCal.inputNameColorPicker).spectrum("set", me.newEntryColor);
 	
 		showEditWindow(parseInt(f.left),parseInt(f.top)+menuHeight, f.width);
 		$('#'+BeCal.inputNameEventTitle).focus();
@@ -1245,13 +1258,17 @@ var BeCal = function(contentdivid)
 	
 		// it is an old entry, so we show the show stuff and hide the input stuff (show mode).
 		$('#'+BeCal.divNameEditContainer).hide();
+		
+		// NEW: No show stuff anymore, just the menu
 		$('#'+BeCal.divNameShowContainer).show();
 	
 		// same with the title.
-		$('#'+BeCal.divNameEditTitle).hide();
-		$('#'+BeCal.divNameShowTitle).show();
+		// NEW: Not!
+		//$('#'+BeCal.divNameEditTitle).hide();
+		//$('#'+BeCal.divNameShowTitle).show();
 	
-		$('#'+BeCal.divNameShowTitle).html(evt.title);
+		// OLD: divnameSHOWtitle.html...
+		$('#'+BeCal.inputNameEventTitle).val(evt.title);
 	
 		// set the dates in the inputs so we can get their formatted values for the non-input text.
 		AnyTime.setCurrent( BeCal.inputNameDate1, evt.startDate);
@@ -1260,16 +1277,20 @@ var BeCal = function(contentdivid)
 		AnyTime.setCurrent( BeCal.inputNameTime2, evt.endDate);
 	
 		// now copy their values.
-		$('#'+BeCal.showNameTime1).html($('#'+BeCal.inputNameTime1).val());
-		$('#'+BeCal.showNameTime2).html($('#'+BeCal.inputNameTime2).val());
-		$('#'+BeCal.showNameDate1).html($('#'+BeCal.inputNameDate1).val());
-		$('#'+BeCal.showNameDate2).html($('#'+BeCal.inputNameDate2).val());
+		// NEW: Not!
+//		$('#'+BeCal.showNameTime1).html($('#'+BeCal.inputNameTime1).val());
+//		$('#'+BeCal.showNameTime2).html($('#'+BeCal.inputNameTime2).val());
+//		$('#'+BeCal.showNameDate1).html($('#'+BeCal.inputNameDate1).val());
+//		$('#'+BeCal.showNameDate2).html($('#'+BeCal.inputNameDate2).val());
 
 		// show the duration of the event.
 		showEntryDuration(evt.startDate, evt.endDate);
 	
 		// set the event color.
 		changeEntryWindowEvtColor(evt.color);
+		
+		// NEW: also set the color picker color.
+		$('#'+BeCal.inputNameColorPicker).spectrum("set", evt.color);
 	
 		// show the window.
 		showEditWindow(parseInt(left),parseInt(top), 1);
@@ -1295,8 +1316,24 @@ var BeCal = function(contentdivid)
 	this.updateEventBtnPressed = function()
 	{
 		console.log("Updating event.");
-		// XHEREX
-	};
+		if(m_selectedEvent==null)
+		{
+			console.log("ERROR: No event selected.")
+			return;
+		}
+		
+		// The event is saved in the m_selectedEvent variable, just set the new values.
+		m_selectedEvent.startDate=Date.setTime(AnyTime.getCurrent(BeCal.inputNameDate1), AnyTime.getCurrent(BeCal.inputNameTime1));
+		m_selectedEvent.endDate=Date.setTime(AnyTime.getCurrent(BeCal.inputNameDate2), AnyTime.getCurrent(BeCal.inputNameTime2));
+		m_selectedEvent.title = $('#'+BeCal.inputNameEventTitle).val();
+		m_selectedEvent.color = $('#'+BeCal.inputNameColorPicker).spectrum('get').toHexString(); // TODO: Set new color
+
+		saveToDB(m_selectedEvent);
+		m_selectedEvent = null;
+		
+		$('#'+BeCal.editEntryWindow).hide();
+		$('#'+BeCal.inputNameEventTitle).val("");
+ 	};
 	
 	// delete a selected element.
 	this.deleteEventBtnPressed = function()
@@ -1422,11 +1459,11 @@ BeCal.inputNameColorPicker = "becalUIEntryColorPicker";
 
 // ids for the show entry window
 BeCal.divNameShowContainer = "becalUIShowEntryContainer";
-BeCal.divNameShowTitle = "becalUITitleShowDiv";
-BeCal.showNameTime1 = "becalUITimeShow1";
-BeCal.showNameTime2 = "becalUITimeShow2";
-BeCal.showNameDate1 = "becalUIDateShow1";
-BeCal.showNameDate2 = "becalUIDateShow2";
+//BeCal.divNameShowTitle = "becalUITitleShowDiv";
+//BeCal.showNameTime1 = "becalUITimeShow1";
+//BeCal.showNameTime2 = "becalUITimeShow2";
+//BeCal.showNameDate1 = "becalUIDateShow1";
+//BeCal.showNameDate2 = "becalUIDateShow2";
 
 // DEFAULT VALUES ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
