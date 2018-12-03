@@ -131,7 +131,8 @@ class SQL
 		global $table_calendarevents;
 
 		SQL::openConnection();
-		$query = 'SELECT * FROM '.$table_calendarevents.' WHERE `startdate` <= "'.$enddate.'" AND `enddate` >= "'.$startdate.'"';
+//		$query = 'SELECT * FROM '.$table_calendarevents.' WHERE `startdate` <= "'.$enddate.'" AND `enddate` >= "'.$startdate.'"';
+		$query = 'SELECT * FROM '.$table_calendarevents.' WHERE `startdate` <= "'.$enddate.'" AND (`enddate` >= "'.$startdate.'" OR `eventtype` = "1")';
 		$result = SQL::query($query);
 		SQL::closeConnection();
 		return $result;

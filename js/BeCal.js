@@ -101,7 +101,7 @@ var BeCalEvent = function()
 	this.color = BeCal.eventDefaultColor;	// color of the event bars.
 	this.eventtype = 0;						// event type:
 											// 0: calendar event.
-											// 1: TODO, Not done yet.
+											// 1: A TODO, Not done yet.
 											// 2: TODO, DONE!
 	this.userid = 0;						// The creator user id.
 	var m_id=-1;							// internal unique id for fast search and stuff.
@@ -142,7 +142,7 @@ var BeCalEvent = function()
 	
 	// create the bar div and return it.
 	var getBarDivText=function(text, x,y,width, height, addclass = "")
-	{
+	{		
 		var txt='<div onclick="BeCal.openEventViewDialog('+m_id+');" onmouseover="BeCalEvent.eventMouseOver('+m_id+');" onmouseout="BeCalEvent.eventMouseOver('+m_id+', true);" class="becalEventBar '+addclass+' becalEventMouseOut evt_'+m_id+'" style="background-color:'+me.color+'; top:'+y+'px; left:'+x+'px; width:'+width+'px; height:'+height+'px;">'+text+'</div>';
 		return txt;
 	};
@@ -161,10 +161,25 @@ var BeCalEvent = function()
 
 		var result = "";	// the returning html text.
 
+		var now = new Date();								// NOW date used for todos.
+		//console.log(now);
+
 		var firstDay = Date.removeTime(dayfields[0].date);					// first date on the table.
 		var lastDay = Date.removeTime(dayfields[dayfields.length-1].date);	// last date on the table.
+		
 		var evtStartDay = Date.removeTime(this.startDate);					// start date of the event.
 		var evtEndDay = Date.removeTime(this.endDate);						// end date of the event.
+		
+		// check if event is a todo. If so, maybe adjust dates.
+		//console.log("Evttype: "+me.eventtype);
+		if(me.eventtype==1)
+		{
+			if(evtStartDay<now)
+				evtStartDay = now;
+			evtEndDay = evtStartDay;
+			evtEndDay.setHours(evtEndDay.getHours()+1);
+		}
+		
 		var actualdate = new Date(evtStartDay);								// actual date for the bars.
 		var mydayfield=dayfields[0];										// field on table for the actual date.
 		
@@ -184,14 +199,18 @@ var BeCalEvent = function()
 		
 		var done = false;
 		var firstone = true; // if this is set, it will add a border div to id.
+		
+		// check if it is a todo.
+		pretext="";
+		if(me.eventtype==1)
+			pretext="(X)&nbsp;";
+		
 		while(!done)
 		{	
 			turn+=1;
+			// the date is in the future, abort.
 			if(actualdate>evtEndDay)
-			{
-				//console.log("-- aborting: actualdate > enddate--");
 				return result;
-			}
 	
 			// adjust actual date to begin of table.
 			if(actualdate<firstDay)
@@ -257,7 +276,7 @@ var BeCalEvent = function()
 							firstone = false;
 						}
 						// add the bar.
-						result += getBarDivText(this.title, posX, realPosY, width, height, "becalEventNoBorder");
+						result += getBarDivText(pretext+this.title, posX, realPosY, width, height, "becalEventNoBorder");
 						actualdate = Date.removeTime(nd);
 						//console.log("--> (Processed "+processed+" Remaining "+remainingDays+") Setting date: "+nd.toString());
 						processed = 0;
@@ -290,7 +309,7 @@ var BeCalEvent = function()
 			}
 			
 			// add the last bar (see above)
-			result += getBarDivText(this.title, posX, realPosY, width, height, "becalEventNoBorder");
+			result += getBarDivText(pretext+this.title, posX, realPosY, width, height, "becalEventNoBorder");
 			
 			if(remainingDays<=0 && !newline)
 				done=true;
@@ -656,8 +675,10 @@ var BeCal = function(contentdivid)
 		{
 			// create all the event bars.
 			var sortedFields = sortEventsByLength(startScreenDate, endScreenDate);
+			ac = 0;
 			for(e=0;e<sortedFields.length;e++)
 			{
+				ac++;
 				var event = sortedFields[e];
 				txt+=event.createMonthBars(me);
 			}
@@ -704,10 +725,11 @@ var BeCal = function(contentdivid)
 		var arr = new Array();
 		var entries = m_eventArray;
 		// first get all entries in range.
+		// only push the timed events first.	
 		for(var i = 0;i<entries.length;i++)
 		{
 			var e = entries[i];
-			if(e.startDate<=endDate && e.endDate>=startDate)
+			if(e.startDate<=endDate && (e.endDate>=startDate && e.eventtype==0))
 				arr.push(e);
 		}
 	
@@ -740,6 +762,15 @@ var BeCal = function(contentdivid)
 				}
 			}
 		}
+		
+		// at last push the todos, so they do not inflict on the length.
+		for(var i = 0;i<entries.length;i++)
+		{
+			var e = entries[i];
+			if(e.startDate<=endDate && e.eventtype==1)
+				arr.push(e);
+		}
+
 		return arr;
 	};
 	
