@@ -567,6 +567,10 @@ var BeCal = function(contentdivid)
 			case "month":
 				console.log("--> rendering month display for "+renderdate);
 				return createMonthDisplay(renderdate);
+			case "todos":
+				console.log("--> rendering TODO display.");
+				createTodoDisplay();
+				return renderdate;
 			default:
 				console.log("RENDER ERROR: Renderstate not accepted.");
 				return new Date();
@@ -574,6 +578,50 @@ var BeCal = function(contentdivid)
 		// FATAL ERROR.
 		console.log("FATAL RENDER ERROR!");
 		return null;
+	};
+	
+	// remove all backgrounds from the content.
+	var setBackground = function(newbackgroundclass)
+	{
+		$(m_contentDivID).removeClass("calendarBackground");
+		$(m_contentDivID).removeClass("todoBackground");
+		
+		$(m_contentDivID).addClass(newbackgroundclass);
+	}
+	
+	// initialize the TODO-display.
+	this.setStateMonth = function()
+	{
+		setBackground('calendarBackground');
+		m_renderstate = "month";
+		this.render(m_renderDate);
+	};
+	
+	// initialize the TODO-display.
+	this.setStateTodos = function()
+	{
+		setBackground('todoBackground');
+		m_renderstate = "todos";
+		this.render(m_renderDate);
+	};
+	
+	// render the todos.
+	var createTodoDisplay = function()
+	{
+		// build menu.
+		var mt = "";
+		mt = '<div id="'+BeCal.divNameTopbarDate+'">TO-DOs</div>';
+		mt+='<div id="'+BeCal.divNameTopbarAdvancer+'">';
+			mt+='<span class="becalAdvanceBtn">&nbsp;</span>';
+			mt+='<a href="javascript:" class="becalAdvanceBtn becalBtn" onclick="BeCal.setStateMonth();">-&gt; Calendar</a>';
+//			mt+='<a href="javascript:" class="becalAdvanceBtn" onclick="BeCal.advanceMonth(-1);">&nbsp;&lt;&nbsp;</a>';
+//			mt+='<a href="javascript:" class="becalAdvanceBtn" onclick="BeCal.advanceMonth(1);">&nbsp;&gt;&nbsp;</a>';
+		mt+='</div>';
+		$('#'+BeCal.divNameTopMenu).html(mt);
+
+		var txt="Hello";
+		// create the html.
+		$('#'+BeCal.divNameContent).html(txt);
 	};
 	
 	// render a month screen.
@@ -586,9 +634,10 @@ var BeCal = function(contentdivid)
 		var mt = "";
 		mt = '<div id="'+BeCal.divNameTopbarDate+'">'+BeCal.monthNamesL[renderdate.getMonth()]+" "+renderdate.getFullYear()+"</div>";
 		mt+='<div id="'+BeCal.divNameTopbarAdvancer+'">';
-		mt+='<a href="javascript:" class="becalAdvanceBtn becalBtn" onclick="BeCal.getToday();">Heute</a>';
-		mt+='<a href="javascript:" class="becalAdvanceBtn" onclick="BeCal.advanceMonth(-1);">&nbsp;&lt;&nbsp;</a>';
-		mt+='<a href="javascript:" class="becalAdvanceBtn" onclick="BeCal.advanceMonth(1);">&nbsp;&gt;&nbsp;</a>';
+			mt+='<a href="javascript:" class="becalAdvanceBtn" onclick="BeCal.advanceMonth(-1);">&nbsp;&lt;&nbsp;</a>';
+			mt+='<a href="javascript:" class="becalAdvanceBtn" onclick="BeCal.advanceMonth(1);">&nbsp;&gt;&nbsp;</a>';
+			mt+='<a href="javascript:" class="becalAdvanceBtn becalBtn" onclick="BeCal.getToday();">Heute</a>&nbsp;';
+			mt+='<a href="javascript:" class="becalAdvanceBtn becalBtn" onclick="BeCal.setStateTodos();">-&gt; To-Do\'s</a>';
 		mt+='</div>';
 		$('#'+BeCal.divNameTopMenu).html(mt);
 		
@@ -883,22 +932,6 @@ var BeCal = function(contentdivid)
 			
 		txt+='</div>';
 		
-		// window for the show stuff.
-	/*	txt+='<div>';
-			txt+='<table border="0"><tr><td>';
-				txt+='<div id="'+BeCal.showNameTime1+'" class="becalInputTime"></div>';
-				txt+='<div id="'+BeCal.showNameDate1+'" class="becalInputDate"></div>';
-			txt+='</td><td><div class="becalInputMiddlestrich">-</div></td><td>';
-				txt+='<div id="'+BeCal.showNameTime2+'" class="becalInputTime"></div>';
-				txt+='<div id="'+BeCal.showNameDate2+'" class="becalInputDate"></div>';
-			txt+='</td></tr></table>';
-			txt+='<div class="becalEditButtonDiv" id="'+BeCal.divNameShowContainer+'"><nobr>';
-				txt+='<a href="javascript:" class="becalBadBtn becalDeleteBtn" onclick="BeCal.deleteEventBtnPressed()"></a>&nbsp;';
-				txt+='<a href="javascript:" class="becalOkBtn becalEditBtn" onclick="BeCal.updateEventBtnPressed()"></a>';
-			txt+='</nobr></div>';
-		txt+='</div>';
-		*/
-		
 		// show the duration of the event.
 		txt+='<div class="becalEntryDurationDiv"></div>';
 		
@@ -1104,7 +1137,7 @@ var BeCal = function(contentdivid)
 	{
 		var dt = m_renderDate;
 		dt.setMonth(dt.getMonth()+amount);
-		m_renderdate = this.render(dt);
+		m_renderDate = this.render(dt);
 		return m_renderDate;
 	};
 	
@@ -1256,12 +1289,6 @@ var BeCal = function(contentdivid)
 		// NEW: No show stuff anymore, just the menu
 		 $('#'+BeCal.divNameShowContainer).hide();
 	
-		// same with the title.
-		//$('#'+BeCal.divNameEditTitle).show();
-		
-		// NEW: No show stuff anymore
-		// $('#'+BeCal.divNameShowTitle).hide();
-	
 		changeEntryWindowEvtColor(me.newEntryColor);
 		$('#'+BeCal.inputNameColorPicker).spectrum("set", me.newEntryColor);
 	
@@ -1293,11 +1320,6 @@ var BeCal = function(contentdivid)
 		// NEW: No show stuff anymore, just the menu
 		$('#'+BeCal.divNameShowContainer).show();
 	
-		// same with the title.
-		// NEW: Not!
-		//$('#'+BeCal.divNameEditTitle).hide();
-		//$('#'+BeCal.divNameShowTitle).show();
-	
 		// OLD: divnameSHOWtitle.html...
 		$('#'+BeCal.inputNameEventTitle).val(evt.title);
 	
@@ -1306,13 +1328,6 @@ var BeCal = function(contentdivid)
 		AnyTime.setCurrent( BeCal.inputNameDate2, evt.endDate);
 		AnyTime.setCurrent( BeCal.inputNameTime1, evt.startDate);
 		AnyTime.setCurrent( BeCal.inputNameTime2, evt.endDate);
-	
-		// now copy their values.
-		// NEW: Not!
-//		$('#'+BeCal.showNameTime1).html($('#'+BeCal.inputNameTime1).val());
-//		$('#'+BeCal.showNameTime2).html($('#'+BeCal.inputNameTime2).val());
-//		$('#'+BeCal.showNameDate1).html($('#'+BeCal.inputNameDate1).val());
-//		$('#'+BeCal.showNameDate2).html($('#'+BeCal.inputNameDate2).val());
 
 		// show the duration of the event.
 		showEntryDuration(evt.startDate, evt.endDate);
@@ -1451,6 +1466,21 @@ BeCal.openEventViewDialog = function(eventid)
 	if(BeCal.instance!=null)
 		BeCal.instance.openEventViewDialog(eventid)
 };
+
+// initialize the todo display.
+BeCal.setStateTodos = function()
+{
+	if(BeCal.instance!=null)
+		BeCal.instance.setStateTodos();
+};
+
+// initialize the month.
+BeCal.setStateMonth = function()
+{
+	if(BeCal.instance!=null)
+		BeCal.instance.setStateMonth();
+};
+
 
 // TEXT MONTH NAMES ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
