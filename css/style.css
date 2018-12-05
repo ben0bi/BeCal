@@ -32,7 +32,7 @@ body
 {
 	background: url('../img/calendar_background.jpg');
 	background-repeat: no-repeat;
-	background-size: 100% 100%;	
+	background-size: 100% auto;	
 }
 
 /* background when the todo state is on. */
@@ -40,7 +40,12 @@ body
 {
 	background: url('../img/todo_background.jpg');
 	background-repeat: no-repeat;
-	background-size: 100% 100%;
+	background-size: 100% auto;
+}
+
+@media all and (orientation: portrait) {
+	.calendarBackground {background-size: auto 100%;}
+	.todoBackground {background-size: auto 100%;}
 }
 
 /* this one blocks the whole content when someting will be made with the db. */

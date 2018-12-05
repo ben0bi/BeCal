@@ -396,6 +396,21 @@ var BeCal = function(contentdivid)
 	// color for a new entry.
 	this.newEntryColor = BeCal.eventDefaultColor;
 	
+	// fill the events list with some data from the DB.
+	var clearAndFillEvents = function(data)
+	{
+		me.clearEvents();
+		for(var i=0;i<data.length;i++)
+		{
+			var d = data[i];
+			var startd = new Date(d.startdate);
+			var endd = new Date(d.enddate);
+			//console.log(i+":"+d.title+" from "+d.startdate+" to "+d.enddate);
+			//console.log(" -> from "+startd+" to "+endd);
+			me.createDBEvent(d.id, startd, endd,d.eventtype, d.title, d.summary, d.color);
+		}
+	};
+	
 	// DB FUNCTIONS
 	var loadEventsBetween = function(startdate, enddate, successFunc)
 	{
@@ -411,20 +426,11 @@ var BeCal = function(contentdivid)
 		var success = function(data)
 		{
 			console.log(data.length+" events loaded.");
-			me.clearEvents();
-			for(var i=0;i<data.length;i++)
-			{
-				var d = data[i];
-				var startd = new Date(d.startdate);
-				var endd = new Date(d.enddate);
-				//console.log(i+":"+d.title+" from "+d.startdate+" to "+d.enddate);
-				//console.log(" -> from "+startd+" to "+endd);
-				me.createDBEvent(d.id, startd, endd,d.eventtype, d.title, d.summary, d.color);
-			}
+			clearAndFillEvents(data);
 			// do something.
 			successFunc();
 			hideBlocker();
-		}
+		};
 
 		// send the ajax request.
 		$.ajax({
@@ -435,7 +441,35 @@ var BeCal = function(contentdivid)
 			dataType: 'json'
 		});
 	};
+	
+	// load the todos for the todo screen.
+	var loadTodos = function(successFunc)
+	{
+		showBlocker();
+		
+		// set up the php request.
+		var url = 'php/ajax_getTodos.php';
+		var data = {nop: 'null'};
+		var success = function(data)
+		{
+			console.log(data.length+" TODO's loaded.");
+			clearAndFillEvents(data);
+			// do something.
+			successFunc();
+			hideBlocker();
+		};
+		
+		// send the ajax request.
+		$.ajax({
+			type: 'POST',
+			url: url,
+			data: data,
+			success: success,
+			dataType: 'json'
+		});
 
+	};
+	
 	// save an event to the DB.
 	var saveToDB = function(becalevt)
 	{
@@ -613,15 +647,44 @@ var BeCal = function(contentdivid)
 		mt = '<div id="'+BeCal.divNameTopbarDate+'">TO-DOs</div>';
 		mt+='<div id="'+BeCal.divNameTopbarAdvancer+'">';
 			mt+='<span class="becalAdvanceBtn">&nbsp;</span>';
-			mt+='<a href="javascript:" class="becalAdvanceBtn becalBtn" onclick="BeCal.setStateMonth();">-&gt; Calendar</a>';
+			mt+='<a href="javascript:" class="becalAdvanceBtn becalBtn" onclick="BeCal.setStateMonth();">-&gt; Kalender</a>';
 //			mt+='<a href="javascript:" class="becalAdvanceBtn" onclick="BeCal.advanceMonth(-1);">&nbsp;&lt;&nbsp;</a>';
 //			mt+='<a href="javascript:" class="becalAdvanceBtn" onclick="BeCal.advanceMonth(1);">&nbsp;&gt;&nbsp;</a>';
 		mt+='</div>';
 		$('#'+BeCal.divNameTopMenu).html(mt);
 
-		var txt="Hello";
-		// create the html.
-		$('#'+BeCal.divNameContent).html(txt);
+		// clear the content
+		$('#'+BeCal.divNameContent).html("");
+		
+		loadTodos(function()
+		{
+			var txt="";
+			var entries = m_eventArray;
+			// first get all entries in range.
+			// only push the timed events first.
+			var now = new Date();
+			var tdyfound = 0;
+			for(var i = 0;i<entries.length;i++)
+			{
+				var e = entries[i];
+				var start = new Date(e.startDate);
+				if(start>=now && tdyfound==0)
+				{
+					txt+="<hr />++++ HEUTE: "+now.getDate()+"."+(now.getMonth()+1)+"."+now.getFullYear()+" ++++"
+					tdyfound=1;
+				}
+				
+				if(start>=now && Date.compareOnlyDate(start,now)==false && tdyfound==1)
+				{
+					txt+="<hr/>"
+					tdyfound = 2;
+				}
+				
+				txt+=start.getDate()+"."+(start.getMonth()+1)+"."+start.getFullYear()+": "+e.title+"<br />";
+			}
+			// create the html.
+			$('#'+BeCal.divNameContent).html(txt);
+		});		
 	};
 	
 	// render a month screen.
@@ -719,6 +782,9 @@ var BeCal = function(contentdivid)
 			}
 		}
 
+		// clear the content
+		$('#'+BeCal.divNameContent).html("");
+	
 		// load the events asyncronous.
 		loadEventsBetween(startScreenDate, endScreenDate, function()
 		{
@@ -729,6 +795,7 @@ var BeCal = function(contentdivid)
 			{
 				ac++;
 				var event = sortedFields[e];
+				// create the month bar and add it to the html text.
 				txt+=event.createMonthBars(me);
 			}
 	

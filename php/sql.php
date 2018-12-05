@@ -125,7 +125,7 @@ class SQL
 		return SQL::delete_from_table($table_calendarevents,'id',$id);
 	}
 
-/* Get all dates between two dates. */
+/* Get all events between two dates. */
 	public static function getCalendarEventsBetween($startdate, $enddate)
 	{
 		global $table_calendarevents;
@@ -138,6 +138,18 @@ class SQL
 		return $result;
 	}
 
+	/* Get all open TODO-events. */
+	public static function getOpenTodos()
+	{
+		global $table_calendarevents;
+
+		SQL::openConnection();
+		$query = 'SELECT * FROM '.$table_calendarevents.' WHERE `eventtype` = "1" ORDER BY `startdate` ASC';
+		$result = SQL::query($query);
+		SQL::closeConnection();
+		return $result;
+	}
+	
 /* Global Queries */
 	public static function delete_from_table($tablename,$what, $value)
 		{return 'DELETE FROM '.$tablename.' WHERE `'.$what.'` = "'.$value.'";';}
