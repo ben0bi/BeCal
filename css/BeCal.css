@@ -76,6 +76,59 @@
 	top: 10px;
 }
 
+/* The checkbox to switch between todos and calendar on the edit entry window. */
+input[type=checkbox].check-todo
+{
+	position: absolute;
+	top: 80px;
+	right: 10px;
+	
+	appereance: none;
+    -webkit-appearance:none;
+	
+	font-family: 'calFont';
+
+    border: 0;
+
+    background-color: transparent;
+    color:#006900;
+    white-space: nowrap;
+    overflow:hidden;
+
+    width:165px;
+    height:30px;
+	padding: 0;
+	margin: 0;
+	font-size: 20pt;
+	margin-left: 10px;
+	margin-top: 10px;
+	
+	color: FF3333;
+}
+
+input[type=checkbox].check-todo:after
+{
+	content: 'X TODO';
+}
+
+input[type=checkbox]:checked.check-todo {
+    /*background-color:#000;*/
+	color: #33FF33;
+	background-color: transparent;
+	top: 78px;
+	border: 0;
+}
+
+input[type=checkbox]:hover.check-todo {
+	color: #FFAA00;
+    background-color: transparent;
+}
+
+input[type=checkbox]:checked:after 
+{
+	content: '\27A0  TODO';
+}
+
 /* font settings of the input with the title of the event on the create entry window. 
 	also the title of the show entry window. */
 .becalInputEventName
@@ -144,7 +197,7 @@
 {
 	position: absolute;
 	right: 10px;
-	top: 110px;
+	top: 135px;
 }
 
 /* an ok button. */

@@ -986,7 +986,12 @@ var BeCal = function(contentdivid)
 				txt+='<input type="text" id="'+BeCal.inputNameTime2+'" class="becalInputTime becalInputMouseOver" value="12:34" /><br />';
 				txt+='<input type="text" id="'+BeCal.inputNameDate2+'" class="becalInputDate becalInputMouseOver" size="50" value="Sun., 30. Sept. 1967" />';
 			txt+='</td></tr></table>';
-			txt+='<div id="'+BeCal.divNameColorPicker+'"><input id="'+BeCal.inputNameColorPicker+'" /></div>';
+			txt+='<div id="'+BeCal.divNameColorPicker+'">';
+				txt+='<input id="'+BeCal.inputNameColorPicker+'" />';
+			txt+='</div>';
+			
+			txt+='<input id="'+BeCal.inputNameCheckTodo+'" class="check-todo" type="checkbox" value="unchecked" />';				
+			
 			txt+='<div class="becalEditButtonDiv" id="'+BeCal.divNameEditContainer+'">';
 				txt+='<a href="javascript:" class="becalOkBtn becalEditBtn" onclick="BeCal.createNewEventBtnPressed()"></a>';
 			txt+='</div>';
@@ -1008,7 +1013,7 @@ var BeCal = function(contentdivid)
 		title+='</div>'; //<div id="'+BeCal.divNameShowTitle+'" class="becalInputEventName"> EVENT TITLE </div>';
 		
 		// create the window.
-		$('#'+BeCal.divNameOverlay).jdCreateWindow(BeCal.editEntryWindow,100,100,500,200, title, txt);
+		$('#'+BeCal.divNameOverlay).jdCreateWindow(BeCal.editEntryWindow,100,100,500,220, title, txt);
 		
 		// *************************************************************
 		// the other entries window.
@@ -1584,6 +1589,7 @@ BeCal.inputNameDate1 = "becalUIInputDate1";
 BeCal.inputNameDate2 = "becalUIInputDate2";
 BeCal.divNameColorPicker = "becalUIEntryColorPickerDiv";
 BeCal.inputNameColorPicker = "becalUIEntryColorPicker";
+BeCal.inputNameCheckTodo = "becalUIEntryCheckTodo";
 
 // ids for the show entry window
 BeCal.divNameShowContainer = "becalUIShowEntryContainer";
