@@ -17,12 +17,21 @@ function status(text)
 	}
 	
 	var txt='<span id="statusadvancer"><nobr>&nbsp;'+text+'&nbsp;</nobr></span>';
-	$('#'+BeCal.divNameStatus).html(txt);
+	var statusdiv = $('#'+BeCal.divNameStatus);
+	statusdiv.html(txt);
 	
 	var l1 = $('#statusadvancer').width();
-	var l2= $('#'+BeCal.divNameStatus).width();
+	var l2= statusdiv.width();
 	
-	console.log("l1: "+l1+" l2:"+l2);
+	if(text.length>0)
+	{
+		statusdiv.removeClass("becalStatusOff");
+		statusdiv.addClass("becalStatusOn");
+	}else{
+		statusdiv.removeClass("becalStatusOn");
+		statusdiv.addClass("becalStatusOff");		
+	}
+	
 	
 	// move it only when the width is bigger.
 	if(l1>l2)
@@ -122,6 +131,27 @@ Date.toSQL = function(datetime)
 		minute="0"+minute;
 	
 	return year+"-"+month+"-"+day+"T"+hour+":"+minute+":00.000";	
+};
+
+// return DD.MM.YYYY
+Date.toShortDate = function(datetime)
+{
+	var year = datetime.getFullYear();
+	var month = datetime.getMonth()+1;
+	var day = datetime.getDate();
+	return day+"."+month+"."+year;
+};
+
+// return HH:mm
+Date.toShortTime = function(datetime)
+{
+	var hour = datetime.getHours();
+	var minute=datetime.getMinutes();
+	if(hour<10)
+		hour="0"+hour;
+	if(minute<10)
+		minute="0"+minute;
+	return hour+":"+minute;
 };
 
 // EVENT STRUCTURE ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -369,12 +399,18 @@ BeCalEvent.eventMouseOver=function(evtid, mouseOut=false)
 {
 	if(mouseOut)
 	{
+		// out of the field.
 		$('.evt_'+evtid).removeClass('becalEventMouseOver');
 		$('.evt_'+evtid).addClass('becalEventMouseOut');
 	}else{
+		// into the field..
 		$('.evt_'+evtid).removeClass('becalEventMouseOut');
 		$('.evt_'+evtid).addClass('becalEventMouseOver');
 	}
+
+	// maybe set status.
+	if(BeCal.instance!=null)
+		BeCal.instance.eventMouseOver(evtid, mouseOut);
 };
 
 // A DAY FIELD IN THE UI +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -438,6 +474,24 @@ var BeCal = function(contentdivid)
 	
 	// color for a new entry.
 	this.newEntryColor = BeCal.eventDefaultColor;
+	
+	// mouse is over or out of an event. Show new status.
+	this.eventMouseOver = function(evtid, mouseOut)
+	{
+		if(!mouseOut)
+		{
+			var evt=me.getEventByID(evtid);
+			if(evt!=null)
+			{
+				var spc =""
+				if(evt.summary!="")
+					spc=" ";
+				status(Date.toShortDate(evt.startDate)+" "+Date.toShortTime(evt.startDate)+" => "+Date.toShortDate(evt.endDate)+" "+Date.toShortTime(evt.endDate)+" : "+evt.title+spc+evt.summary);
+			}
+		}else{
+			status("");
+		}
+	};
 	
 	// fill the events list with some data from the DB.
 	var clearAndFillEvents = function(data)

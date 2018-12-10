@@ -332,9 +332,20 @@ input[type=checkbox]:checked:after
 	left: 0px;
 	height: 25px;
 	font-weight: bolder;
-	border-top: 1px solid #FF0000;
 	font-size: 14pt;
 	position: absolute;
+}
+
+.becalStatusOn
+{
+	background-image: url('../img/semitransparentbg.png');	
+	border-top: 1px solid #FF0000;
+}
+
+.becalStatusOff
+{
+	background-image: none;
+	border-top: 1px solid #FFFFFF;
 }
 
 #statusadvancer
