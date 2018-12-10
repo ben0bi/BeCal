@@ -167,7 +167,10 @@ input[type=checkbox]:checked:after
 {
 	text-align: center;
 	width: 86px;
+	font-size: 30pt;
 }
+
+.becalInputMiddleStrich:after {content: '\27A0';}
 
 /* Date picker. */
 .becalInputDate
@@ -319,6 +322,26 @@ input[type=checkbox]:checked:after
 	border-bottom: 1px dashed #FF0000;
 	font-size: 14pt;
 	/*padding-top: 5px;*/
+}
+
+/* the bottom line with the status in it. */
+#becalStatusDiv
+{
+	width: 100%;
+	bottom: 0px;
+	left: 0px;
+	height: 25px;
+	font-weight: bolder;
+	border-top: 1px solid #FF0000;
+	font-size: 14pt;
+	position: absolute;
+}
+
+#statusadvancer
+{
+	position: absolute;
+	top: 5px;
+	left: 0px;
 }
 
 /* the number of the day in a field. */

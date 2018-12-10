@@ -5,6 +5,49 @@ function hideBlocker() {$('#blocker').hide();}
 function showBlocker() {$('#blocker').show();}
 hideBlocker();
 
+// show a status
+var m_statustimer = null;
+var m_statusdirection = -1;
+function status(text) 
+{
+	if(m_statustimer!=null)
+	{
+		clearInterval(m_statustimer);
+		m_statustimer = null;
+	}
+	
+	var txt='<span id="statusadvancer"><nobr>&nbsp;'+text+'&nbsp;</nobr></span>';
+	$('#'+BeCal.divNameStatus).html(txt);
+	
+	var l1 = $('#statusadvancer').width();
+	var l2= $('#'+BeCal.divNameStatus).width();
+	
+	console.log("l1: "+l1+" l2:"+l2);
+	
+	// move it only when the width is bigger.
+	if(l1>l2)
+	{
+		m_statustimer = setInterval(function() 
+		{
+			var adv = $('#statusadvancer');
+			var left = adv.css('left');
+			var m_statusspeed = 2;
+			var wcontent= $('#'+BeCal.divNameStatus).width();
+			left = parseInt(left);
+			//console.log("left: "+left);
+			
+			left = left + m_statusspeed*m_statusdirection;
+			
+			if(left+adv.width()<=wcontent-10)
+				m_statusdirection = 1;
+			if(left>=0)
+				m_statusdirection=-1;
+			
+			adv.css('left', left+'px');
+		},30);
+	}
+}
+
 // DATE FUNCTIONS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 // this function is copied from stackoverflow. It calculates the days between two dates.
@@ -692,6 +735,7 @@ var BeCal = function(contentdivid)
 	{
 		var realToday = Date.removeTime(new Date());		
 		var calDayNameFieldHeight = 26;	// height of the top bar with the names of the days in it.
+		var calStatusFieldHeight = 26; // height of the bottom bar with the status text in it.
 
 		// build menu.
 		var mt = "";
@@ -719,12 +763,13 @@ var BeCal = function(contentdivid)
 		// get and set widht and height.
 		var cc = $('#'+BeCal.divNameContent);
 		cc.height($(m_contentDivID).height()-$('#'+BeCal.divNameTopMenu).height()-11);
-		var calFieldHeight = (cc.height()-calDayNameFieldHeight)*0.2;	
+		
+		var calFieldHeight = (cc.height()-calDayNameFieldHeight-calStatusFieldHeight)*0.2;	//x * 0.2 = x / 5
 		var calFieldWidth =cc.width()*(1.0/7.0);
 		
 		var txt="";
 		// create the day name fields.
-		txt+='<div class="becalDayField" style="top: 0px; left: 0px;"><div class="becalDayNumber">&nbsp;So.</div>';
+		txt+='<div class="becalDayField" style="top: 0px; left: 0px;"><div class="becalDayNumber">&nbsp;So.</div></div>';
 		txt+='<div class="becalDayField" style="top: 0px; left: '+(calFieldWidth)+'px;"><div class="becalDayNumber">&nbsp;Mo.</div></div>';
 		txt+='<div class="becalDayField" style="top: 0px; left: '+(calFieldWidth*2)+'px;"><div class="becalDayNumber">&nbsp;Di.</div></div>';
 		txt+='<div class="becalDayField" style="top: 0px; left: '+(calFieldWidth*3)+'px;"><div class="becalDayNumber">&nbsp;Mi.</div></div>';
@@ -972,6 +1017,7 @@ var BeCal = function(contentdivid)
 		var txt = "";
 		txt+='<div id="'+BeCal.divNameTopMenu+'"></div>';	// the top bar menu.
 		txt+='<div id="'+BeCal.divNameContent+'"></div>';	// the calendar content.
+		txt+='<div id="'+BeCal.divNameStatus+'"></div>';
 		txt+='<div id="'+BeCal.divNameOverlay+'"></div>';	// the overlay for the jdoor windows.
 		$(m_contentDivID).html(txt);
 		
@@ -982,7 +1028,7 @@ var BeCal = function(contentdivid)
 			txt+='<table border="0"><tr><td>';
 				txt+='<input type="text" id="'+BeCal.inputNameTime1+'" class="becalInputTime becalInputMouseOver" value="12:34" /><br />';
 				txt+='<input type="text" id="'+BeCal.inputNameDate1+'" class="becalInputDate becalInputMouseOver" size="50" value="Sun., 30. Sept. 1967" />';
-			txt+='</td><td><div class="becalInputMiddlestrich">-</div></td><td>';
+			txt+='</td><td><div class="becalInputMiddlestrich"></div></td><td>';
 				txt+='<input type="text" id="'+BeCal.inputNameTime2+'" class="becalInputTime becalInputMouseOver" value="12:34" /><br />';
 				txt+='<input type="text" id="'+BeCal.inputNameDate2+'" class="becalInputDate becalInputMouseOver" size="50" value="Sun., 30. Sept. 1967" />';
 			txt+='</td></tr></table>';
@@ -1080,6 +1126,9 @@ var BeCal = function(contentdivid)
 	
 		// hide all the created UI windows.
 		$('#'+BeCal.divNameOverlay).jdHideAllWindows();
+		
+		// show a welcome message in the status field.
+		status("Welcome to BeCal. Date: "+Date().toString());
 	};
 	
 	// constrain the date inputs so that the end date cannot be < start date.
@@ -1570,6 +1619,7 @@ BeCal.otherEntriesWindow = "becalOtherEntriesWindow";
 // ids for the main items.
 BeCal.divNameTopMenu = "becalTopMenuDiv";
 BeCal.divNameContent = "becalContentDiv";
+BeCal.divNameStatus = "becalStatusDiv";
 BeCal.divNameOverlay = "becalOverlayDiv";
 
 // ids for the other entries window.
