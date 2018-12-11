@@ -20,9 +20,6 @@ function status(text)
 	var statusdiv = $('#'+BeCal.divNameStatus);
 	statusdiv.html(txt);
 	
-	var l1 = $('#statusadvancer').width();
-	var l2= statusdiv.width();
-	
 	if(text.length>0)
 	{
 		statusdiv.removeClass("becalStatusOff");
@@ -32,8 +29,9 @@ function status(text)
 		statusdiv.addClass("becalStatusOff");		
 	}
 	
-	
 	// move it only when the width is bigger.
+	var l1 = $('#statusadvancer').width();
+	var l2= statusdiv.width();
 	if(l1>l2)
 	{
 		m_statustimer = setInterval(function() 
@@ -1080,8 +1078,10 @@ var BeCal = function(contentdivid)
 		txt ="";
 		txt+='<div>';
 			txt+='<table border="0"><tr><td>';
-				txt+='<input type="text" id="'+BeCal.inputNameTime1+'" class="becalInputTime becalInputMouseOver" value="12:34" /><br />';
-				txt+='<input type="text" id="'+BeCal.inputNameDate1+'" class="becalInputDate becalInputMouseOver" size="50" value="Sun., 30. Sept. 1967" />';
+				txt+='<div id="becalStartDateView">';
+					txt+='<input type="text" id="'+BeCal.inputNameTime1+'" class="becalInputTime becalInputMouseOver" value="12:34" /><br />';
+					txt+='<input type="text" id="'+BeCal.inputNameDate1+'" class="becalInputDate becalInputMouseOver" size="50" value="Sun., 30. Sept. 1967" />';
+				txt+='</div><div id="becalTodoTextView"></div>';
 			txt+='</td><td><div class="becalInputMiddlestrich"></div></td><td>';
 				txt+='<input type="text" id="'+BeCal.inputNameTime2+'" class="becalInputTime becalInputMouseOver" value="12:34" /><br />';
 				txt+='<input type="text" id="'+BeCal.inputNameDate2+'" class="becalInputDate becalInputMouseOver" size="50" value="Sun., 30. Sept. 1967" />';
@@ -1090,7 +1090,7 @@ var BeCal = function(contentdivid)
 				txt+='<input id="'+BeCal.inputNameColorPicker+'" />';
 			txt+='</div>';
 			
-			txt+='<input id="'+BeCal.inputNameCheckTodo+'" class="check-todo" type="checkbox" value="unchecked" />';				
+			txt+='<input id="'+BeCal.inputNameCheckTodo+'" onclick="BeCal.checkBoxTodo();" class="check-todo" type="checkbox" value="unchecked" />';
 			
 			txt+='<div class="becalEditButtonDiv" id="'+BeCal.divNameEditContainer+'">';
 				txt+='<a href="javascript:" class="becalOkBtn becalEditBtn" onclick="BeCal.createNewEventBtnPressed()"></a>';
@@ -1573,6 +1573,7 @@ var BeCal = function(contentdivid)
 	{	
 		BeCal.instance = me;
 		createUI();
+		BeCal.checkBoxTodo();
 	}else{
 		console.log("WARNING: There is already a BeCal instance. Aborting.");
 	}
@@ -1656,6 +1657,23 @@ BeCal.setStateMonth = function()
 		BeCal.instance.setStateMonth();
 };
 
+
+// the todo checkbox was checked, do something.
+BeCal.checkBoxTodo = function()
+{
+	var checked = $('#'+BeCal.inputNameCheckTodo).prop('checked');
+	
+	if(checked)
+	{
+		$('#becalStartDateView').hide();
+		//$('.becalInputMiddlestrich').hide();
+		$('#becalTodoTextView').show();
+	}else{
+		$('#becalTodoTextView').hide();
+		//$('.becalInputMiddlestrich').show();
+		$('#becalStartDateView').show();		
+	}
+}
 
 // TEXT MONTH NAMES ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

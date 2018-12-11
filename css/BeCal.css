@@ -162,16 +162,6 @@ input[type=checkbox]:checked:after
 	text-align: center;
 }
 
-/* the line between the two dates. */
-.becalInputMiddlestrich
-{
-	text-align: center;
-	width: 86px;
-	font-size: 30pt;
-}
-
-.becalInputMiddleStrich:after {content: '\27A0';}
-
 /* Date picker. */
 .becalInputDate
 {
@@ -201,6 +191,40 @@ input[type=checkbox]:checked:after
 	position: absolute;
 	right: 10px;
 	top: 135px;
+}
+
+/* the line between the two dates. */
+.becalInputMiddlestrich
+{
+	text-align: center;
+	width: 86px;
+	font-size: 30pt;
+}
+
+.becalInputMiddleStrich:after {content: '\27A0';}
+
+/* show either the start date to edit or a text "To do until:" when it is a todo. */
+#becalTodoTextView
+{
+	font-size: 20pt;
+	text-align: right;
+	width: 200px;
+	/*border: 1px solid #ffff00;*/
+	height: 65px;
+	padding-top: 10px;
+	margin: 0;
+}
+
+#becalTodoTextView:after
+{
+	content: "Abgabe datum";
+}
+
+#becalStartDateView
+{
+	/*border: 1px solid #ff0000;*/
+	width: 200px;
+	height: 75px;
 }
 
 /* an ok button. */
