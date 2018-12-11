@@ -1227,8 +1227,13 @@ var BeCal = function(contentdivid)
 	};
 	
 	// show the duration between the two dates on the edit/show event window.
+	var m_blockEntryDuration = false;
 	var showEntryDuration = function(date1 = false, date2 = false)
-	{
+	{		
+		// prevent from reset all the time.
+		if(m_blockEntryDuration==true)
+			return;
+		
 		var durationdiv = $('.becalEntryDurationDiv');
 		var txt = "Dauer:";
 		var isBig = false;
@@ -1251,40 +1256,57 @@ var BeCal = function(contentdivid)
 			daytime2=new Date(date2);
 			//console.log("Got time from parameters. ;)");
 		}
-	
-		// return days.
-		var days = Date.daysBetween(daytime1, daytime2)-1;
-		daytime2.setDate(daytime1.getDate());
+		
+		// get the milliseconds since 1970.
+		var ms1 = daytime1.getTime();
+		var ms2 = daytime2.getTime();
+		
+		console.log("ms1:"+ms1+" ms2:"+ms2);
+		var timeinMS = ms2-ms1;
+		console.log("MS: "+timeinMS);
+		
+		// the seconds.
+		var seconds = parseInt(timeinMS * 1/1000); // prevent zero division by multiplication.
+		//console.log("Seconds:"+seconds);
+				
+		// the minutes.
+		var timeinMinutes = parseInt(seconds * 1/60);
+		//console.log("Minutes: "+timeinMinutes);
+		
+		var minutes = timeinMinutes % 60;
+		timeinMinutes -= minutes;
+		//console.log("Minutes 2:"+timeinMinutes+" Rest: "+minutes);
+
+		// the hours.
+		var timeinHours = parseInt(timeinMinutes * 1/60);
+		//console.log("Hours: "+timeinHours);
+		
+		var hours = timeinHours % 24;
+		timeinHours -= hours;
+		//console.log("Hours 2: "+timeinHours+" Rest: "+hours);
+		
+		var days = parseInt(timeinHours * 1/24);
+
+		if(days>=7)
+		{
+			var weeks= parseInt(days*1/7);
+			var n="";
+			if(weeks>1)
+				n="n";
+			isBig = ">= "+weeks+" Woche"+n;
+		}
 		
 		if(days>=30)
-			isBig=">= "+parseInt(days/30)+" Monat/e";
-	
-		if(days>=364)
-			isBig=">= "+parseInt(days/364)+" Jahr/e";
-
-		// return hours
-		var hours = daytime2.getHours()-daytime1.getHours();
-		daytime2.setHours(daytime1.getHours());
-	
-		// return minutes
-		var minutes=daytime2.getMinutes()-daytime1.getMinutes();
-		daytime2.setMinutes(daytime1.getMinutes());
-		
-		// adjust times
-		if(minutes<0)
 		{
-			minutes=minutes+60;
-			hours-=1;
-		}
-	
-		if(hours<0)
-		{
-			hours=hours+24;
-			days-=1;
-		}
+			var months = days * 1/30;
+			var e="";
+			if(months>1)
+				e="e";
+			isBig = ">= "+months+" Monat"+e;
+		}		
 		
 		// create duration text.
-		if(!isBig)
+		if(isBig==false)
 		{
 			if(days>0)
 				txt+=days+"d";
@@ -1300,7 +1322,7 @@ var BeCal = function(contentdivid)
 				txt = "Zeitlos";
 			}
 		}else{
-			txt+=isBig;
+			txt=isBig;
 		}
 		
 		// set the divs content.
@@ -1475,6 +1497,9 @@ var BeCal = function(contentdivid)
 	m_selectedEvent = null;
 	this.openEventViewDialog = function(eventid)
 	{
+		// prevent duration div from updating all the time.
+		m_blockEntryDuration = true;
+		
 		var evt = me.getEventByID(eventid);
 		m_selectedEvent = evt;
 		//var evt = BeCal.entries[eventid];
@@ -1503,9 +1528,6 @@ var BeCal = function(contentdivid)
 		AnyTime.setCurrent( BeCal.inputNameDate2, evt.endDate);
 		AnyTime.setCurrent( BeCal.inputNameTime1, evt.startDate);
 		AnyTime.setCurrent( BeCal.inputNameTime2, evt.endDate);
-
-		// show the duration of the event.
-		showEntryDuration(evt.startDate, evt.endDate);
 	
 		// set the event color.
 		changeEntryWindowEvtColor(evt.color);
@@ -1513,6 +1535,10 @@ var BeCal = function(contentdivid)
 		// NEW: also set the color picker color.
 		$('#'+BeCal.inputNameColorPicker).spectrum("set", evt.color);
 	
+		m_blockEntryDuration = false;
+		// show the duration of the event.
+		showEntryDuration(evt.startDate, evt.endDate);
+
 		// show the window.
 		showEditWindow(parseInt(left),parseInt(top), 1);
 	};
