@@ -1075,8 +1075,9 @@ var BeCal = function(contentdivid)
 		
 		// create the windows.
 		// create the html for the edit entry view.
-		txt ="";
-		txt+='<div>';
+		txt="";
+		txt+='<div class="becalWindow">';
+			txt +="<div>";
 			txt+='<table border="0"><tr><td>';
 				txt+='<div id="becalStartDateView">';
 					txt+='<input type="text" id="'+BeCal.inputNameTime1+'" class="becalInputTime becalInputMouseOver" value="12:34" /><br />';
@@ -1106,6 +1107,7 @@ var BeCal = function(contentdivid)
 		
 		// show the duration of the event.
 		txt+='<div class="becalEntryDurationDiv"></div>';
+		txt+='</div>';
 		
 		// create the title.
 		var title ='<div id="'+BeCal.divNameEditTitle+'">';
