@@ -32,7 +32,7 @@ body
 {
 	background: url('../img/calendar_background.jpg');
 	background-repeat: no-repeat;
-	background-size: 100% auto;	
+	background-size: cover;	
 }
 
 /* background when the todo state is on. */
@@ -40,7 +40,7 @@ body
 {
 	background: url('../img/todo_background.jpg');
 	background-repeat: no-repeat;
-	background-size: 100% auto;
+	background-size: cover;
 }
 
 /* background for the edit window and stuff. */

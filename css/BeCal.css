@@ -525,3 +525,11 @@ input[type=checkbox]:checked:after
 	height: 50px !important;
 	padding-left: 17px;
 }
+
+/* the div with the buttons on the intermediary todo window. */
+.intermediaryTodoButtons
+{
+	position: absolute;
+	top: 10px;
+	left: 10px;
+}

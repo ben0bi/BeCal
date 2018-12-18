@@ -1126,12 +1126,12 @@ var BeCal = function(contentdivid)
 
 		// *************************************************************
 		// the window to check a todo before the edit window pops up.
-		txt='<div class="becalWindow"><nobr>';
+		txt='<div class="becalWindow"><div class="intermediaryTodoButtons"><nobr>';
 				txt+='<a href="javascript:" class="becalOkBtn becalHakenBtn" onclick="TODO"></a>&nbsp;';
 				txt+='<a href="javascript:" class="becalBadBtn becalDeleteBtn" onclick="BeCal.deleteEventBtnPressed()"></a>&nbsp;';
-				txt+='<a href="javascript:" class="becalOkBtn becalEditBtn" onclick="TODO"></a>';
-		txt+='</nobr></div>';
-		$('#'+BeCal.divNameOverlay).jdCreateWindow(BeCal.updateTodoWindow,100,100,200,100, "Todo..", txt);
+				txt+='<a href="javascript:" class="becalOkBtn becalEditBtn" onclick="BeCal.editEventBtnInTodoOverlayPressed()"></a>';
+		txt+='</nobr></div></div>';
+		$('#'+BeCal.divNameOverlay).jdCreateWindow(BeCal.updateTodoWindow,100,100,180,60, "Todo..", txt);
 
 		// *************************************************************
 		// the other entries window.
@@ -1478,6 +1478,7 @@ var BeCal = function(contentdivid)
 		// hide the intermediary interface window.
 		$('#'+BeCal.updateTodoWindow).hide();
 
+		// get the date field where the click happened.
 		var f = m_datefieldArray[datefieldid];
 	
 		var now = new Date();
@@ -1593,6 +1594,19 @@ var BeCal = function(contentdivid)
 		showWindowPos(BeCal.editEntryWindow,parseInt(left),parseInt(top), 1);
 	};
 	
+	// open the event view dialog from the intermediary todo button overlay.
+	this.editEventBtnInTodoOverlayPressed =function()
+	{
+		// hide the intermediary interface window.
+		$('#'+BeCal.updateTodoWindow).hide();
+		
+		// open the event view for the selected item.
+		if(m_selectedEvent!=null)
+			me.openEventViewDialog(m_selectedEvent.getID(),true);
+		else
+			console.log("ERROR: Event not found after clicking edit on intermediary todo overlay.");
+	};
+	
 	// create a new event from the data in the edit window.
 	this.createNewEventBtnPressed = function()
 	{
@@ -1654,6 +1668,8 @@ var BeCal = function(contentdivid)
 		console.log("WARNING: There is already a BeCal instance. Aborting.");
 	}
 };
+
+/************************************************************************************************* GLOBAL FUNCTIONS *****************************/
 
 BeCal.instance = null;	// the singleton instance of this calendar.
 // create a new entry from the new entry window.
@@ -1749,6 +1765,12 @@ BeCal.checkBoxTodo = function()
 		//$('.becalInputMiddlestrich').show();
 		$('#becalStartDateView').show();		
 	}
+}
+
+BeCal.editEventBtnInTodoOverlayPressed =function()
+{
+	if(BeCal.instance!=null)
+		BeCal.instance.editEventBtnInTodoOverlayPressed();
 }
 
 // TEXT MONTH NAMES ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
