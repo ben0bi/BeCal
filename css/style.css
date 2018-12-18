@@ -80,3 +80,23 @@ body
 	width: 100%;
 	text-align: center;
 }
+
+/* a check */
+.statushaken:after
+{
+	display: inline-block;
+	position: absolute;
+	color: #33FF33;
+	content: '\2714';
+	bottom: 0px;
+}
+
+/* an unchecked check */
+.statuskreuz:after
+{
+	display: inline-block;
+	position: absolute;
+	color: #FF3333;
+	content: '\2716';
+	bottom: 0px;
+}

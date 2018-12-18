@@ -489,9 +489,9 @@ var BeCal = function(contentdivid)
 				if(evttype==0)	// event
 					status(Date.toShortDate(evt.startDate)+" "+Date.toShortTime(evt.startDate)+" => "+Date.toShortDate(evt.endDate)+" "+Date.toShortTime(evt.endDate)+" : "+evt.title+spc+evt.summary);
 				if(evttype==1) // TODO not done
-					status(" TODO: "+evt.title+spc+evt.summary+" bis am "+Date.toShortDate(evt.endDate)+" "+Date.toShortTime(evt.endDate));
+					status("<span class=\"statuskreuz\"></span>  TODO: "+evt.title+spc+evt.summary+" bis am "+Date.toShortDate(evt.endDate)+" "+Date.toShortTime(evt.endDate));
 				if(evttype==2) // Done TODO
-					status(" ERLEDIGT: "+evt.title+spc+evt.summary+" am "+Date.toShortDate(evt.startDate)+" "+Date.toShortTime(evt.startDate));
+					status("<span class=\"statushaken\"></span>  ERLEDIGT: "+evt.title+spc+evt.summary+" am "+Date.toShortDate(evt.startDate)+" "+Date.toShortTime(evt.startDate));
 			}
 		}else{
 			status("");
@@ -1123,7 +1123,16 @@ var BeCal = function(contentdivid)
 		
 		// create the window.
 		$('#'+BeCal.divNameOverlay).jdCreateWindow(BeCal.editEntryWindow,100,100,500,220, title, txt);
-		
+
+		// *************************************************************
+		// the window to check a todo before the edit window pops up.
+		txt='<div class="becalWindow"><nobr>';
+				txt+='<a href="javascript:" class="becalOkBtn becalHakenBtn" onclick="TODO"></a>&nbsp;';
+				txt+='<a href="javascript:" class="becalBadBtn becalDeleteBtn" onclick="BeCal.deleteEventBtnPressed()"></a>&nbsp;';
+				txt+='<a href="javascript:" class="becalOkBtn becalEditBtn" onclick="TODO"></a>';
+		txt+='</nobr></div>';
+		$('#'+BeCal.divNameOverlay).jdCreateWindow(BeCal.updateTodoWindow,100,100,200,100, "Todo..", txt);
+
 		// *************************************************************
 		// the other entries window.
 		title ="Weitere";
@@ -1188,7 +1197,7 @@ var BeCal = function(contentdivid)
 		});
 	
 		// hide all the created UI windows.
-		$('#'+BeCal.divNameOverlay).jdHideAllWindows();
+		//$('#'+BeCal.divNameOverlay).jdHideAllWindows();
 		
 		// show a welcome message in the status field.
 		status("Welcome to BeCal. Date: "+Date().toString());
@@ -1425,11 +1434,11 @@ var BeCal = function(contentdivid)
 	};
 	
 	// show the edit window.
-	var showEditWindow = function(posX, posY, entryWidth)
+	var showWindowPos = function(windowtitle, posX, posY, entryWidth)
 	{
 		hideAllWindows();
 	
-		var win = $('#'+BeCal.editEntryWindow);
+		var win = $('#'+windowtitle);
 		var content = $('#'+BeCal.divNameOverlay);
 		var w = win.width();
 		var h = win.height();
@@ -1466,6 +1475,9 @@ var BeCal = function(contentdivid)
 	// open the edit entry dialog.
 	this.openEditDialog = function(datefieldid)
 	{
+		// hide the intermediary interface window.
+		$('#'+BeCal.updateTodoWindow).hide();
+
 		var f = m_datefieldArray[datefieldid];
 	
 		var now = new Date();
@@ -1498,14 +1510,17 @@ var BeCal = function(contentdivid)
 		changeEntryWindowEvtColor(me.newEntryColor);
 		$('#'+BeCal.inputNameColorPicker).spectrum("set", me.newEntryColor);
 	
-		showEditWindow(parseInt(f.left),parseInt(f.top)+menuHeight, f.width);
+		showWindowPos(BeCal.editEntryWindow, parseInt(f.left),parseInt(f.top)+menuHeight, f.width);
 		$('#'+BeCal.inputNameEventTitle).focus();
 	};
 	
 	// open the dialog to show the event view.
 	m_selectedEvent = null;
-	this.openEventViewDialog = function(eventid)
+	this.openEventViewDialog = function(eventid, afterintermediary=false)
 	{
+		// hide the intermediary interface window.
+		$('#'+BeCal.updateTodoWindow).hide();
+		
 		// prevent duration div from updating all the time.
 		m_blockEntryDuration = true;
 		
@@ -1566,8 +1581,16 @@ var BeCal = function(contentdivid)
 		// show the duration of the event.
 		showEntryDuration(evt.startDate, evt.endDate);
 
+		// maybe show the intermediary interface
+		if(eventtype>=1 && afterintermediary==false)
+		{
+			showWindowPos(BeCal.updateTodoWindow, parseInt(left), parseInt(top), 1);
+			$('#'+BeCal.updateTodoWindow).jdShow();
+			return;
+		}
+
 		// show the window.
-		showEditWindow(parseInt(left),parseInt(top), 1);
+		showWindowPos(BeCal.editEntryWindow,parseInt(left),parseInt(top), 1);
 	};
 	
 	// create a new event from the data in the edit window.
@@ -1740,6 +1763,7 @@ BeCal.monthNamesL = ["Januar", "Februar", "März", "April", "Mai", "Juni",
 // ids for the windows.
 BeCal.editEntryWindow = "becalEditEntryWindow";
 BeCal.otherEntriesWindow = "becalOtherEntriesWindow";
+BeCal.updateTodoWindow = "becalUpdateTodoWindow";
 
 // ids for the main items.
 BeCal.divNameTopMenu = "becalTopMenuDiv";

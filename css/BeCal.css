@@ -263,7 +263,6 @@ input[type=checkbox]:checked:after
 	background-color: #663333;
 }
 
-
 /* this button has an edit pencil in it. */
 .becalEditBtn
 {
@@ -272,6 +271,18 @@ input[type=checkbox]:checked:after
 	padding: 0px !important;
 	border-radius: 20px !important;
 	background-image: url("../img/edit.png");
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+/* this button has a red pencil rubber in it. */
+.becalHakenBtn
+{
+	width: 40px;
+	height: 40px;
+	padding: 0px !important;
+	border-radius: 20px !important;
+	background-image: url("../img/haken.png");
 	background-repeat: no-repeat;
 	background-position: center;
 }
@@ -287,7 +298,6 @@ input[type=checkbox]:checked:after
 	background-repeat: no-repeat;
 	background-position: center;
 }
-
 
 /* the advance buttons. */
 .becalAdvanceBtn {color: #FFFFFA; text-decoration: none;}
