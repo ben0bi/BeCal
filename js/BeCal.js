@@ -482,9 +482,16 @@ var BeCal = function(contentdivid)
 			if(evt!=null)
 			{
 				var spc =""
+				var evttype = evt.eventtype;
 				if(evt.summary!="")
 					spc=" ";
-				status(Date.toShortDate(evt.startDate)+" "+Date.toShortTime(evt.startDate)+" => "+Date.toShortDate(evt.endDate)+" "+Date.toShortTime(evt.endDate)+" : "+evt.title+spc+evt.summary);
+				
+				if(evttype==0)	// event
+					status(Date.toShortDate(evt.startDate)+" "+Date.toShortTime(evt.startDate)+" => "+Date.toShortDate(evt.endDate)+" "+Date.toShortTime(evt.endDate)+" : "+evt.title+spc+evt.summary);
+				if(evttype==1) // TODO not done
+					status(" TODO: "+evt.title+spc+evt.summary+" bis am "+Date.toShortDate(evt.endDate)+" "+Date.toShortTime(evt.endDate));
+				if(evttype==2) // Done TODO
+					status(" ERLEDIGT: "+evt.title+spc+evt.summary+" am "+Date.toShortDate(evt.startDate)+" "+Date.toShortTime(evt.startDate));
 			}
 		}else{
 			status("");
@@ -1263,9 +1270,9 @@ var BeCal = function(contentdivid)
 		var ms1 = daytime1.getTime();
 		var ms2 = daytime2.getTime();
 		
-		console.log("ms1:"+ms1+" ms2:"+ms2);
+		//console.log("ms1:"+ms1+" ms2:"+ms2);
 		var timeinMS = ms2-ms1;
-		console.log("MS: "+timeinMS);
+		//console.log("MS: "+timeinMS);
 		
 		// the seconds.
 		var seconds = parseInt(timeinMS * 1/1000); // prevent zero division by multiplication.
@@ -1509,8 +1516,26 @@ var BeCal = function(contentdivid)
 		{
 			console.log("FATAL: Event with id "+eventid+" not found.");
 			m_selectedEvent = null;
-			return;
+			return; 
 		}
+
+		// get the event type and set it to the checkboxes.
+		var eventtype = evt.eventtype;
+		
+		// it is a normal event.
+		if(eventtype==0)
+			$('#'+BeCal.inputNameCheckTodo).prop('checked', false);
+		
+		// it is a TODO.
+		if(eventtype>=1)
+			$('#'+BeCal.inputNameCheckTodo).prop('checked', true);
+
+		BeCal.checkBoxTodo();
+		
+		// it is a todo which is already done.
+//		if(eventtype==2)
+//		{
+//		}
 		
 		var left=$().Mouse().x;
 		var top=$().Mouse().y;
@@ -1743,11 +1768,6 @@ BeCal.inputNameCheckTodo = "becalUIEntryCheckTodo";
 
 // ids for the show entry window
 BeCal.divNameShowContainer = "becalUIShowEntryContainer";
-//BeCal.divNameShowTitle = "becalUITitleShowDiv";
-//BeCal.showNameTime1 = "becalUITimeShow1";
-//BeCal.showNameTime2 = "becalUITimeShow2";
-//BeCal.showNameDate1 = "becalUIDateShow1";
-//BeCal.showNameDate2 = "becalUIDateShow2";
 
 // DEFAULT VALUES ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
