@@ -565,3 +565,27 @@ input[type=checkbox]:checked:after
 	top: 10px;
 	left: 10px;
 }
+
+/* a todo entry in the todo view. */
+.becalTodo
+{
+	position: relative;
+	left: 0px;
+	width: 100%;
+	margin: 0px;
+	padding: 0px;
+}
+
+.becalTodoDone
+{
+	text-decoration: line-through;
+	color: #AAFFAA;
+	margin-left: 30px;
+}
+
+.becalTodoNotDone
+{
+	text-decoration: none;
+	color: FFFFFA;
+	margin-left: 30px;
+}

@@ -139,12 +139,25 @@ class SQL
 	}
 
 	/* Get all open TODO-events. */
-	public static function getOpenTodos()
+/*	public static function getOpenTodos()
 	{
 		global $table_calendarevents;
 
 		SQL::openConnection();
 		$query = 'SELECT * FROM '.$table_calendarevents.' WHERE `eventtype` = "1" ORDER BY `startdate` ASC';
+		$result = SQL::query($query);
+		SQL::closeConnection();
+		return $result;
+	}
+*/
+	
+	/* Get all TODO-events. */
+	public static function getAllTodos()
+	{
+		global $table_calendarevents;
+
+		SQL::openConnection();
+		$query = 'SELECT * FROM '.$table_calendarevents.' WHERE `eventtype` = "1" OR `eventtype` = "2" ORDER BY `startdate` ASC';
 		$result = SQL::query($query);
 		SQL::closeConnection();
 		return $result;

@@ -749,8 +749,8 @@ var BeCal = function(contentdivid)
 		mt = '<div id="'+BeCal.divNameTopbarDate+'">TO-DOs</div>';
 		mt+='<div id="'+BeCal.divNameTopbarAdvancer+'">';
 			mt+='<span class="becalAdvanceBtn">&nbsp;</span>';
+			mt+='<a href="javascript:" class="becalAdvanceBtn becalBtn" onclick="BeCal.switchTodoView();">ALLE</a>&nbsp;';
 			mt+='<a href="javascript:" class="becalAdvanceBtn becalBtn" onclick="BeCal.setStateMonth();">-&gt; Kalender</a>';
-//			mt+='<a href="javascript:" class="becalAdvanceBtn" onclick="BeCal.advanceMonth(-1);">&nbsp;&lt;&nbsp;</a>';
 //			mt+='<a href="javascript:" class="becalAdvanceBtn" onclick="BeCal.advanceMonth(1);">&nbsp;&gt;&nbsp;</a>';
 		mt+='</div>';
 		$('#'+BeCal.divNameTopMenu).html(mt);
@@ -760,7 +760,7 @@ var BeCal = function(contentdivid)
 		
 		loadTodos(function()
 		{
-			var txt="";
+			var txt="<br />";
 			var entries = m_eventArray;
 			// first get all entries in range.
 			// only push the timed events first.
@@ -782,7 +782,15 @@ var BeCal = function(contentdivid)
 					tdyfound = 2;
 				}
 				
-				txt+=start.getDate()+"."+(start.getMonth()+1)+"."+start.getFullYear()+": "+e.title+"<br />";
+				txt+='<div class="becalTodo">';
+				if(e.eventtype==1)
+				{
+					txt+='<span class="statuskreuz"></span> <span class="becalTodoNotDone">';
+				}else{
+					txt+='<span class="statushaken"></span> <span class="becalTodoDone">';
+				}
+				// create the text for the entry.
+				txt+=start.getDate()+"."+(start.getMonth()+1)+"."+start.getFullYear()+": "+e.title+"</span></div><br />";
 			}
 			// create the html.
 			$('#'+BeCal.divNameContent).html(txt);
@@ -1108,7 +1116,7 @@ var BeCal = function(contentdivid)
 				txt+='<a href="javascript:" class="becalOkBtn becalEditBtn" onclick="BeCal.createNewEventBtnPressed()"></a>';
 			txt+='</div>';
 			
-			// NEW: just the buttons for the show stuff, not more.
+			// NEW: just the buttons for the show (update, not create) stuff, not more.
 			txt+='<div class="becalEditButtonDiv" id="'+BeCal.divNameShowContainer+'"><nobr>';
 				txt+='<a href="javascript:" class="becalBadBtn becalDeleteBtn" onclick="BeCal.deleteEventBtnPressed()"></a>&nbsp;';
 				txt+='<a href="javascript:" class="becalOkBtn becalEditBtn" onclick="BeCal.updateEventBtnPressed()"></a>';
@@ -1131,7 +1139,7 @@ var BeCal = function(contentdivid)
 		// *************************************************************
 		// the window to check a todo before the edit window pops up.
 		txt='<div class="becalWindow"><div class="intermediaryTodoButtons"><nobr>';
-				txt+='<a href="javascript:" class="becalOkBtn becalHakenBtn" onclick="TODO"></a>&nbsp;';
+				txt+='<a href="javascript:" class="becalOkBtn becalHakenBtn" onclick="BeCal.updateEventBtnPressed(2)"></a>&nbsp;';
 				txt+='<a href="javascript:" class="becalBadBtn becalDeleteBtn" onclick="BeCal.deleteEventBtnPressed()"></a>&nbsp;';
 				txt+='<a href="javascript:" class="becalOkBtn becalEditBtn" onclick="BeCal.editEventBtnInTodoOverlayPressed()"></a>';
 		txt+='</nobr></div></div>';
@@ -1632,7 +1640,7 @@ var BeCal = function(contentdivid)
 	};
 	
 	// update an event.
-	this.updateEventBtnPressed = function()
+	this.updateEventBtnPressed = function(eventtype = -1)
 	{
 		console.log("Updating event.");
 		if(m_selectedEvent==null)
@@ -1646,11 +1654,24 @@ var BeCal = function(contentdivid)
 		m_selectedEvent.endDate=Date.setTime(AnyTime.getCurrent(BeCal.inputNameDate2), AnyTime.getCurrent(BeCal.inputNameTime2));
 		m_selectedEvent.title = $('#'+BeCal.inputNameEventTitle).val();
 		m_selectedEvent.color = $('#'+BeCal.inputNameColorPicker).spectrum('get').toHexString(); // TODO: Set new color
+		
+		// set the event type from update window.
+		var todocheck = $('#'+BeCal.inputNameCheckTodo).prop('checked');
+		if(todocheck==true)
+			m_selectedEvent.eventtype = 1;
+		else
+			m_selectedEvent.eventtype = 0;
+		
+		// set the event type from function parameter.
+		if(eventtype!=-1)
+			m_selectedEvent.eventtype = eventtype;
 
 		saveToDB(m_selectedEvent);
 		m_selectedEvent = null;
 		
 		$('#'+BeCal.editEntryWindow).hide();
+		$('#'+BeCal.updateTodoWindow).hide();
+		
 		$('#'+BeCal.inputNameEventTitle).val("");
  	};
 	
@@ -1689,10 +1710,10 @@ BeCal.createNewEventBtnPressed = function()
 };
 
 // update an existing event.
-BeCal.updateEventBtnPressed = function()
+BeCal.updateEventBtnPressed = function(eventtype = -1)
 {
 	if(BeCal.instance!=null)
-		BeCal.instance.updateEventBtnPressed();
+		BeCal.instance.updateEventBtnPressed(eventtype);
 };
 
 // delete a selected event.
