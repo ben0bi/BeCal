@@ -76,12 +76,42 @@
 	top: 10px;
 }
 
+
+/* The checkbox and title for the todo/event selector. */
+#todocheckboxdiv
+{
+	font-family: 'calFont';
+	position: absolute;
+	top: 80px;
+	width: 150px;
+	right: 10px;
+	height: 30px;
+	color: inherit;
+	/*border: 1px solid #FFA000;*/
+}
+#todocheckboxdiv:hover
+{
+	color: #FFAA00 !important;
+}
+
+.todoname:after {content: "Todo";}
+.eventname:after {content: "Event";}
+.TodoCheckName
+{
+	position: absolute;
+	top: 7px;
+	right: 0px;
+	/*color: #FFFFFA;*/
+	padding-left: 10px;
+	font-size: 16pt;
+}
+
 /* The checkbox to switch between todos and calendar on the edit entry window. */
 input[type=checkbox].check-todo
 {
 	position: absolute;
-	top: 80px;
-	right: 10px;
+	top: -10px;
+	right: 100px;
 	
 	appereance: none;
     -webkit-appearance:none;
@@ -91,31 +121,26 @@ input[type=checkbox].check-todo
     border: 0;
 
     background-color: transparent;
-    color:#006900;
+    color:#3333FF;
     white-space: nowrap;
     overflow:hidden;
 
-    width:165px;
+    width:40px;
     height:30px;
 	padding: 0;
 	margin: 0;
 	font-size: 20pt;
 	margin-left: 10px;
 	margin-top: 10px;
-	
-	color: FF3333;
 }
 
-input[type=checkbox].check-todo:after
-{
-	content: 'X TODO';
-}
 
 input[type=checkbox]:checked.check-todo {
     /*background-color:#000;*/
 	color: #33FF33;
 	background-color: transparent;
-	top: 78px;
+	top: -10px;
+	right: 80px;
 	border: 0;
 }
 
@@ -124,9 +149,16 @@ input[type=checkbox]:hover.check-todo {
     background-color: transparent;
 }
 
+
+/* The TODO checkbox content. */
+input[type=checkbox].check-todo:after
+{
+	content: '\1F4C5';
+}
+
 input[type=checkbox]:checked:after 
 {
-	content: '\27A0  TODO';
+	content: '\2714';
 }
 
 /* font settings of the input with the title of the event on the create entry window. 

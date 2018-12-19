@@ -1098,8 +1098,12 @@ var BeCal = function(contentdivid)
 				txt+='<input id="'+BeCal.inputNameColorPicker+'" />';
 			txt+='</div>';
 			
-			txt+='<input id="'+BeCal.inputNameCheckTodo+'" onclick="BeCal.checkBoxTodo();" class="check-todo" type="checkbox" value="unchecked" />';
+			// the todo checkbox
+			txt+='<div id="todocheckboxdiv" onclick="BeCal.checkBoxTodo(true)">';
+			txt+='<nobr><input id="'+BeCal.inputNameCheckTodo+'" onclick="BeCal.checkBoxTodo(true)" class="check-todo" type="checkbox" value="unchecked" />';
+			txt+='<span class="TodoCheckName eventname"></span></nobr></div>';
 			
+			// the edit button container.
 			txt+='<div class="becalEditButtonDiv" id="'+BeCal.divNameEditContainer+'">';
 				txt+='<a href="javascript:" class="becalOkBtn becalEditBtn" onclick="BeCal.createNewEventBtnPressed()"></a>';
 			txt+='</div>';
@@ -1197,7 +1201,7 @@ var BeCal = function(contentdivid)
 		});
 	
 		// hide all the created UI windows.
-		//$('#'+BeCal.divNameOverlay).jdHideAllWindows();
+		$('#'+BeCal.divNameOverlay).jdHideAllWindows();
 		
 		// show a welcome message in the status field.
 		status("Welcome to BeCal. Date: "+Date().toString());
@@ -1614,7 +1618,11 @@ var BeCal = function(contentdivid)
 		var e = new BeCalEvent();
 		var start=Date.setTime(AnyTime.getCurrent(BeCal.inputNameDate1), AnyTime.getCurrent(BeCal.inputNameTime1));
 		var end=Date.setTime(AnyTime.getCurrent(BeCal.inputNameDate2), AnyTime.getCurrent(BeCal.inputNameTime2));
-		e.create(start, end, 0, $('#'+BeCal.inputNameEventTitle).val(), "", this.newEntryColor);
+		var evttype = 0;
+		var todo = $('#'+BeCal.inputNameCheckTodo).prop('checked');
+		if(todo==true)
+			evttype=1;
+		e.create(start, end, evttype, $('#'+BeCal.inputNameEventTitle).val(), "", this.newEntryColor);
 		m_eventArray.push(e);
 	
 		$('#'+BeCal.editEntryWindow).hide();
@@ -1655,6 +1663,7 @@ var BeCal = function(contentdivid)
 		m_selectedEvent = null;
 		
 		$('#'+BeCal.editEntryWindow).hide();
+		$('#'+BeCal.updateTodoWindow).hide();
 		$('#'+BeCal.inputNameEventTitle).val("");
 	};
 	
@@ -1751,19 +1760,29 @@ BeCal.setStateMonth = function()
 
 
 // the todo checkbox was checked, do something.
-BeCal.checkBoxTodo = function()
+BeCal.checkBoxTodo = function(invert=false)
 {
 	var checked = $('#'+BeCal.inputNameCheckTodo).prop('checked');
+	if(invert)
+	{
+		checked = !checked;
+		$('#'+BeCal.inputNameCheckTodo).prop('checked', checked);
+	}
 	
+	var tn = $('.TodoCheckName');
 	if(checked)
 	{
 		$('#becalStartDateView').hide();
 		//$('.becalInputMiddlestrich').hide();
 		$('#becalTodoTextView').show();
+		tn.removeClass('eventname');
+		tn.addClass('todoname');
 	}else{
 		$('#becalTodoTextView').hide();
 		//$('.becalInputMiddlestrich').show();
 		$('#becalStartDateView').show();		
+		tn.removeClass('todoname');
+		tn.addClass('eventname');
 	}
 }
 
