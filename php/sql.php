@@ -62,7 +62,7 @@ class SQL
 					$trigger=0;
 					break;
 				case "5":
-					$t="4";
+					$t="5";
 					if($trigger==2) {$t=chr(13);}
 					$output=$output.$t;
 					$trigger=0;
@@ -157,7 +157,7 @@ class SQL
 		global $table_calendarevents;
 
 		SQL::openConnection();
-		$query = 'SELECT * FROM '.$table_calendarevents.' WHERE `eventtype` = "1" OR `eventtype` = "2" ORDER BY `startdate` ASC';
+		$query = 'SELECT * FROM '.$table_calendarevents.' WHERE `eventtype` = "1" OR `eventtype` = "2" ORDER BY `enddate` ASC';
 		$result = SQL::query($query);
 		SQL::closeConnection();
 		return $result;
