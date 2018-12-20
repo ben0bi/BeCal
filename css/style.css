@@ -81,26 +81,42 @@ body
 	text-align: center;
 }
 
-/* a check */
-.statushaken:after
+/* todo checked */
+.haken
+{	
+	color: #33FF33;
+	font-size: 20pt;
+}
+.haken:after
+{
+	content: '\2611';
+}
+
+/* todo unchecked */
+.kreuz
+{
+	color: #FF3333;	
+	font-size: 20pt;
+}
+.kreuz:after
+{
+	content: '\2610';
+}
+
+/* position of the todo check on the todo view. */
+.todocharpos
 {
 	display: inline-block;
 	position: absolute;
-	color: #33FF33;
-	content: '\2611';
-	font-size: 20pt;
+	top: -7px;	
+}
+
+/* position of the todo check on the status. */
+.statuscharpos
+{
+	display: inline-block;
+	position: absolute;
 	top: -10px;
 	/*bottom: 0px;*/
 }
 
-/* an unchecked check */
-.statuskreuz:after
-{
-	display: inline-block;
-	position: absolute;
-	color: #FF3333;
-	content: '\2610';
-	font-size: 20pt;
-	top: -10px;
-	/*bottom: 0px;*/
-}

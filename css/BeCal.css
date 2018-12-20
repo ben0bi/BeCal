@@ -585,19 +585,42 @@ input[type=checkbox]:checked:after
 	left: 0px;
 	width: 100%;
 	margin: 0px;
+	margin-top: 5px;
 	padding: 0px;
+	padding-bottom: 3px;
+	padding-top: 3px;
+	cursor: pointer;
+	/*border: 1px solid #FF0000;*/
+	background-image: url('../img/semitransparentbg.png');
+	/*border-bottom: 1px solid #FFAA00;*/
+}
+
+/* hovering over a todo item */
+.becalTodo:hover
+{
+	background-color: #000033;
+}
+
+.becalTodo:hover > .becalTodoText,
+.becalTodo > .kreuz:hover,
+.becalTodo > .haken:hover
+{
+	color: #FFAA00 !important;
+}
+
+.becalTodoText
+{
+	margin-left: 30px;
 }
 
 .becalTodoDone
 {
 	text-decoration: line-through;
 	color: #AAFFAA;
-	margin-left: 30px;
 }
 
 .becalTodoNotDone
 {
 	text-decoration: none;
 	color: FFFFFA;
-	margin-left: 30px;
 }

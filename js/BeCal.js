@@ -252,7 +252,6 @@ var BeCalEvent = function()
 				evtEndDay = now;
 			evtStartDay = new Date(evtEndDay);
 			evtEndDay.setHours(evtStartDay.getHours()+1);
-			console.log("--> neu "+me.eventtype+" @ "+evtStartDay+" -> "+evtEndDay);
 		}
 		
 		var actualdate = new Date(evtStartDay);								// actual date for the bars.
@@ -493,9 +492,9 @@ var BeCal = function(contentdivid)
 				if(evttype==0)	// event
 					status(Date.toShortDate(evt.startDate)+" "+Date.toShortTime(evt.startDate)+" => "+Date.toShortDate(evt.endDate)+" "+Date.toShortTime(evt.endDate)+" : "+evt.title+spc+evt.summary);
 				if(evttype==1) // TODO not done
-					status("<span class=\"statuskreuz\"></span>  &nbsp;TODO: "+evt.title+spc+evt.summary+" bis am "+Date.toShortDate(evt.endDate)+" "+Date.toShortTime(evt.endDate));
+					status("<span class=\"statuscharpos kreuz\"></span>  &nbsp;TODO: "+evt.title+spc+evt.summary+" bis am "+Date.toShortDate(evt.endDate)+" "+Date.toShortTime(evt.endDate));
 				if(evttype==2) // Done TODO
-					status("<span class=\"statushaken\"></span>  ERLEDIGT: "+evt.title+spc+evt.summary+" am "+Date.toShortDate(evt.startDate)+" "+Date.toShortTime(evt.startDate));
+					status("<span class=\"statuscharpos haken\"></span>  ERLEDIGT: "+evt.title+spc+evt.summary+" am "+Date.toShortDate(evt.startDate)+" "+Date.toShortTime(evt.startDate));
 			}
 		}else{
 			status("");
@@ -789,13 +788,13 @@ var BeCal = function(contentdivid)
 				txt+='<div class="becalTodo">';
 				if(e.eventtype==1)
 				{
-					txt+='<span class="statuskreuz" onclick="BeCal.updateEventType('+e.getID()+', 2)"></span> <span class="becalTodoNotDone" onclick="BeCal.openEventViewDialog('+e.getID()+')">';
+					txt+='<span class="todocharpos kreuz" onclick="BeCal.updateEventType('+e.getID()+', 2)"></span> <span class="becalTodoText becalTodoNotDone" onclick="BeCal.openEventViewDialog('+e.getID()+')">';
 				}else{
-					txt+='<span class="statushaken" onclick="BeCal.updateEventType('+e.getID()+', 1)"></span> <span class="becalTodoDone" onclick="BeCal.openEventViewDialog('+e.getID()+')">';
+					txt+='<span class="todocharpos haken" onclick="BeCal.updateEventType('+e.getID()+', 1)"></span> <span class="becalTodoText becalTodoDone" onclick="BeCal.openEventViewDialog('+e.getID()+')">';
 				}
 				
 				// create the text for the entry.
-				txt+=end.getDate()+"."+(end.getMonth()+1)+"."+end.getFullYear()+": "+e.title+"</span></div><br />";
+				txt+=end.getDate()+"."+(end.getMonth()+1)+"."+end.getFullYear()+": "+e.title+"</span></div>";
 			}
 			// create the html.
 			$('#'+BeCal.divNameContent).html(txt);
@@ -811,6 +810,7 @@ var BeCal = function(contentdivid)
 			console.log("Event not found for updating the type.");
 			return;
 		}
+		$('#'+BeCal.updateTodoWindow).hide();
 		e.eventtype=eventtype;
 		saveToDB(e);
 	};
@@ -1221,7 +1221,7 @@ var BeCal = function(contentdivid)
 		// show the actual entry duration.
 		showEntryDuration();
 		
-			// do something when the input fields change.
+		// do something when the input fields change.
 		$('#'+BeCal.inputNameDate1).on('change', function()
 		{
 			constrainDateInput();
@@ -1249,13 +1249,14 @@ var BeCal = function(contentdivid)
 		// show a welcome message in the status field.
 		status("Welcome to BeCal. Date: "+Date().toString());
 	};
-	
+		
 	// constrain the date inputs so that the end date cannot be < start date.
+	// use unconstrain if it is a todo.
 	var constrainDateInput = function()
 	{
 		if(m_isChangingDateInput)
 		{
-//			console.log("already changing");
+			console.log("already changing");
 			return;
 		}
 		m_isChangingDateInput=true;
@@ -1290,6 +1291,27 @@ var BeCal = function(contentdivid)
 		$('#AnyTime--'+BeCal.inputNameTime2).hide();	
 		m_isChangingDateInput=false;
 	};
+	
+	// unconstrain the datetime input of field 2 for todos.
+	this.unconstrainDateTimeInput = function()
+	{
+		m_isChangingDateInput = true;
+
+		var defaultConv = new AnyTime.Converter({format:'%H:%i'});
+		var earliestdate = new Date("1900-01-01T00:00:00");
+		AnyTime.setEarliest(BeCal.inputNameDate2, earliestdate);
+		AnyTime.setEarliest(BeCal.inputNameTime2, defaultConv.parse("00:00"));
+		
+		$('#AnyTime--'+BeCal.inputNameDate2).hide();
+		$('#AnyTime--'+BeCal.inputNameTime2).hide();	
+	}
+	
+	// undo the unconstrain on todos.
+	this.UNunconstrainDateTimeInput = function()
+	{
+		m_isChangingDateInput = false;
+		constrainDateInput();
+	}
 	
 	// show the duration between the two dates on the edit/show event window.
 	var m_blockEntryDuration = false;
@@ -1842,12 +1864,18 @@ BeCal.checkBoxTodo = function(invert=false)
 		$('#becalTodoTextView').show();
 		tn.removeClass('eventname');
 		tn.addClass('todoname');
+		
+		if(BeCal.instance!=null)
+			BeCal.instance.unconstrainDateTimeInput();		
 	}else{
 		$('#becalTodoTextView').hide();
 		//$('.becalInputMiddlestrich').show();
 		$('#becalStartDateView').show();		
 		tn.removeClass('todoname');
 		tn.addClass('eventname');
+
+		if(BeCal.instance!=null)
+			BeCal.instance.UNunconstrainDateTimeInput();
 	}
 }
 
