@@ -237,18 +237,22 @@ var BeCalEvent = function()
 
 		var firstDay = Date.removeTime(dayfields[0].date);					// first date on the table.
 		var lastDay = Date.removeTime(dayfields[dayfields.length-1].date);	// last date on the table.
+		lastDay.setHours(23);
+		lastDay.setMinutes(59);
+		lastDay.setSeconds(59);
 		
-		var evtStartDay = Date.removeTime(this.startDate);					// start date of the event.
-		var evtEndDay = Date.removeTime(this.endDate);						// end date of the event.
+		var evtStartDay = Date.removeTime(me.startDate);					// start date of the event.
+		var evtEndDay = Date.removeTime(me.endDate);						// end date of the event.
 		
 		// check if event is a todo. If so, maybe adjust dates.
-		//console.log("Evttype: "+me.eventtype);
-		if(me.eventtype==1)
+		if(me.eventtype==1 || me.eventtype==2)
 		{
-			if(evtStartDay<now)
-				evtStartDay = now;
-			evtEndDay = evtStartDay;
-			evtEndDay.setHours(evtEndDay.getHours()+1);
+			// end day is start day for the todos.
+			if(evtEndDay<now)
+				evtEndDay = now;
+			evtStartDay = new Date(evtEndDay);
+			evtEndDay.setHours(evtStartDay.getHours()+1);
+			console.log("--> neu "+me.eventtype+" @ "+evtStartDay+" -> "+evtEndDay);
 		}
 		
 		var actualdate = new Date(evtStartDay);								// actual date for the bars.
@@ -769,14 +773,14 @@ var BeCal = function(contentdivid)
 			for(var i = 0;i<entries.length;i++)
 			{
 				var e = entries[i];
-				var start = new Date(e.startDate);
-				if(start>=now && tdyfound==0)
+				var end = new Date(e.endDate);
+				if(end>=now && tdyfound==0)
 				{
 					txt+="<hr />++++ HEUTE: "+now.getDate()+"."+(now.getMonth()+1)+"."+now.getFullYear()+" ++++"
 					tdyfound=1;
 				}
 				
-				if(start>=now && Date.compareOnlyDate(start,now)==false && tdyfound==1)
+				if(end>=now && Date.compareOnlyDate(end,now)==false && tdyfound==1)
 				{
 					txt+="<hr/>"
 					tdyfound = 2;
@@ -791,7 +795,7 @@ var BeCal = function(contentdivid)
 				}
 				
 				// create the text for the entry.
-				txt+=start.getDate()+"."+(start.getMonth()+1)+"."+start.getFullYear()+": "+e.title+"</span></div><br />";
+				txt+=end.getDate()+"."+(end.getMonth()+1)+"."+end.getFullYear()+": "+e.title+"</span></div><br />";
 			}
 			// create the html.
 			$('#'+BeCal.divNameContent).html(txt);
@@ -830,8 +834,8 @@ var BeCal = function(contentdivid)
 		$('#'+BeCal.divNameTopMenu).html(mt);
 		
 		// get the month begin.
-		var monthBegin = new Date(renderdate.getFullYear(), renderdate.getMonth(), 1, 1, 1, 10, 0);
 		var myMonth = renderdate.getMonth();
+		var monthBegin = new Date(renderdate.getFullYear(), myMonth, 1, 1, 1, 10, 0);
 
 		// set the return date to month begin.
 		var returnDate = Date.removeTime(monthBegin);
@@ -841,7 +845,7 @@ var BeCal = function(contentdivid)
 		if(monthBeginDay > 0)
 			monthBegin.setDate(monthBegin.getDate() - monthBeginDay);
 		
-		// get and set widht and height.
+		// get and set width and height.
 		var cc = $('#'+BeCal.divNameContent);
 		cc.height($(m_contentDivID).height()-$('#'+BeCal.divNameTopMenu).height()-11);
 		
@@ -873,6 +877,9 @@ var BeCal = function(contentdivid)
 		var startScreenDate = new Date(Date.removeTime(monthBegin));
 		var endScreenDate = new Date(startScreenDate);
 		endScreenDate.setDate(startScreenDate.getDate()+35);
+		endScreenDate.setHours(23);
+		endScreenDate.setMinutes(59);
+		endScreenDate.setSeconds(59);
 		for(weeks=0;weeks<5;weeks++)
 		{  
 			for(days=0;days<7;days++)
@@ -916,6 +923,7 @@ var BeCal = function(contentdivid)
 		{
 			// create all the event bars.
 			var sortedFields = sortEventsByLength(startScreenDate, endScreenDate);
+			
 			ac = 0;
 			for(e=0;e<sortedFields.length;e++)
 			{
@@ -966,12 +974,13 @@ var BeCal = function(contentdivid)
 		//console.log("Sorting between "+startDate+" / "+endDate);
 		var arr = new Array();
 		var entries = m_eventArray;
+		
 		// first get all entries in range.
 		// only push the timed events first.	
 		for(var i = 0;i<entries.length;i++)
 		{
 			var e = entries[i];
-			if(e.startDate<=endDate && (e.endDate>=startDate && e.eventtype==0))
+			if(e.eventtype==0 && e.startDate<=endDate && e.endDate>=startDate)
 				arr.push(e);
 		}
 	
@@ -1009,7 +1018,7 @@ var BeCal = function(contentdivid)
 		for(var i = 0;i<entries.length;i++)
 		{
 			var e = entries[i];
-			if(e.startDate<=endDate && e.eventtype==1)
+			if(e.eventtype==1 && e.endDate<=endDate && e.endDate>=startDate)
 				arr.push(e);
 		}
 
