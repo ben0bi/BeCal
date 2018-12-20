@@ -489,7 +489,7 @@ var BeCal = function(contentdivid)
 				if(evttype==0)	// event
 					status(Date.toShortDate(evt.startDate)+" "+Date.toShortTime(evt.startDate)+" => "+Date.toShortDate(evt.endDate)+" "+Date.toShortTime(evt.endDate)+" : "+evt.title+spc+evt.summary);
 				if(evttype==1) // TODO not done
-					status("<span class=\"statuskreuz\"></span>  TODO: "+evt.title+spc+evt.summary+" bis am "+Date.toShortDate(evt.endDate)+" "+Date.toShortTime(evt.endDate));
+					status("<span class=\"statuskreuz\"></span>  &nbsp;TODO: "+evt.title+spc+evt.summary+" bis am "+Date.toShortDate(evt.endDate)+" "+Date.toShortTime(evt.endDate));
 				if(evttype==2) // Done TODO
 					status("<span class=\"statushaken\"></span>  ERLEDIGT: "+evt.title+spc+evt.summary+" am "+Date.toShortDate(evt.startDate)+" "+Date.toShortTime(evt.startDate));
 			}
@@ -785,16 +785,30 @@ var BeCal = function(contentdivid)
 				txt+='<div class="becalTodo">';
 				if(e.eventtype==1)
 				{
-					txt+='<span class="statuskreuz"></span> <span class="becalTodoNotDone">';
+					txt+='<span class="statuskreuz" onclick="BeCal.updateEventType('+e.getID()+', 2)"></span> <span class="becalTodoNotDone" onclick="BeCal.openEventViewDialog('+e.getID()+')">';
 				}else{
-					txt+='<span class="statushaken"></span> <span class="becalTodoDone">';
+					txt+='<span class="statushaken" onclick="BeCal.updateEventType('+e.getID()+', 1)"></span> <span class="becalTodoDone" onclick="BeCal.openEventViewDialog('+e.getID()+')">';
 				}
+				
 				// create the text for the entry.
 				txt+=start.getDate()+"."+(start.getMonth()+1)+"."+start.getFullYear()+": "+e.title+"</span></div><br />";
 			}
 			// create the html.
 			$('#'+BeCal.divNameContent).html(txt);
 		});		
+	};
+	
+	// update only the event type for an event.
+	this.updateEventType=function(eventid, eventtype)
+	{
+		var e = me.getEventByID(eventid);
+		if(e==null)
+		{
+			console.log("Event not found for updating the type.");
+			return;
+		}
+		e.eventtype=eventtype;
+		saveToDB(e);
 	};
 	
 	// render a month screen.
@@ -1077,6 +1091,16 @@ var BeCal = function(contentdivid)
 		return returnslot;
 	}
 	
+	var showTodoBtn = function(isdone=false)
+	{
+		$('#BecalTodoDOBtn').hide();
+		$('#BecalTodoDONEBtn').hide();
+		if(isdone)
+			$('#BecalTodoDOBtn').show();
+		else
+			$('#BecalTodoDONEBtn').show();
+	}
+	
 	// create the (static) UI of the calendar app.
 	var createUI = function()
 	{
@@ -1139,12 +1163,14 @@ var BeCal = function(contentdivid)
 		// *************************************************************
 		// the window to check a todo before the edit window pops up.
 		txt='<div class="becalWindow"><div class="intermediaryTodoButtons"><nobr>';
-				txt+='<a href="javascript:" class="becalOkBtn becalHakenBtn" onclick="BeCal.updateEventBtnPressed(2)"></a>&nbsp;';
+				txt+='<a href="javascript:" id="BecalTodoDONEBtn" class="becalOkBtn becalHakenBtn" onclick="BeCal.updateEventBtnPressed(2)"></a>';
+				txt+='<a href="javascript:" id="BecalTodoDOBtn" class="becalBadBtn becalKreuzBtn" onclick="BeCal.updateEventBtnPressed(1)"></a>&nbsp;';
 				txt+='<a href="javascript:" class="becalBadBtn becalDeleteBtn" onclick="BeCal.deleteEventBtnPressed()"></a>&nbsp;';
 				txt+='<a href="javascript:" class="becalOkBtn becalEditBtn" onclick="BeCal.editEventBtnInTodoOverlayPressed()"></a>';
 		txt+='</nobr></div></div>';
 		$('#'+BeCal.divNameOverlay).jdCreateWindow(BeCal.updateTodoWindow,100,100,180,60, "Todo..", txt);
-
+		showTodoBtn();
+		
 		// *************************************************************
 		// the other entries window.
 		title ="Weitere";
@@ -1557,13 +1583,15 @@ var BeCal = function(contentdivid)
 		// it is a TODO.
 		if(eventtype>=1)
 			$('#'+BeCal.inputNameCheckTodo).prop('checked', true);
-
-		BeCal.checkBoxTodo();
 		
-		// it is a todo which is already done.
-//		if(eventtype==2)
-//		{
-//		}
+		// show the right button.
+		if(eventtype==1)
+			showTodoBtn(false); // todo not done.
+		if(eventtype==2) // a done todo.
+			showTodoBtn(true);
+
+		// update the checkbox content.
+		BeCal.checkBoxTodo();
 		
 		var left=$().Mouse().x;
 		var top=$().Mouse().y;
@@ -1655,12 +1683,19 @@ var BeCal = function(contentdivid)
 		m_selectedEvent.title = $('#'+BeCal.inputNameEventTitle).val();
 		m_selectedEvent.color = $('#'+BeCal.inputNameColorPicker).spectrum('get').toHexString(); // TODO: Set new color
 		
+		// get the old event type.
+		var oldtype = m_selectedEvent.eventtype;
+		
 		// set the event type from update window.
 		var todocheck = $('#'+BeCal.inputNameCheckTodo).prop('checked');
 		if(todocheck==true)
 			m_selectedEvent.eventtype = 1;
 		else
 			m_selectedEvent.eventtype = 0;
+		
+		// maybe set it to done.
+		if(oldtype==2 && todocheck==true)
+			m_selectedEvent.eventtype = 2;
 		
 		// set the event type from function parameter.
 		if(eventtype!=-1)
@@ -1807,10 +1842,18 @@ BeCal.checkBoxTodo = function(invert=false)
 	}
 }
 
+// The edit button in the update todo overlay was pressed.
 BeCal.editEventBtnInTodoOverlayPressed =function()
 {
 	if(BeCal.instance!=null)
 		BeCal.instance.editEventBtnInTodoOverlayPressed();
+}
+
+// update only the type of an event.
+BeCal.updateEventType = function(evtid, evttype)
+{
+	if(BeCal.instance!=null)
+		BeCal.instance.updateEventType(evtid, evttype);
 }
 
 // TEXT MONTH NAMES ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

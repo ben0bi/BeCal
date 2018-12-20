@@ -307,7 +307,7 @@ input[type=checkbox]:checked:after
 	background-position: center;
 }
 
-/* this button has a red pencil rubber in it. */
+/* this button has an ok check thingy in it . */
 .becalHakenBtn
 {
 	width: 40px;
@@ -315,6 +315,18 @@ input[type=checkbox]:checked:after
 	padding: 0px !important;
 	border-radius: 20px !important;
 	background-image: url("../img/haken.png");
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+/* this button has a cross in it. */
+.becalKreuzBtn
+{
+	width: 40px;
+	height: 40px;
+	padding: 0px !important;
+	border-radius: 20px !important;
+	background-image: url("../img/kreuz.png");
 	background-repeat: no-repeat;
 	background-position: center;
 }
