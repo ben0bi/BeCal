@@ -151,7 +151,14 @@ function audioPlayEvent(evt)
 		audioPlayFile(evt.summary);
 }
 
+function audioPlaySelectedEvent()
+{
+	if(m_selectedEvent!=null)
+		audioPlayEvent(m_selectedEvent);
+}
+
 // play an audio file.
+// global audio for not playing more than one at a time.
 g_singleAudio = null;
 function audioPlayFile(filename)
 {
@@ -162,7 +169,7 @@ function audioPlayFile(filename)
 		g_singleAudio.currentTime=0;
 	}
 	
-	console.log("Play AUDIO: DATA/AUDIO/"+filename);
+	console.log("Play Audio: "+filename);
 	g_singleAudio = new Audio("DATA/AUDIO/"+filename);
 	g_singleAudio.play();
 }
@@ -929,12 +936,14 @@ var BeCal = function(contentdivid)
 		mt+='</div>';
 		$('#'+BeCal.divNameTopMenu).html(mt);
 
-		// clear the content
-		$('#'+BeCal.divNameContent).html("");
+		// clear the content and set the height.
+		var cc = $('#'+BeCal.divNameContent);
+		cc.height(window.innerHeight-$('#'+BeCal.divNameTopMenu).height()-$('#'+BeCal.divNameStatus).height()-12);
+		cc.html("");
 		
 		loadTodos(function()
 		{
-			var txt="<br />";
+			var txt='<div class="fullscreen scrollvertical"><br />';
 			var entries = m_eventArray;
 			// first get all entries in range.
 			// only push the timed events first.
@@ -967,6 +976,9 @@ var BeCal = function(contentdivid)
 				// create the text for the entry.
 				txt+=end.getDate()+"."+(end.getMonth()+1)+"."+end.getFullYear()+": "+e.title+"</span></div>";
 			}
+			
+			txt+="</div>";
+			
 			// create the html.
 			$('#'+BeCal.divNameContent).html(txt);
 		});		
@@ -1018,9 +1030,9 @@ var BeCal = function(contentdivid)
 		
 		// get and set width and height.
 		var cc = $('#'+BeCal.divNameContent);
-		cc.height($(m_contentDivID).height()-$('#'+BeCal.divNameTopMenu).height()-11);
+		cc.height(window.innerHeight-$('#'+BeCal.divNameTopMenu).height()-$('#'+BeCal.divNameStatus).height()-12);
 		
-		var calFieldHeight = (cc.height()-calDayNameFieldHeight-calStatusFieldHeight)*0.2;	//x * 0.2 = x / 5
+		var calFieldHeight = (cc.height()-calDayNameFieldHeight)*0.2;	//x * 0.2 = x / 5
 		var calFieldWidth =cc.width()*(1.0/7.0);
 		
 		var txt="";
@@ -1334,7 +1346,7 @@ var BeCal = function(contentdivid)
 		
 		// create the title. It contains an input field and an audio record button.
 		var title ='<div id="'+BeCal.divNameEditTitle+'" onmouseover="statusfromvalue(\'#'+BeCal.inputNameEventTitle+'\')" onmouseout="status(\'\')">';
-			title+='<span id="audioRecordBtn" class="audioRecordBtn audio_not_recording" onclick="audioSwitchRecording()"></span><input type="text" id="'+BeCal.inputNameEventTitle+'" class="becalInputEventName" placeholder="Titel hinzufügen"></input>';
+			title+='<span id="audioRecordBtn" class="audioRecordBtn audio_not_recording" onclick="audioSwitchRecording()"></span><input type="text" id="'+BeCal.inputNameEventTitle+'" onclick="audioPlaySelectedEvent()" class="becalInputEventName" placeholder="Titel hinzufügen"></input>';
 		title+='</div>'; //<div id="'+BeCal.divNameShowTitle+'" class="becalInputEventName"> EVENT TITLE </div>';
 		
 		// create the window.
@@ -1348,7 +1360,7 @@ var BeCal = function(contentdivid)
 				txt+='<a href="javascript:" class="becalBadBtn becalDeleteBtn" onclick="BeCal.deleteEventBtnPressed()"></a>&nbsp;';
 				txt+='<a href="javascript:" class="becalOkBtn becalEditBtn" onclick="BeCal.editEventBtnInTodoOverlayPressed()"></a>';
 		txt+='</nobr></div></div>';
-		$('#'+BeCal.divNameOverlay).jdCreateWindow(BeCal.updateTodoWindow,100,100,180,60, "Todo..", txt);
+		$('#'+BeCal.divNameOverlay).jdCreateWindow(BeCal.updateTodoWindow,100,100,180,60, '<div onclick="audioPlaySelectedEvent()">Todo..</div>', txt);
 		showTodoBtn();
 		
 		// *************************************************************

@@ -38,6 +38,7 @@
 	position: relative;
 	width: 100%;
 	height: 100%;
+	/*border: 2px solid #FF00FF;*/
 }
 
 /* the overlay with the UI stuff on it. */
@@ -624,4 +625,19 @@ input[type=checkbox]:checked:after
 {
 	text-decoration: none;
 	color: FFFFFA;
+}
+
+/* fullscreen and scrolling classes. */
+.fullscreen
+{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	/*border: 1px solid #FF0000;*/
+}
+
+.scrollvertical
+{
+	overflow-x: hidden;
+	overflow-y: auto;
 }
