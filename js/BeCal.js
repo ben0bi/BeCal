@@ -93,7 +93,7 @@ function audioRecord()
 		
 		// create a data blob with the audio chunks.
 		mediaRecorder.addEventListener("stop", () => {
-			const audioBlob = new Blob(audioChunks);
+			const audioBlob = new Blob(audioChunks,{type: 'audio/wav'});
 			const audioUrl = URL.createObjectURL(audioBlob);
 			//console.log("URL for recorded audio: "+audioUrl);
 			const audio = new Audio(audioUrl);
@@ -102,6 +102,8 @@ function audioRecord()
 			else
 				g_lastRecordedAudio=null;
 			g_audioRecorder = null;
+			
+			// maybe just save after stopping.
 			var s = g_audioDirectSave;
 			g_audioDirectSave = null;
 			if(s!=null)
@@ -161,7 +163,8 @@ function audioPlayFile(filename)
 	}
 	
 	console.log("Play AUDIO: DATA/AUDIO/"+filename);
-	g_singleAudio = new Audio("DATA/AUDIO/"+filename)
+	g_singleAudio = new Audio("DATA/AUDIO/"+filename);
+	g_singleAudio.play();
 }
 
 // DATE FUNCTIONS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -700,6 +703,7 @@ var BeCal = function(contentdivid)
 				console.log("Need to stop recording first.");
 				g_audioDirectSave=becalevt;
 				g_audioRecorder.stop();
+				return;
 				// maybe wait for the audiorecorder to stop.
 			}
 			
