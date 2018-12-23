@@ -124,6 +124,16 @@ class SQL
 		global $table_calendarevents;
 		return SQL::delete_from_table($table_calendarevents,'id',$id);
 	}
+	
+/* get the audio file of a specific event. DB connection must be established before. */
+	public static function get_audio_filename($id)
+	{
+		global $table_calendarevents;
+		$query = 'SELECT * FROM '.$table_calendarevents.' WHERE `id` = "'.$id.'"';
+		$result = SQL::query($query);		
+		$first=SQL::getFirstRow($result);
+		return $first->summary;
+	}
 
 /* Get all events between two dates. */
 	public static function getCalendarEventsBetween($startdate, $enddate)
