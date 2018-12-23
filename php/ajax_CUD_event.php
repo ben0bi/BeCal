@@ -39,8 +39,8 @@ if($CUD=='delete')
 	if($dbid>0)
 		SQL::query(SQL::delete_event($dbid));
 	else
-		echo ("Delete failed: DBID <= 0 [$dbid]");
-	echo("DB deletion done.");
+		echo (" Delete failed: DBID <= 0 [$dbid]");
+	echo(" DB deletion done.");
 }
 
 SQL::closeConnection();

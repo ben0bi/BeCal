@@ -165,6 +165,10 @@ input[type=checkbox]:checked:after
 	also the title of the show entry window. */
 .becalInputEventName
 {
+	position: absolute;
+	top: 0px;
+	left: 52px;
+	width: 380px;
 	font-family: 'calFont', sans-serif;
 	font-size: 15pt;
 	color: #FFFFFA;
@@ -172,9 +176,6 @@ input[type=checkbox]:checked:after
 	background-color: transparent;
 	border: 0;
 }
-
-/* this is the specific input for the title which has a width of 80%. */
-.w80 {width: 80%;}
 
 /* div with the duration of the event in the edit entry window. */
 .becalEntryDurationDiv

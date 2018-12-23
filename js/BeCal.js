@@ -1,4 +1,4 @@
-/* Ben0bis Calendar, V2. */
+ /* Ben0bis Calendar, V2. */
 
 // show and hide UI-blocker functions.
 function hideBlocker() {$('#blocker').hide();}
@@ -8,6 +8,8 @@ hideBlocker();
 // show a status
 var m_statustimer = null;
 var m_statusdirection = -1;
+
+// show a status in the status line at the bottom.
 function status(text) 
 {
 	if(m_statustimer!=null)
@@ -55,6 +57,82 @@ function status(text)
 	}
 }
 
+// show status with the value of a jquery entity.
+function statusfromvalue(jqueryid)
+{
+	var val=$(jqueryid).val();
+	status(val);
+}
+
+// SPEECH RECORDING
+var g_audioRecorder = null;
+var g_lastRecordedAudio = null; // you need to reset that when nothing happens.
+function audioRecord()
+{
+	// Stolen from:
+	// https://medium.com/@bryanjenningz/how-to-record-and-play-audio-in-javascript-faa1b2b3e49b
+	navigator.mediaDevices.getUserMedia({audio: true}).then(stream =>
+	{
+		// maybe stop and save a previous recording.
+		audioStopRecord();
+
+		// show stop button.
+		$('.audioRecordBtn').removeClass('audio_not_recording');
+		$('.audioRecordBtn').addClass('audio_recording');	
+		
+		const mediaRecorder = new MediaRecorder(stream);
+		g_audioRecorder = mediaRecorder;
+
+		mediaRecorder.start();
+		const audioChunks = [];
+		
+		// add data to the chunks.
+		mediaRecorder.addEventListener("dataavailable", event => {audioChunks.push(event.data);});
+		
+		// create a data blob with the audio chunks.
+		mediaRecorder.addEventListener("stop", () => {
+			const audioBlob = new Blob(audioChunks);
+			const audioUrl = URL.createObjectURL(audioBlob);
+			//console.log("URL for recorded audio: "+audioUrl);
+			const audio = new Audio(audioUrl);
+			if(g_lastRecordedAudio!=-1)
+				g_lastRecordedAudio = audio;
+			else
+				g_lastRecordedAudio=null;
+			g_audioRecorder = null;
+			audio.play();
+		});
+	});
+}
+
+function audioStopRecord()
+{
+	$('.audioRecordBtn').removeClass('audio_recording');
+	$('.audioRecordBtn').addClass('audio_not_recording');
+	if(g_audioRecorder!=null){
+		g_audioRecorder.stop();
+		// it resets itself after the stop event.
+	}else{
+		g_audioRecorder=null;
+		g_lastRecordedAudio=null;
+	}
+}
+
+function audioSwitchRecording()
+{
+	if(g_audioRecorder==null)
+	{	
+		audioRecord()
+	}else{
+		audioStopRecord();
+	}
+}
+
+function audioReset()
+{
+	g_lastRecordedAudio=-1;
+	audioStopRecord();
+}
 // DATE FUNCTIONS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 // this function is copied from stackoverflow. It calculates the days between two dates.
@@ -582,17 +660,23 @@ var BeCal = function(contentdivid)
 		// create SQL strings from the dates.
 		var d1 = Date.toSQL(becalevt.startDate);
 		var d2 = Date.toSQL(becalevt.endDate);
+		
+		// save the audio too.
+		var lastAudio=0;
+		if(g_lastRecordedAudio!=null)
+			lastAudio=g_lastRecordedAudio;
 	
 		// set up the php request.
 		var url = 'php/ajax_CUD_event.php';
 		var data = {dbid: becalevt.getDBID(),
+					CUD: 'create',
 					startdate: d1,
 					enddate: d2,
 					title: becalevt.title,
 					summary: becalevt.summary,
 					color: becalevt.color,
-					eventtype: becalevt.eventtype,
-					CUD: 'create'};			// the CUD event to do.
+					eventtype: becalevt.eventtype
+					};			// the CUD event to do.
 					// ^if CUD == 'create', it will create OR update an object.
 					// if CUD == 'delete', it will delete the object.
 		
@@ -600,6 +684,16 @@ var BeCal = function(contentdivid)
 		var success = function(data)
 		{
 			console.log("CUD event result:" +data);
+			
+			// maybe save the audio, too.
+			if(g_lastRecordedAudio!=null)
+			{
+				console.log("There is some audio which also should be saved...");
+				
+				// TODO: Save audio.
+				
+				audioReset();
+			}
 			m_renderDate=me.render(m_renderDate);
 			// hideBlocker(); render will load all events and show blocker in the meanwhile
 		}
@@ -1161,9 +1255,9 @@ var BeCal = function(contentdivid)
 		txt+='<div class="becalEntryDurationDiv"></div>';
 		txt+='</div>';
 		
-		// create the title.
-		var title ='<div id="'+BeCal.divNameEditTitle+'">';
-			title+='<input type="text" id="'+BeCal.inputNameEventTitle+'" class="becalInputEventName w80" placeholder="Titel hinzufügen"></input>';
+		// create the title. It contains an input field and an audio record button.
+		var title ='<div id="'+BeCal.divNameEditTitle+'" onmouseover="statusfromvalue(\'#'+BeCal.inputNameEventTitle+'\')" onmouseout="status(\'\')">';
+			title+='<span id="audioRecordBtn" class="audioRecordBtn audio_not_recording" onclick="audioSwitchRecording()"></span><input type="text" id="'+BeCal.inputNameEventTitle+'" class="becalInputEventName" placeholder="Titel hinzufügen"></input>';
 		title+='</div>'; //<div id="'+BeCal.divNameShowTitle+'" class="becalInputEventName"> EVENT TITLE </div>';
 		
 		// create the window.
@@ -1304,14 +1398,14 @@ var BeCal = function(contentdivid)
 		
 		$('#AnyTime--'+BeCal.inputNameDate2).hide();
 		$('#AnyTime--'+BeCal.inputNameTime2).hide();	
-	}
+	};
 	
 	// undo the unconstrain on todos.
 	this.UNunconstrainDateTimeInput = function()
 	{
 		m_isChangingDateInput = false;
 		constrainDateInput();
-	}
+	};
 	
 	// show the duration between the two dates on the edit/show event window.
 	var m_blockEntryDuration = false;
@@ -1488,9 +1582,10 @@ var BeCal = function(contentdivid)
 	{
 		// hide all time picker windows.
 		$(".AnyTime-win").each(function(){$(this).hide();});
-	
+		
 		$('#'+BeCal.otherEntriesWindow).hide();
-		$('#'+BeCal.editEntryWindow).hide();	
+		$('#'+BeCal.editEntryWindow).hide();
+		$('#'+BeCal.updateTodoWindow).hide();
 	};
 	
 	// change color of top bar in the entry/show window.
@@ -1544,6 +1639,8 @@ var BeCal = function(contentdivid)
 	// open the edit entry dialog.
 	this.openEditDialog = function(datefieldid)
 	{
+		audioReset();
+		
 		// hide the intermediary interface window.
 		$('#'+BeCal.updateTodoWindow).hide();
 
@@ -1588,6 +1685,9 @@ var BeCal = function(contentdivid)
 	m_selectedEvent = null;
 	this.openEventViewDialog = function(eventid, afterintermediary=false)
 	{
+		// reset the audio recording.
+		audioReset();
+		
 		// hide the intermediary interface window.
 		$('#'+BeCal.updateTodoWindow).hide();
 		

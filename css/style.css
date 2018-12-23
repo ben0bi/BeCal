@@ -103,6 +103,35 @@ body
 	content: '\2610';
 }
 
+/* The audio record button. */
+.audioRecordBtn
+{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	display: inline-block;
+	width: 50px;
+	height: 100%;
+	font-size: 28pt;
+	background-color: #3333FF;
+	text-align: center;
+}
+.audioRecordBtn:hover
+{
+	background-color: #FFAA00;
+}
+
+.audio_not_recording:after
+{
+	content: '\1f3a4';
+}
+
+.audio_recording:after
+{
+	content: '\23F9';
+	color: #FF0000;
+}
+
 /* position of the todo check on the todo view. */
 .todocharpos
 {
