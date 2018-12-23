@@ -5,7 +5,9 @@
 
 //require __DIR__."/sql.php";
 if(isset($_FILES['file']) and !$_FILES['file']['error']){
-    $fname = "11" . ".wav";
+    
+	$fname=date('Y_m_d_H_i_s')."__".rand(1,10000).".wav";
+	//$fname = "11" . ".wav";
 	$fdir="../DATA/AUDIO/$fname";
 
 	// maybe remove previous file.

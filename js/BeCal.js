@@ -114,7 +114,7 @@ function audioRecord()
 // stop the audio recording.
 function audioStopRecord()
 {
-	console.log("Stopping recording audio.");
+	console.log("Stop recording audio.");
 	$('.audioRecordBtn').removeClass('audio_recording');
 	$('.audioRecordBtn').addClass('audio_not_recording');
 	if(g_audioRecorder!=null){
@@ -141,6 +141,29 @@ function audioReset()
 	g_lastRecordedAudio=-1;
 	audioStopRecord();
 }
+
+// play the audio of an event if there exists one.
+function audioPlayEvent(evt)
+{
+	if(evt.summary!=0 && evt.summary!="")
+		audioPlayFile(evt.summary);
+}
+
+// play an audio file.
+g_singleAudio = null;
+function audioPlayFile(filename)
+{
+	// maybe stop other sound.
+	if(g_singleAudio!=null)
+	{
+		g_singleAudio.pause();
+		g_singleAudio.currentTime=0;
+	}
+	
+	console.log("Play AUDIO: DATA/AUDIO/"+filename);
+	g_singleAudio = new Audio("DATA/AUDIO/"+filename)
+}
+
 // DATE FUNCTIONS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 // this function is copied from stackoverflow. It calculates the days between two dates.
@@ -1738,7 +1761,7 @@ var BeCal = function(contentdivid)
 	{
 		// reset the audio recording.
 		audioReset();
-		
+				
 		// hide the intermediary interface window.
 		$('#'+BeCal.updateTodoWindow).hide();
 		
@@ -1754,6 +1777,9 @@ var BeCal = function(contentdivid)
 			m_selectedEvent = null;
 			return; 
 		}
+
+		// maybe play the associated sound.
+		audioPlayEvent(evt);
 
 		// get the event type and set it to the checkboxes.
 		var eventtype = evt.eventtype;
