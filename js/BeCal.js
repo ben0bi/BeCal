@@ -67,6 +67,7 @@ function statusfromvalue(jqueryid)
 // SPEECH RECORDING
 var g_audioRecorder = null;
 var g_lastRecordedAudio = null; // you need to reset that when nothing happens.
+g_audioDirectSave=null;
 function audioRecord()
 {
 	// Stolen from:
@@ -75,6 +76,7 @@ function audioRecord()
 	{
 		// maybe stop and save a previous recording.
 		audioStopRecord();
+		console.log("Start recording audio..");
 
 		// show stop button.
 		$('.audioRecordBtn').removeClass('audio_not_recording');
@@ -96,17 +98,23 @@ function audioRecord()
 			//console.log("URL for recorded audio: "+audioUrl);
 			const audio = new Audio(audioUrl);
 			if(g_lastRecordedAudio!=-1)
-				g_lastRecordedAudio = audio;
+				g_lastRecordedAudio = audioBlob;
 			else
 				g_lastRecordedAudio=null;
 			g_audioRecorder = null;
+			var s = g_audioDirectSave;
+			g_audioDirectSave = null;
+			if(s!=null)
+				BeCal.DBsave(s);
 			audio.play();
 		});
 	});
 }
 
+// stop the audio recording.
 function audioStopRecord()
 {
+	console.log("Stopping recording audio.");
 	$('.audioRecordBtn').removeClass('audio_recording');
 	$('.audioRecordBtn').addClass('audio_not_recording');
 	if(g_audioRecorder!=null){
@@ -654,18 +662,69 @@ var BeCal = function(contentdivid)
 	};
 	
 	// save an event to the DB.
+	this.DBsave = function(evt) {saveToDB(evt);};
 	var saveToDB = function(becalevt)
 	{
 		showBlocker();
+		// maybe stop audio
+		//audioStopRecord(false);
+		// maybe save the audio first.
+		if(g_lastRecordedAudio!=null || g_audioRecorder!=null)
+		{
+			console.log("Saving AUDIO:");
+			if(g_audioRecorder!=null)
+			{
+				console.log("Need to stop recording first.");
+				g_audioDirectSave=becalevt;
+				g_audioRecorder.stop();
+				// maybe wait for the audiorecorder to stop.
+			}
+			
+			// get the audio blob.
+			var lastAudio=0;
+			if(g_lastRecordedAudio!=null)
+				lastAudio=g_lastRecordedAudio;
+
+			// set up the php request.
+			var url = 'php/ajax_save_audiofile.php';
+		
+			// success function for audio saving.
+			var audioprocessed = function(data)
+			{
+				console.log(" CUD audiofile result:" +data);
+				if(data!="ERROR: AUDIO NOT SAVED!")
+					becalevt.summary = data; // set the audio filename.
+				// save the event after the audio was saved.
+				saveToDB_afteraudio(becalevt);
+				// hideBlocker(); render will load all events and show blocker in the meanwhile
+				audioReset();
+			}
+		
+			var data = new FormData();
+			data.append('file', lastAudio);
+
+			$.ajax({
+				url :  url,
+				type: 'POST',
+				data: data,
+				contentType: false,
+				processData: false,
+				success: audioprocessed,
+				error: audioprocessed
+			});
+		}else{
+			// there is no audio, just save the event.
+			saveToDB_afteraudio(becalevt);
+			audioReset();
+		}
+	}
+	
+	function saveToDB_afteraudio(becalevt)
+	{
 		// create SQL strings from the dates.
 		var d1 = Date.toSQL(becalevt.startDate);
 		var d2 = Date.toSQL(becalevt.endDate);
-		
-		// save the audio too.
-		var lastAudio=0;
-		if(g_lastRecordedAudio!=null)
-			lastAudio=g_lastRecordedAudio;
-	
+
 		// set up the php request.
 		var url = 'php/ajax_CUD_event.php';
 		var data = {dbid: becalevt.getDBID(),
@@ -685,26 +744,17 @@ var BeCal = function(contentdivid)
 		{
 			console.log("CUD event result:" +data);
 			
-			// maybe save the audio, too.
-			if(g_lastRecordedAudio!=null)
-			{
-				console.log("There is some audio which also should be saved...");
-				
-				// TODO: Save audio.
-				
-				audioReset();
-			}
 			m_renderDate=me.render(m_renderDate);
 			// hideBlocker(); render will load all events and show blocker in the meanwhile
 		}
-
+		
 		$.ajax({
 			type: 'POST',
 			url: url,
 			data: data,
 			success: success,
 			dataType: 'text'
-		});		
+		});
 	}
 
 	// save an event to the DB.
@@ -1348,9 +1398,10 @@ var BeCal = function(contentdivid)
 	// use unconstrain if it is a todo.
 	var constrainDateInput = function()
 	{
+		// some other "thread" is already changing this stuff.
 		if(m_isChangingDateInput)
 		{
-			console.log("already changing");
+			//console.log("already changing");
 			return;
 		}
 		m_isChangingDateInput=true;
@@ -1945,6 +1996,13 @@ BeCal.setStateMonth = function()
 		BeCal.instance.setStateMonth();
 };
 
+// extern save to db for audio file.
+BeCal.DBsave = function(evt)
+{
+	if(BeCal.instance!=null)
+		BeCal.instance.DBsave(evt);
+};
+
 
 // the todo checkbox was checked, do something.
 BeCal.checkBoxTodo = function(invert=false)
@@ -1984,14 +2042,14 @@ BeCal.editEventBtnInTodoOverlayPressed =function()
 {
 	if(BeCal.instance!=null)
 		BeCal.instance.editEventBtnInTodoOverlayPressed();
-}
+};
 
 // update only the type of an event.
 BeCal.updateEventType = function(evtid, evttype)
 {
 	if(BeCal.instance!=null)
 		BeCal.instance.updateEventType(evtid, evttype);
-}
+};
 
 // TEXT MONTH NAMES ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
