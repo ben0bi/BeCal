@@ -64,10 +64,11 @@ function statusfromvalue(jqueryid)
 	status(val);
 }
 
-// SPEECH RECORDING
+// AUDIO FUNCTIONS +++++++++++++++ SPEECH RECORDING +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 var g_audioRecorder = null;
 var g_lastRecordedAudio = null; // you need to reset that when nothing happens.
 g_audioDirectSave=null;
+g_playLastRecord = true; // play the last recorded audio or not?
 function audioRecord()
 {
 	// Stolen from:
@@ -108,14 +109,18 @@ function audioRecord()
 			g_audioDirectSave = null;
 			if(s!=null)
 				BeCal.DBsave(s);
-			audio.play();
+			// maybe play the audio.
+			if(g_playLastRecord)
+				audio.play();
 		});
 	});
 }
 
 // stop the audio recording.
-function audioStopRecord()
+function audioStopRecord(doplay = true)
 {
+	g_playLastRecord = doplay;
+
 	console.log("Stop recording audio.");
 	$('.audioRecordBtn').removeClass('audio_recording');
 	$('.audioRecordBtn').addClass('audio_not_recording');
@@ -138,17 +143,17 @@ function audioSwitchRecording()
 	}
 }
 
-function audioReset()
+function audioReset(doplay = true)
 {
 	g_lastRecordedAudio=-1;
-	audioStopRecord();
+	audioStopRecord(doplay);
 }
 
 // play the audio of an event if there exists one.
 function audioPlayEvent(evt)
 {
-	if(evt.summary!=0 && evt.summary!="")
-		audioPlayFile(evt.summary);
+	if(evt.audiofile!=0 && evt.audiofile!="")
+		audioPlayFile(evt.audiofile);
 }
 
 function audioPlaySelectedEvent()
@@ -286,6 +291,7 @@ var BeCalEvent = function()
 	// ENTRY DATA
 	this.title = "Ohne Titel";				// title of the event.
 	this.summary = "";						// summary of the event. (NOT YET USED)
+	this.audiofile="";						// if there is some audio, it is linked to this variable per filename.
 	this.startDate = new Date();			// start date of the event.
 	this.endDate = new Date();				// end date of the event.
 	this.color = BeCal.eventDefaultColor;	// color of the event bars.
@@ -298,13 +304,14 @@ var BeCalEvent = function()
 	this.getID = function() {return m_id;};	// return the unique id.
 	
 	// create the event.
-	this.create = function(start, end, newtype, newtitle, newsummary="", newcolor = "") 
+	this.create = function(start, end, newtype, newtitle, newaudiofile="", newsummary="", newcolor = "") 
 	{
 		me.title = newtitle;
 		me.summary = newsummary;
 		me.startDate = new Date(start);
 		me.endDate = new Date(end);
 		me.eventtype = newtype;
+		me.audiofile = newaudiofile;
 		
 		if(newcolor=="")
 			me.color=BeCal.eventDefaultColor;
@@ -323,9 +330,9 @@ var BeCalEvent = function()
 	};
 	
 	// create the entry from a database entry. This sets the dbid to >0 and haschanged to false.
-	this.createFromDB = function(dbid,start, end, newtype, newtitle, newsummary, newcolor)
+	this.createFromDB = function(dbid,start, end, newtype, newtitle, newaudiofile, newsummary, newcolor)
 	{
-		me.create(start, end, newtype, newtitle, newsummary, newcolor);
+		me.create(start, end, newtype, newtitle, newaudiofile, newsummary, newcolor);
 		m_dbID = dbid;
 		//m_hasChanged = false;
 	};
@@ -605,6 +612,7 @@ var BeCal = function(contentdivid)
 			{
 				var spc =""
 				var evttype = evt.eventtype;
+				// maybe add the summary to the status.
 				if(evt.summary!="")
 					spc=" ";
 				
@@ -631,7 +639,7 @@ var BeCal = function(contentdivid)
 			var endd = new Date(d.enddate);
 			//console.log(i+":"+d.title+" from "+d.startdate+" to "+d.enddate);
 			//console.log(" -> from "+startd+" to "+endd);
-			me.createDBEvent(d.id, startd, endd,d.eventtype, d.title, d.summary, d.color);
+			me.createDBEvent(d.id, startd, endd,d.eventtype, d.title, d.audiofile, d.summary, d.color);
 		}
 	};
 	
@@ -727,7 +735,7 @@ var BeCal = function(contentdivid)
 			{
 				console.log(" CUD audiofile result:" +data);
 				if(data!="ERROR: AUDIO NOT SAVED!")
-					becalevt.summary = data; // set the audio filename.
+					becalevt.audiofile = data; // set the audio filename.
 				// save the event after the audio was saved.
 				saveToDB_afteraudio(becalevt);
 				// hideBlocker(); render will load all events and show blocker in the meanwhile
@@ -767,6 +775,7 @@ var BeCal = function(contentdivid)
 					enddate: d2,
 					title: becalevt.title,
 					summary: becalevt.summary,
+					audiofile: becalevt.audiofile,
 					color: becalevt.color,
 					eventtype: becalevt.eventtype
 					};			// the CUD event to do.
@@ -774,10 +783,9 @@ var BeCal = function(contentdivid)
 					// if CUD == 'delete', it will delete the object.
 		
 		// success function.
-		var success = function(data)
+		var aftersavemethod = function(data)
 		{
-			console.log("CUD event result:" +data);
-			
+			console.log("CUD event result:" +data);		
 			m_renderDate=me.render(m_renderDate);
 			// hideBlocker(); render will load all events and show blocker in the meanwhile
 		}
@@ -786,7 +794,8 @@ var BeCal = function(contentdivid)
 			type: 'POST',
 			url: url,
 			data: data,
-			success: success,
+			success: aftersavemethod,
+			error: aftersavemethod,
 			dataType: 'text'
 		});
 	}
@@ -805,6 +814,7 @@ var BeCal = function(contentdivid)
 					enddate: '0',
 					title: '0',
 					summary: '0',
+					audiofile: '0',
 					color: '0',
 					eventtype: 0,
 					CUD: 'delete'};			// the CUD event to do.
@@ -833,19 +843,19 @@ var BeCal = function(contentdivid)
 	this.clearEvents = function() {m_eventArray = new Array();};
 	
 	// create an event and add it to the list.
-	this.createEvent = function(startdate, enddate, eventtype, title, summary="", color = "")
+	this.createEvent = function(startdate, enddate, eventtype, title, audiofile="", summary="", color = "")
 	{
 		var e = new BeCalEvent();
-		e.create(startdate, enddate, eventtype, title, summary, color);
+		e.create(startdate, enddate, eventtype, title, audiofile, summary, color);
 		m_eventArray.push(e);
 		return e;
 	};
 	
 	// create an event from the DB.
-	this.createDBEvent = function(dbid, startdate, enddate, eventtype, title, summary="", color="")
+	this.createDBEvent = function(dbid, startdate, enddate, eventtype, title, audiofile="", summary="", color="")
 	{
 		var e = new BeCalEvent();
-		e.createFromDB(dbid, startdate, enddate, eventtype, title, summary, color);
+		e.createFromDB(dbid, startdate, enddate, eventtype, title, audiofile, summary, color);
 		m_eventArray.push(e);
 		return e;
 	};
@@ -973,8 +983,9 @@ var BeCal = function(contentdivid)
 					txt+='<span class="todocharpos haken" onclick="BeCal.updateEventType('+e.getID()+', 1)"></span> <span class="becalTodoText becalTodoDone" onclick="BeCal.openEventViewDialog('+e.getID()+')">';
 				}
 				
+				// maybe add audio icon.
 				var audio="";
-				if(e.summary!="" && e.summary!=null)
+				if(e.audiofile!="" && e.audiofile!=null)
 					audio='<span class="todoDisplay_has_audio_file"></span>&nbsp;';
 				
 				// create the text for the entry.
@@ -1679,6 +1690,7 @@ var BeCal = function(contentdivid)
 		// hide all time picker windows.
 		$(".AnyTime-win").each(function(){$(this).hide();});
 		
+		audioReset(false);
 		$('#'+BeCal.otherEntriesWindow).hide();
 		$('#'+BeCal.editEntryWindow).hide();
 		$('#'+BeCal.updateTodoWindow).hide();
@@ -1736,7 +1748,7 @@ var BeCal = function(contentdivid)
 	this.openEditDialog = function(datefieldid)
 	{
 		$('#eventView_has_audio_file').hide();
-		audioReset();
+		//audioReset(); // it will stop on hideallwindows in showwindowpos.
 		
 		// hide the intermediary interface window.
 		$('#'+BeCal.updateTodoWindow).hide();
@@ -1783,7 +1795,7 @@ var BeCal = function(contentdivid)
 	this.openEventViewDialog = function(eventid, afterintermediary=false)
 	{
 		// reset the audio recording.
-		audioReset();
+		//audioReset(); // it will stop on hideallwindows in showwindowpos.
 				
 		// hide the intermediary interface window.
 		$('#'+BeCal.updateTodoWindow).hide();
@@ -1802,7 +1814,7 @@ var BeCal = function(contentdivid)
 		}
 
 		// show or hide the speaker icon. TODO: audio in table.
-		if(evt.summary!=null && evt.summary!="")
+		if(evt.audiofile!=null && evt.audiofile!="")
 			$('#eventView_has_audio_file').show();
 		else
 			$('#eventView_has_audio_file').hide();
@@ -1895,7 +1907,8 @@ var BeCal = function(contentdivid)
 		var todo = $('#'+BeCal.inputNameCheckTodo).prop('checked');
 		if(todo==true)
 			evttype=1;
-		e.create(start, end, evttype, $('#'+BeCal.inputNameEventTitle).val(), "", this.newEntryColor);
+		
+		e.create(start, end, evttype, $('#'+BeCal.inputNameEventTitle).val(), "", "", this.newEntryColor);
 		m_eventArray.push(e);
 	
 		$('#'+BeCal.editEntryWindow).hide();
@@ -1938,11 +1951,11 @@ var BeCal = function(contentdivid)
 		if(eventtype!=-1)
 			m_selectedEvent.eventtype = eventtype;
 
-		saveToDB(m_selectedEvent);
-		m_selectedEvent = null;
-		
 		$('#'+BeCal.editEntryWindow).hide();
 		$('#'+BeCal.updateTodoWindow).hide();
+
+		saveToDB(m_selectedEvent);
+		m_selectedEvent = null;
 		
 		$('#'+BeCal.inputNameEventTitle).val("");
  	};
@@ -1950,14 +1963,13 @@ var BeCal = function(contentdivid)
 	// delete a selected element.
 	this.deleteEventBtnPressed = function()
 	{
+		hideAllWindows();		
+		$('#'+BeCal.inputNameEventTitle).val("");
+
 		// selectedevent will be set when you click on an existing event.
 		if(m_selectedEvent!=null)
 			removeFromDB(m_selectedEvent);
 		m_selectedEvent = null;
-		
-		$('#'+BeCal.editEntryWindow).hide();
-		$('#'+BeCal.updateTodoWindow).hide();
-		$('#'+BeCal.inputNameEventTitle).val("");
 	};
 	
 	// INIT

@@ -17,6 +17,7 @@ while($row=mysqli_fetch_object($result))
 {
 	$row->title=SQL::SQLtoText($row->title);
 	$row->summary=SQL::SQLtoText($row->summary);
+	$row->audiofile=SQL::SQLtoText($row->audiofile);
 	$arr[] = $row;
 }
 

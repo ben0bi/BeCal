@@ -137,13 +137,18 @@ body
 #eventView_has_audio_file
 {
 	position: absolute;
-	top: 0px;
-	left: 0px;
-	background-color: transparent;
+	top: 24px;
+	right: 78px;
+	background-color: #000033;
+	color: #000000;
+	border-radius: 5px;
+	border: 2px solid #FFAA00;
 	z-index: 10;
-	width: 25px;
-	height: 25px;
-	font-size: 12pt;
+	width: 20px;
+	height: 20px;
+	text-align: center;
+	font-size: 10pt;
+	z-index: 10;
 	pointer-events: none;
 }
 #eventView_has_audio_file:after {content: '\1F50A';}
@@ -152,12 +157,12 @@ body
 .todoDisplay_has_audio_file
 {
 	display: inline-block;
-	font-size: 12pt;
-	top: -3px;
-	height: 25px;
-	width: 25px;
+	font-size: 10pt;
+	height: 20px;
+	width: 20px;
 	text-align: center;
-	background-color: #FFAA00;
+	background-color: #000033;
+	border: 2px solid #FFAA00;
 	border-radius: 5px;
 }
 .todoDisplay_has_audio_file:after {content: '\1F50A';}

@@ -99,23 +99,25 @@ class SQL
 /* Create and update queries */
 
 // create a new calendar event.
-	public static function insert_event($title, $startdate, $enddate, $eventtype, $color, $summary)
+	public static function insert_event($title, $startdate, $enddate, $eventtype, $color, $audiofile ,$summary)
 	{
 		global $table_calendarevents;
 		//$createdate=date('Y-m-d H:i:s');
 		$title=SQL::textToSQL($title);
 		$summary=SQL::textToSQL($summary);
-		return "INSERT INTO ".$table_calendarevents.' (`title`, `startdate`, `enddate`, `eventtype`, `color`, `summary`) VALUES("'.$title.'", "'.$startdate.'", "'.$enddate.'", "'.$eventtype.'", "'.$color.'", "'.$summary.'");';
+		$audiofile=SQL::textToSQL($audiofile);
+		return "INSERT INTO ".$table_calendarevents.' (`title`, `startdate`, `enddate`, `eventtype`, `color`, `summary`, `audiofile`) VALUES("'.$title.'", "'.$startdate.'", "'.$enddate.'", "'.$eventtype.'", "'.$color.'", "'.$summary.'", "'.$audiofile.'");';
 	}
 
 // update an existing calendar event.
-	public static function update_event($dbid, $title, $startdate, $enddate, $eventtype, $color, $summary)
+	public static function update_event($dbid, $title, $startdate, $enddate, $eventtype, $color, $audiofile, $summary)
 	{
 		global $table_calendarevents;
 		//$createdate=date('Y-m-d H:i:s');
 		$title=SQL::textToSQL($title);
 		$summary=SQL::textToSQL($summary);
-		return 'UPDATE '.$table_calendarevents.' SET `title` = "'.$title.'", `startdate` = "'.$startdate.'", `enddate` = "'.$enddate.'", `eventtype` = "'.$eventtype.'", `color` = "'.$color.'", `summary` = "'.$summary.'" WHERE `id` = "'.$dbid.'";';
+		$audiofile=SQL::textToSQL($audiofile);
+		return 'UPDATE '.$table_calendarevents.' SET `title` = "'.$title.'", `startdate` = "'.$startdate.'", `enddate` = "'.$enddate.'", `eventtype` = "'.$eventtype.'", `color` = "'.$color.'", `summary` = "'.$summary.'", `audiofile` = "'.$audiofile.'" WHERE `id` = "'.$dbid.'";';
 	}
 	
 /* delete an event. */
@@ -132,7 +134,7 @@ class SQL
 		$query = 'SELECT * FROM '.$table_calendarevents.' WHERE `id` = "'.$id.'"';
 		$result = SQL::query($query);		
 		$first=SQL::getFirstRow($result);
-		return $first->summary;
+		return $first->audiofile;
 	}
 
 /* Get all events between two dates. */

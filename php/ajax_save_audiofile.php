@@ -10,13 +10,15 @@ if(isset($_FILES['file']) and !$_FILES['file']['error']){
 	//$fname = "11" . ".wav";
 	$fdir="../DATA/AUDIO/$fname";
 
-	// maybe remove previous file.
+	// maybe remove a file with the same name (unwanted because of unique ids)
 	if(file_exists($fdir)) {
 		chmod($fdir,0755); //Change the file permissions if allowed
 		unlink($fdir); //remove the file
 	}
 	
+	// copy the file to the new location.
     move_uploaded_file($_FILES['file']['tmp_name'], $fdir);
+	// return the new filename.
 	echo($fname);
 }else{echo("ERROR: AUDIO NOT SAVED!");}
 ?>
