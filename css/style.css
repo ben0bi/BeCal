@@ -132,6 +132,36 @@ body
 	color: #FF0000;
 }
 
+/* show that the event has an audio file associated to it. */
+/* this is the icon in the event view window. */
+#eventView_has_audio_file
+{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	background-color: transparent;
+	z-index: 10;
+	width: 25px;
+	height: 25px;
+	font-size: 12pt;
+	pointer-events: none;
+}
+#eventView_has_audio_file:after {content: '\1F50A';}
+
+/* The icon on a line in the todo display. */
+.todoDisplay_has_audio_file
+{
+	display: inline-block;
+	font-size: 12pt;
+	top: -3px;
+	height: 25px;
+	width: 25px;
+	text-align: center;
+	background-color: #FFAA00;
+	border-radius: 5px;
+}
+.todoDisplay_has_audio_file:after {content: '\1F50A';}
+
 /* position of the todo check on the todo view. */
 .todocharpos
 {

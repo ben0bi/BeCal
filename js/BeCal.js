@@ -611,9 +611,9 @@ var BeCal = function(contentdivid)
 				if(evttype==0)	// event
 					status(Date.toShortDate(evt.startDate)+" "+Date.toShortTime(evt.startDate)+" => "+Date.toShortDate(evt.endDate)+" "+Date.toShortTime(evt.endDate)+" : "+evt.title+spc+evt.summary);
 				if(evttype==1) // TODO not done
-					status("<span class=\"statuscharpos kreuz\"></span>  &nbsp;TODO: "+evt.title+spc+evt.summary+" bis am "+Date.toShortDate(evt.endDate)+" "+Date.toShortTime(evt.endDate));
+					status("<span class=\"statuscharpos kreuz\"></span> &nbsp;TODO: "+evt.title+spc+evt.summary+" bis am "+Date.toShortDate(evt.endDate)+" "+Date.toShortTime(evt.endDate));
 				if(evttype==2) // Done TODO
-					status("<span class=\"statuscharpos haken\"></span>  ERLEDIGT: "+evt.title+spc+evt.summary+" am "+Date.toShortDate(evt.startDate)+" "+Date.toShortTime(evt.startDate));
+					status("<span class=\"statuscharpos haken\"></span> &nbsp;ERLEDIGT: "+evt.title+spc+evt.summary+" am "+Date.toShortDate(evt.startDate)+" "+Date.toShortTime(evt.startDate));
 			}
 		}else{
 			status("");
@@ -965,7 +965,7 @@ var BeCal = function(contentdivid)
 					tdyfound = 2;
 				}
 				
-				txt+='<div class="becalTodo">';
+				txt+='<div class="becalTodo" onmouseover="BeCalEvent.eventMouseOver('+e.getID()+')">';
 				if(e.eventtype==1)
 				{
 					txt+='<span class="todocharpos kreuz" onclick="BeCal.updateEventType('+e.getID()+', 2)"></span> <span class="becalTodoText becalTodoNotDone" onclick="BeCal.openEventViewDialog('+e.getID()+')">';
@@ -973,8 +973,12 @@ var BeCal = function(contentdivid)
 					txt+='<span class="todocharpos haken" onclick="BeCal.updateEventType('+e.getID()+', 1)"></span> <span class="becalTodoText becalTodoDone" onclick="BeCal.openEventViewDialog('+e.getID()+')">';
 				}
 				
+				var audio="";
+				if(e.summary!="" && e.summary!=null)
+					audio='<span class="todoDisplay_has_audio_file"></span>&nbsp;';
+				
 				// create the text for the entry.
-				txt+=end.getDate()+"."+(end.getMonth()+1)+"."+end.getFullYear()+": "+e.title+"</span></div>";
+				txt+=end.getDate()+"."+(end.getMonth()+1)+"."+end.getFullYear()+": "+audio+e.title+"</span></div>";
 			}
 			
 			txt+="</div>";
@@ -1346,7 +1350,9 @@ var BeCal = function(contentdivid)
 		
 		// create the title. It contains an input field and an audio record button.
 		var title ='<div id="'+BeCal.divNameEditTitle+'" onmouseover="statusfromvalue(\'#'+BeCal.inputNameEventTitle+'\')" onmouseout="status(\'\')">';
-			title+='<span id="audioRecordBtn" class="audioRecordBtn audio_not_recording" onclick="audioSwitchRecording()"></span><input type="text" id="'+BeCal.inputNameEventTitle+'" onclick="audioPlaySelectedEvent()" class="becalInputEventName" placeholder="Titel hinzufügen"></input>';
+			title+='<div id="eventView_has_audio_file"></div>'; // the speaker icon.
+			title+='<span id="audioRecordBtn" class="audioRecordBtn audio_not_recording" onclick="audioSwitchRecording()"></span>';
+			title+='<input type="text" id="'+BeCal.inputNameEventTitle+'" onclick="audioPlaySelectedEvent()" class="becalInputEventName" placeholder="Titel hinzufügen"></input>';
 		title+='</div>'; //<div id="'+BeCal.divNameShowTitle+'" class="becalInputEventName"> EVENT TITLE </div>';
 		
 		// create the window.
@@ -1729,6 +1735,7 @@ var BeCal = function(contentdivid)
 	// open the edit entry dialog.
 	this.openEditDialog = function(datefieldid)
 	{
+		$('#eventView_has_audio_file').hide();
 		audioReset();
 		
 		// hide the intermediary interface window.
@@ -1794,6 +1801,12 @@ var BeCal = function(contentdivid)
 			return; 
 		}
 
+		// show or hide the speaker icon. TODO: audio in table.
+		if(evt.summary!=null && evt.summary!="")
+			$('#eventView_has_audio_file').show();
+		else
+			$('#eventView_has_audio_file').hide();
+		
 		// maybe play the associated sound.
 		audioPlayEvent(evt);
 
