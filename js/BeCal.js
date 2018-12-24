@@ -599,6 +599,9 @@ var BeCal = function(contentdivid)
 	var m_renderDate = new Date();	// previously BeCal.globalToday
 	this.getRenderDate = function() {return m_renderDate;};
 	
+	// the actual view for the todos.
+	var m_actualTodoView = 2; // 1 = alle, 2 = not done, 0 = done
+		
 	// color for a new entry.
 	this.newEntryColor = BeCal.eventDefaultColor;
 	
@@ -937,10 +940,15 @@ var BeCal = function(contentdivid)
 	{
 		// build menu.
 		var mt = "";
+		var actTodo = "#unset";
+		if(m_actualTodoView==0) actTodo= "DONE";
+		if(m_actualTodoView==1) actTodo= "ALLE";
+		if(m_actualTodoView==2) actTodo= "TODO";
+
 		mt = '<div id="'+BeCal.divNameTopbarDate+'">TO-DOs</div>';
 		mt+='<div id="'+BeCal.divNameTopbarAdvancer+'">';
 			mt+='<span class="becalAdvanceBtn">&nbsp;</span>';
-			mt+='<a href="javascript:" class="becalAdvanceBtn becalBtn" onclick="BeCal.switchTodoView();">ALLE</a>&nbsp;';
+			mt+='<a href="javascript:" class="becalAdvanceBtn becalBtn" onclick="BeCal.switchTodoView();">'+actTodo+'</a>&nbsp;';
 			mt+='<a href="javascript:" class="becalAdvanceBtn becalBtn" onclick="BeCal.setStateMonth();">-&gt; Kalender</a>';
 //			mt+='<a href="javascript:" class="becalAdvanceBtn" onclick="BeCal.advanceMonth(1);">&nbsp;&gt;&nbsp;</a>';
 		mt+='</div>';
@@ -962,6 +970,12 @@ var BeCal = function(contentdivid)
 			for(var i = 0;i<entries.length;i++)
 			{
 				var e = entries[i];
+				
+				// maybe ommit this entry.
+				if((e.eventtype==2 && m_actualTodoView==2) ||
+					(e.eventtype==1 && m_actualTodoView==0))
+					continue;
+				
 				var end = new Date(e.endDate);
 				if(end>=now && tdyfound==0)
 				{
@@ -975,7 +989,7 @@ var BeCal = function(contentdivid)
 					tdyfound = 2;
 				}
 				
-				txt+='<div class="becalTodo" onmouseover="BeCalEvent.eventMouseOver('+e.getID()+')">';
+				txt+='<div class="becalTodo" onmouseover="BeCalEvent.eventMouseOver('+e.getID()+')" onmouseout="status(\'\')">';
 				if(e.eventtype==1)
 				{
 					txt+='<span class="todocharpos kreuz" onclick="BeCal.updateEventType('+e.getID()+', 2)"></span> <span class="becalTodoText becalTodoNotDone" onclick="BeCal.openEventViewDialog('+e.getID()+')">';
@@ -998,6 +1012,15 @@ var BeCal = function(contentdivid)
 			$('#'+BeCal.divNameContent).html(txt);
 		});		
 	};
+	
+	// switch between the todos.
+	this.switchTodoView = function()
+	{
+		m_actualTodoView++;
+		if(m_actualTodoView>2)
+			m_actualTodoView=0;
+		m_renderDate=me.render(m_renderDate);
+	}
 	
 	// update only the event type for an event.
 	this.updateEventType=function(eventid, eventtype)
@@ -2070,6 +2093,12 @@ BeCal.DBsave = function(evt)
 		BeCal.instance.DBsave(evt);
 };
 
+// switch between the 3 todo states.
+BeCal.switchTodoView = function()
+{
+	if(BeCal.instance!=null)
+		BeCal.instance.switchTodoView();
+};
 
 // the todo checkbox was checked, do something.
 BeCal.checkBoxTodo = function(invert=false)
