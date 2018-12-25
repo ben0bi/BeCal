@@ -1,4 +1,4 @@
- /* Ben0bis Calendar, V2. */
+ /* Ben0bis Calendar, V2.5 */
 
 // show and hide UI-blocker functions.
 function hideBlocker() {$('#blocker').hide();}
@@ -8,6 +8,9 @@ hideBlocker();
 // show a status
 var m_statustimer = null;
 var m_statusdirection = -1;
+
+/* set another css file to a link with an id. */
+function switchCSS(cssid, newcssfilename) {$('#'+cssid).attr('href', 'css/'+newcssfilename);}
 
 // show a status in the status line at the bottom.
 function status(text) 
@@ -1369,6 +1372,8 @@ var BeCal = function(contentdivid)
 			txt+='<div class="becalEditButtonDiv" id="'+BeCal.divNameEditContainer+'">';
 				txt+='<a href="javascript:" class="becalOkBtn becalEditBtn" onclick="BeCal.createNewEventBtnPressed()"></a>';
 			txt+='</div>';
+			
+			//TEST txt+='<a href="javascript:" onclick="switchCSS(\'customstyle\',\'style_minimal.css\')">CS</a>';
 			
 			// NEW: just the buttons for the show (update, not create) stuff, not more.
 			txt+='<div class="becalEditButtonDiv" id="'+BeCal.divNameShowContainer+'"><nobr>';

@@ -3,21 +3,26 @@
   font-family: 'calFont';
   font-style: normal;
   font-weight: 400;
-  src: url('../fonts/PressStart2P.ttf');
+/*  src: url('../fonts/PressStart2P.ttf'); */
 }
 
 @font-face {
   font-family: 'calFontSmall_Bold';
   font-style: normal;
   font-weight: 400;
-  src: url('../fonts/Play-Bold.ttf');
+  /* src: url('../fonts/Play-Bold.ttf'); */
 }
 
 @font-face {
   font-family: 'calFontSmall';
   font-style: normal;
   font-weight: 400;
-  src: url('../fonts/Play-Regular.ttf');
+  /* src: url('../fonts/Play-Regular.ttf'); */
+}
+
+html, body
+{
+	font-family: 'calFont', sans-serif;
 }
 
 body
@@ -30,34 +35,25 @@ body
 /* background when the calendar is on. */
 .calendarBackground
 {
-	background: url('../img/calendar_background.jpg');
-	background-repeat: no-repeat;
-	background-size: cover;	
+	background-color: #003300;
 }
 
 /* background when the todo state is on. */
 .todoBackground
 {
-	background: url('../img/todo_background.jpg');
-	background-repeat: no-repeat;
-	background-size: cover;
+	background-color: #000033;
 }
 
 /* background for the edit window and stuff. */
 .becalWindow
 {
-	width: 100%;
-	height: 100%;
-	background-image: url('../img/bg_repeat.png');
+	background-color: #000033;
 }
 
 /* this one blocks the whole content when someting will be made with the db. */
 #blocker
 {
 	background-color: #663300;
-	background: url('../img/blocker_background.png');
-	background-repeat: repeat;
-	/*background-size: 100% 100%;*/
 }
 
 /* the calendar top bar menu */
@@ -78,7 +74,7 @@ body
 }
 #todocheckboxdiv:hover
 {
-	color: #FFAA00 !important;
+	color: #33AAFF !important;
 }
 
 /* The TODO checkbox content. */
