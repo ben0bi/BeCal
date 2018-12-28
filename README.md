@@ -1,6 +1,8 @@
 # BeCal
 Onfline Calendar: You can set it up on your own server and use it locally.
 
+See the screenshot "becalscreenshot.png" above.
+
 I use(d) the google calendar but there you cannot change the theme and this white is way to bright.
 Also, I cannot find any documentation about gapi.client.calendar anywhere, just this weird json calls I cannot figure out how to use. Why? Because in the example, they use gapi.client.calendar and not this json mentioned in their own documentation. I tried to download the reminders but I could not bring it to work. Also, I want to get offline soon, so I need a calendar on my own LAN server.
 
