@@ -1069,11 +1069,17 @@ var BeCal = function(contentdivid)
 		if(monthBeginDay > 0)
 			monthBegin.setDate(monthBegin.getDate() - monthBeginDay);
 		
+		// how many week lines do we render?
+		var linecount = 5;
+		// only add a line if the monthbeginday is >= wednesday and month is not february.
+		if(monthBeginDay>3 && myMonth!=1)
+			linecount = 6;
+		
 		// get and set width and height.
 		var cc = $('#'+BeCal.divNameContent);
 		cc.height(window.innerHeight-$('#'+BeCal.divNameTopMenu).height()-$('#'+BeCal.divNameStatus).height()-12);
 		
-		var calFieldHeight = (cc.height()-calDayNameFieldHeight)*0.2;	//x * 0.2 = x / 5
+		var calFieldHeight = (cc.height()-calDayNameFieldHeight)* (1.0/linecount);	//x * 0.2 = x / 5
 		var calFieldWidth =cc.width()*(1.0/7.0);
 		
 		var txt="";
@@ -1104,7 +1110,7 @@ var BeCal = function(contentdivid)
 		endScreenDate.setHours(23);
 		endScreenDate.setMinutes(59);
 		endScreenDate.setSeconds(59);
-		for(weeks=0;weeks<5;weeks++)
+		for(weeks=0;weeks<linecount;weeks++)
 		{  
 			for(days=0;days<7;days++)
 			{
@@ -1117,7 +1123,7 @@ var BeCal = function(contentdivid)
 				// set classes.
 				var cl="";
 				if(days==6) cl=" becalLastCalField";
-				if(weeks==4) cl+=" becalLowestCalField";
+				if(weeks==linecount-1) cl+=" becalLowestCalField";
 				if(Date.compareOnlyDate(realToday, mydate)==true)
 					cl+=" becalToday";
 				var dt = mydate.getDate();
@@ -1775,6 +1781,9 @@ var BeCal = function(contentdivid)
 	// open the edit entry dialog.
 	this.openEditDialog = function(datefieldid)
 	{
+		// reset the selected event.
+		m_selectedEvent = null;
+		
 		$('#eventView_has_audio_file').hide();
 		//audioReset(); // it will stop on hideallwindows in showwindowpos.
 		
