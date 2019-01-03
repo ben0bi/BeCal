@@ -119,20 +119,20 @@ class SQL
 		$audiofile=SQL::textToSQL($audiofile);
 		return 'UPDATE '.$table_calendarevents.' SET `title` = "'.$title.'", `startdate` = "'.$startdate.'", `enddate` = "'.$enddate.'", `eventtype` = "'.$eventtype.'", `color` = "'.$color.'", `summary` = "'.$summary.'", `audiofile` = "'.$audiofile.'" WHERE `id` = "'.$dbid.'";';
 	}
-	
+
 /* delete an event. */
 	public static function delete_event($id)
 	{
 		global $table_calendarevents;
 		return SQL::delete_from_table($table_calendarevents,'id',$id);
 	}
-	
+
 /* get the audio file of a specific event. DB connection must be established before. */
 	public static function get_audio_filename($id)
 	{
 		global $table_calendarevents;
 		$query = 'SELECT * FROM '.$table_calendarevents.' WHERE `id` = "'.$id.'"';
-		$result = SQL::query($query);		
+		$result = SQL::query($query);
 		$first=SQL::getFirstRow($result);
 		return $first->audiofile;
 	}
@@ -144,7 +144,7 @@ class SQL
 
 		SQL::openConnection();
 //		$query = 'SELECT * FROM '.$table_calendarevents.' WHERE `startdate` <= "'.$enddate.'" AND `enddate` >= "'.$startdate.'"';
-		$query = 'SELECT * FROM '.$table_calendarevents.' WHERE `startdate` <= "'.$enddate.'" AND (`enddate` >= "'.$startdate.'" OR `eventtype` = "1")';
+		$query = 'SELECT * FROM '.$table_calendarevents.' WHERE (`startdate` <= "'.$enddate.'" AND `enddate` >= "'.$startdate.'") OR `eventtype` = "1"';
 		$result = SQL::query($query);
 		SQL::closeConnection();
 		return $result;
@@ -162,7 +162,7 @@ class SQL
 		return $result;
 	}
 */
-	
+
 	/* Get all TODO-events. */
 	public static function getAllTodos()
 	{
@@ -174,7 +174,7 @@ class SQL
 		SQL::closeConnection();
 		return $result;
 	}
-	
+
 /* Global Queries */
 	public static function delete_from_table($tablename,$what, $value)
 		{return 'DELETE FROM '.$tablename.' WHERE `'.$what.'` = "'.$value.'";';}

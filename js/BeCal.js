@@ -891,7 +891,7 @@ var BeCal = function(contentdivid)
 	
 	// get the actual date and draw the screen with the given state.
 	this.getToday = function() {m_renderDate = this.render(new Date());};
-	
+
 	// render the screen and return the globaltoday.
 	this.render = function(renderdate)
 	{
@@ -1038,11 +1038,11 @@ var BeCal = function(contentdivid)
 		e.eventtype=eventtype;
 		saveToDB(e);
 	};
-	
+
 	// render a month screen.
 	var createMonthDisplay = function(renderdate)
 	{
-		var realToday = Date.removeTime(new Date());		
+		var realToday = Date.removeTime(new Date());
 		var calDayNameFieldHeight = 26;	// height of the top bar with the names of the days in it.
 		var calStatusFieldHeight = 26; // height of the bottom bar with the status text in it.
 
@@ -1056,32 +1056,32 @@ var BeCal = function(contentdivid)
 			mt+='<a href="javascript:" class="becalAdvanceBtn becalBtn" onclick="BeCal.setStateTodos();">-&gt; To-Do\'s</a>';
 		mt+='</div>';
 		$('#'+BeCal.divNameTopMenu).html(mt);
-		
+
 		// get the month begin.
 		var myMonth = renderdate.getMonth();
 		var monthBegin = new Date(renderdate.getFullYear(), myMonth, 1, 1, 1, 10, 0);
 
 		// set the return date to month begin.
 		var returnDate = Date.removeTime(monthBegin);
-		
+
 		// maybe move the date some way backward.
 		var monthBeginDay = monthBegin.getDay();
 		if(monthBeginDay > 0)
 			monthBegin.setDate(monthBegin.getDate() - monthBeginDay);
-		
+
 		// how many week lines do we render?
 		var linecount = 5;
 		// only add a line if the monthbeginday is >= wednesday and month is not february.
 		if(monthBeginDay>3 && myMonth!=1)
 			linecount = 6;
-		
+
 		// get and set width and height.
 		var cc = $('#'+BeCal.divNameContent);
 		cc.height(window.innerHeight-$('#'+BeCal.divNameTopMenu).height()-$('#'+BeCal.divNameStatus).height()-12);
-		
+
 		var calFieldHeight = (cc.height()-calDayNameFieldHeight)* (1.0/linecount);	//x * 0.2 = x / 5
 		var calFieldWidth =cc.width()*(1.0/7.0);
-		
+
 		var txt="";
 		// create the day name fields.
 		txt+='<div class="becalDayField" style="top: 0px; left: 0px;"><div class="becalDayNumber">&nbsp;So.</div></div>';
@@ -1091,15 +1091,15 @@ var BeCal = function(contentdivid)
 		txt+='<div class="becalDayField" style="top: 0px; left: '+(calFieldWidth*4)+'px;"><div class="becalDayNumber">&nbsp;Do.</div></div>';
 		txt+='<div class="becalDayField" style="top: 0px; left: '+(calFieldWidth*5)+'px;"><div class="becalDayNumber">&nbsp;Fr.</div></div>';
 		txt+='<div class="becalDayField becalLastCalField" style="top: 0px; left: '+(calFieldWidth*6)+'px;"><div class="becalDayNumber">&nbsp;Sa.</div></div>';
-	
+
 		// create the day fields.
 		m_datefieldArray = new Array();
-	
+
 		// calculate the slots-per-field.
 		m_maxEventSlots = 0;
 		if(calFieldHeight-BeCal.calendarFieldTopHeight>0)
 		m_maxEventSlots = parseInt((calFieldHeight-BeCal.calendarFieldTopHeight) / BeCal.eventSlotHeight)-1; // one is left for the multievent link.
-	
+
 		if(m_maxEventSlots<0)
 			m_maxEventSlots=0;
 
@@ -1111,7 +1111,7 @@ var BeCal = function(contentdivid)
 		endScreenDate.setMinutes(59);
 		endScreenDate.setSeconds(59);
 		for(weeks=0;weeks<linecount;weeks++)
-		{  
+		{
 			for(days=0;days<7;days++)
 			{
 				// set the date.
@@ -1129,13 +1129,13 @@ var BeCal = function(contentdivid)
 				var dt = mydate.getDate();
 				if(mydate.getDate()==1)
 					dt+=". "+BeCal.monthNames[mydate.getMonth()];
-			
+
 				// create the day field.
 				var f = new BeCalDayField(mydate,posX,posY,calFieldWidth, calFieldHeight, m_maxEventSlots);
 				// and push it to the array.
 				m_datefieldArray.push(f);
 				var id=m_datefieldArray.length-1; // id is the last index.
-		
+
 				// add some html
 				txt+='<div class="becalField'+cl+'" style="top:'+posY+'px; left: '+posX+'px;" onclick="BeCal.openEditDialog('+id+');">';
 				txt+='<div class="becalDayNumber">&nbsp;'+dt+'</div>';
@@ -1147,13 +1147,13 @@ var BeCal = function(contentdivid)
 
 		// clear the content
 		$('#'+BeCal.divNameContent).html("");
-	
+
 		// load the events asyncronous.
 		loadEventsBetween(startScreenDate, endScreenDate, function()
 		{
 			// create all the event bars.
 			var sortedFields = sortEventsByLength(startScreenDate, endScreenDate);
-			
+
 			ac = 0;
 			for(e=0;e<sortedFields.length;e++)
 			{
@@ -1162,10 +1162,10 @@ var BeCal = function(contentdivid)
 				// create the month bar and add it to the html text.
 				txt+=event.createMonthBars(me);
 			}
-	
+
 			// create the html.
 			$('#'+BeCal.divNameContent).html(txt);
-		
+
 			// create width and height.
 			$(".becalDayField").each(function()
 			{
@@ -1176,7 +1176,7 @@ var BeCal = function(contentdivid)
 				$(this).width(calFieldWidth);
 				$(this).height(calFieldHeight);
 			});
-		
+
 			// set hidden event numbers.
 			for(i=0;i<m_datefieldArray.length;i++)
 			{
@@ -1190,30 +1190,30 @@ var BeCal = function(contentdivid)
 					$('#becalDayHiddenEvtWrapper_'+i).hide();
 				}
 			}
-		
+
 			// stop hidden events from clicking through
 			$('.becalDayHiddenEvents').click(function(e) {e.stopPropagation();});
 		});
-		
+
 		return returnDate;
 	};
-	
+
 	// sort all the events of the calendar by length. longest first.
 	var sortEventsByLength = function(startDate, endDate)
 	{
 		//console.log("Sorting between "+startDate+" / "+endDate);
 		var arr = new Array();
 		var entries = m_eventArray;
-		
+
 		// first get all entries in range.
-		// only push the timed events first.	
+		// only push the timed events first.
 		for(var i = 0;i<entries.length;i++)
 		{
 			var e = entries[i];
 			if(e.eventtype==0 && e.startDate<=endDate && e.endDate>=startDate)
 				arr.push(e);
 		}
-	
+
 		// now sort them all by length.
 		var arr2 = new Array();
 		if(arr.length>1)
@@ -1227,10 +1227,10 @@ var BeCal = function(contentdivid)
 				{
 					var a1 = arr[i];
 					var a2 = arr[i+1];
-				
+
 					var d1 = Date.daysBetween(a1.startDate, a1.endDate);
 					var d2 = Date.daysBetween(a2.startDate, a2.endDate);
-				
+
 					// maybe switch the values.
 					if(d2 > d1) // the more days, the further up we go.
 					{
@@ -1243,12 +1243,12 @@ var BeCal = function(contentdivid)
 				}
 			}
 		}
-		
+
 		// at last push the todos, so they do not inflict on the length.
 		for(var i = 0;i<entries.length;i++)
 		{
 			var e = entries[i];
-			if(e.eventtype==1 && e.endDate<=endDate && e.endDate>=startDate)
+			if(e.eventtype==1 && e.endDate<=endDate) // && e.endDate>=startDate)
 				arr.push(e);
 		}
 
