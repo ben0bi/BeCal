@@ -20,20 +20,20 @@ function status(text)
 		clearInterval(m_statustimer);
 		m_statustimer = null;
 	}
-	
+
 	var txt='<span id="statusadvancer"><nobr>&nbsp;'+text+'&nbsp;</nobr></span>';
 	var statusdiv = $('#'+BeCal.divNameStatus);
 	statusdiv.html(txt);
-	
+
 	if(text.length>0)
 	{
 		statusdiv.removeClass("becalStatusOff");
 		statusdiv.addClass("becalStatusOn");
 	}else{
 		statusdiv.removeClass("becalStatusOn");
-		statusdiv.addClass("becalStatusOff");		
+		statusdiv.addClass("becalStatusOff");
 	}
-	
+
 	// move it only when the width is bigger.
 	var l1 = $('#statusadvancer').width();
 	var l2= statusdiv.width();
@@ -47,14 +47,14 @@ function status(text)
 			var wcontent= $('#'+BeCal.divNameStatus).width();
 			left = parseInt(left);
 			//console.log("left: "+left);
-			
+
 			left = left + m_statusspeed*m_statusdirection;
-			
+
 			if(left+adv.width()<=wcontent-10)
 				m_statusdirection = 1;
 			if(left>=0)
 				m_statusdirection=-1;
-			
+
 			adv.css('left', left+'px');
 		},30);
 	}
@@ -339,10 +339,10 @@ var BeCalEvent = function()
 		m_dbID = dbid;
 		//m_hasChanged = false;
 	};
-	
+
 	// create the bar div and return it.
 	var getBarDivText=function(text, x,y,width, height, addclass = "")
-	{		
+	{
 		var txt='<div onclick="BeCal.openEventViewDialog('+m_id+');" onmouseover="BeCalEvent.eventMouseOver('+m_id+');" onmouseout="BeCalEvent.eventMouseOver('+m_id+', true);" class="becalEventBar '+addclass+' becalEventMouseOut evt_'+m_id+'" style="background-color:'+me.color+'; top:'+y+'px; left:'+x+'px; width:'+width+'px; height:'+height+'px;">'+text+'</div>';
 		return txt;
 	};
@@ -351,12 +351,12 @@ var BeCalEvent = function()
 	this.createMonthBars=function(calendar)
 	{
 		var dayfields = calendar.getDateFields();	// get the day fields from the calendar.
-		
-		var posX=0;							// x position to calculate with.
-		var posY=0;							// y position to calculate with.
-		var realPosY=0;						// the real y position.
-		//var realPosX = 0;					// the real x position.
-		var width=0;						// the bar width.
+
+		var posX=0;					// x position to calculate with.
+		var posY=0;					// y position to calculate with.
+		var realPosY=0;					// the real y position.
+		//var realPosX = 0;				// the real x position.
+		var width=0;					// the bar width.
 		var height=BeCal.eventBarHeight;	// the bar height.
 
 		var result = "";	// the returning html text.
@@ -369,10 +369,10 @@ var BeCalEvent = function()
 		lastDay.setHours(23);
 		lastDay.setMinutes(59);
 		lastDay.setSeconds(59);
-		
+
 		var evtStartDay = Date.removeTime(me.startDate);					// start date of the event.
 		var evtEndDay = Date.removeTime(me.endDate);						// end date of the event.
-		
+
 		// check if event is a todo. If so, maybe adjust dates.
 		if(me.eventtype==1 || me.eventtype==2)
 		{
@@ -382,55 +382,55 @@ var BeCalEvent = function()
 			evtStartDay = new Date(evtEndDay);
 			evtEndDay.setHours(evtStartDay.getHours()+1);
 		}
-		
+
 		var actualdate = new Date(evtStartDay);								// actual date for the bars.
 		var mydayfield=dayfields[0];										// field on table for the actual date.
-		
+
 		// get a free slot between the two dates.
 		var myslot = calendar.getFreeSlotBetween(evtStartDay,evtEndDay, true);
-		
+
 		// check if event is on table.
 		if(evtStartDay>lastDay || evtEndDay<firstDay || myslot<0)
 		{
 			//console.log("-- event not on table or no free slot found --");
 			return result;
 		}
-		
+
 		var processed =0;
 		var turn = 0;
 		//console.log("+++ Listing Event +++");
-		
+
 		var done = false;
 		var firstone = true; // if this is set, it will add a border div to id.
-		
+
 		// check if it is a todo.
 		pretext="";
 		if(me.eventtype==1)
 			pretext="(X)&nbsp;";
-		
+
 		while(!done)
-		{	
+		{
 			turn+=1;
 			// the date is in the future, abort.
 			if(actualdate>evtEndDay)
 				return result;
-	
+
 			// adjust actual date to begin of table.
 			if(actualdate<firstDay)
 				actualdate = new Date(firstDay);
 
 			// get the remaining days between the two dates.
 			var remainingDays = Date.daysBetween(actualdate, evtEndDay);
-			
+
 			//console.log("------ Turn "+turn+" -------------------------");
 			//console.log("Event lasts "+remainingDays+" day/s.\nStart: "+evtStartDay+"\nEnd: "+evtEndDay+"\nActual: "+actualdate);
-		
+
 			// get the dayfield for the actual date.
 			if(actualdate>=firstDay)
 				mydayfield = calendar.getDayField(actualdate);
 			else
 				mydayfield=dayfields[0];
-		
+
 			// check if the dayfield was found.
 			if(mydayfield==0)
 			{
@@ -444,11 +444,11 @@ var BeCalEvent = function()
 			posY = mydayfield.top;
 			//realPosX = posX;
 			realPosY=mydayfield.top+BeCal.calendarFieldTopHeight+(myslot*BeCal.eventSlotHeight);
-			
+
 			width = 0;
-		
+
 			//console.log("X: "+parseInt(posX)+" Y: "+parseInt(posY));
-			
+
 			var r = remainingDays;
 			var newline=false;
 			width-=5; // include padding into the width.
@@ -456,7 +456,7 @@ var BeCalEvent = function()
 			{
 				var nd = Date.removeTime(actualdate);
 				nd.setDate(nd.getDate()+w);
-				
+
 				var newdayfield = calendar.getDayField(nd);
 				if(newdayfield!=0)
 				{
@@ -488,13 +488,13 @@ var BeCalEvent = function()
 					}
 				}else{
 					console.log("(2) Dayfield not found for date: "+nd.toString());
-					actualdate=Date.removeTime(nd);			
+					actualdate=Date.removeTime(nd);
 					break;
 				}
 			}
-			
+
 			// * add the last div.
-			
+
 			// add the start marker.
 			if(firstone==true && evtStartDay>=firstDay)
 			{
@@ -503,17 +503,17 @@ var BeCalEvent = function()
 				width-=5;
 				firstone = false;
 			}
-			
+
 			// add the end marker.
 			if(evtEndDay<=lastDay)
 			{
-				width-=10;			
+				width-=10;
 				result += getBarDivText("", posX+width-4, realPosY, 10, height, "becalEventMarker");
 			}
-			
+
 			// add the last bar (see above)
 			result += getBarDivText(pretext+this.title, posX, realPosY, width, height, "becalEventNoBorder");
-			
+
 			if(remainingDays<=0 && !newline)
 				done=true;
 		}
@@ -553,7 +553,7 @@ var BeCalDayField = function(day,x,y,w,h,slotcount)
 	this.left = x;
 	this.width = w;
 	this.height = h;
-	
+
 	// the slots are used to draw events above each other.
 	var slots = new Array(slotcount);
 	this.hiddenEventCount = 0;
@@ -563,7 +563,7 @@ var BeCalDayField = function(day,x,y,w,h,slotcount)
 		for(i=0;i<slots.length;i++)
 			slots[i]=false;
 	}
-	
+
 	// return a slot.
 	this.isSlotOccupied = function(index)
 	{
@@ -888,7 +888,7 @@ var BeCal = function(contentdivid)
 		}
 		return 0;
 	};
-	
+
 	// get the actual date and draw the screen with the given state.
 	this.getToday = function() {m_renderDate = this.render(new Date());};
 
@@ -912,16 +912,16 @@ var BeCal = function(contentdivid)
 		console.log("FATAL RENDER ERROR!");
 		return null;
 	};
-	
+
 	// remove all backgrounds from the content.
 	var setBackground = function(newbackgroundclass)
 	{
 		$(m_contentDivID).removeClass("calendarBackground");
 		$(m_contentDivID).removeClass("todoBackground");
-		
+
 		$(m_contentDivID).addClass(newbackgroundclass);
 	}
-	
+
 	// initialize the TODO-display.
 	this.setStateMonth = function()
 	{
@@ -929,7 +929,7 @@ var BeCal = function(contentdivid)
 		m_renderstate = "month";
 		this.render(m_renderDate);
 	};
-	
+
 	// initialize the TODO-display.
 	this.setStateTodos = function()
 	{
@@ -937,7 +937,7 @@ var BeCal = function(contentdivid)
 		m_renderstate = "todos";
 		this.render(m_renderDate);
 	};
-	
+
 	// render the todos.
 	var createTodoDisplay = function()
 	{
@@ -961,7 +961,7 @@ var BeCal = function(contentdivid)
 		var cc = $('#'+BeCal.divNameContent);
 		cc.height(window.innerHeight-$('#'+BeCal.divNameTopMenu).height()-$('#'+BeCal.divNameStatus).height()-12);
 		cc.html("");
-		
+
 		loadTodos(function()
 		{
 			var txt='<div class="fullscreen scrollvertical"><br />';
@@ -973,25 +973,25 @@ var BeCal = function(contentdivid)
 			for(var i = 0;i<entries.length;i++)
 			{
 				var e = entries[i];
-				
+
 				// maybe ommit this entry.
 				if((e.eventtype==2 && m_actualTodoView==2) ||
 					(e.eventtype==1 && m_actualTodoView==0))
 					continue;
-				
+
 				var end = new Date(e.endDate);
 				if(end>=now && tdyfound==0)
 				{
 					txt+="<hr />++++ HEUTE: "+now.getDate()+"."+(now.getMonth()+1)+"."+now.getFullYear()+" ++++"
 					tdyfound=1;
 				}
-				
+
 				if(end>=now && Date.compareOnlyDate(end,now)==false && tdyfound==1)
 				{
 					txt+="<hr/>"
 					tdyfound = 2;
 				}
-				
+
 				txt+='<div class="becalTodo" onmouseover="BeCalEvent.eventMouseOver('+e.getID()+')" onmouseout="status(\'\')">';
 				if(e.eventtype==1)
 				{
@@ -999,23 +999,23 @@ var BeCal = function(contentdivid)
 				}else{
 					txt+='<span class="todocharpos haken" onclick="BeCal.updateEventType('+e.getID()+', 1)"></span> <span class="becalTodoText becalTodoDone" onclick="BeCal.openEventViewDialog('+e.getID()+')">';
 				}
-				
+
 				// maybe add audio icon.
 				var audio="";
 				if(e.audiofile!="" && e.audiofile!=null)
 					audio='<span class="todoDisplay_has_audio_file"></span>&nbsp;';
-				
+
 				// create the text for the entry.
 				txt+=end.getDate()+"."+(end.getMonth()+1)+"."+end.getFullYear()+": "+audio+e.title+"</span></div>";
 			}
-			
+
 			txt+="</div>";
-			
+
 			// create the html.
 			$('#'+BeCal.divNameContent).html(txt);
-		});		
+		});
 	};
-	
+
 	// switch between the todos.
 	this.switchTodoView = function()
 	{
@@ -1024,7 +1024,7 @@ var BeCal = function(contentdivid)
 			m_actualTodoView=0;
 		m_renderDate=me.render(m_renderDate);
 	}
-	
+
 	// update only the event type for an event.
 	this.updateEventType=function(eventid, eventtype)
 	{
@@ -1254,7 +1254,7 @@ var BeCal = function(contentdivid)
 
 		return arr;
 	};
-	
+
 	// return a slot index number which is free on all days between the two dates.
 	// returns -1 if no slot was found.
 	this.getFreeSlotBetween = function(date1, date2, occupyslots=false)
@@ -1264,14 +1264,14 @@ var BeCal = function(contentdivid)
 		// get start and end on the fields.
 		var startField = fields[0];
 		var endField = fields[fields.length-1];
-	
+
 		var startFieldDate = startField.date;
 		var endFieldDate = endField.date;
-	
+
 		// the indexes for checking the slots.
 		var startIndex = 0;
 		var endIndex = fields.length-1;
-	
+
 		// dates are out of scope.
 		if(date1>endFieldDate)
 			return -1;
@@ -1285,11 +1285,11 @@ var BeCal = function(contentdivid)
 			if(Date.compareOnlyDate(date1,f.date)==true)
 				startIndex = i;
 			if(Date.compareOnlyDate(date2,f.date)==true)
-				endIndex = i;			
+				endIndex = i;
 		}
 
 		//console.log("IDX: "+startIndex+" to "+endIndex);
-		
+
 		// now check for all slots.
 		var returnslot = -1;
 		for(slot=0;slot<m_maxEventSlots;slot++)
@@ -1310,7 +1310,7 @@ var BeCal = function(contentdivid)
 				break; // break the first for.
 			}
 		}
-	
+
 		// maybe occupy the found slot.
 		if(occupyslots==true || occupyslots>=1)
 		{
@@ -1325,11 +1325,12 @@ var BeCal = function(contentdivid)
 				}
 			}
 		}
-	
+
 		//console.log("Returning slot: "+returnslot);
 		return returnslot;
 	}
-	
+
+	// show the "a" todo button (?)
 	var showTodoBtn = function(isdone=false)
 	{
 		$('#BecalTodoDOBtn').hide();
@@ -1339,7 +1340,7 @@ var BeCal = function(contentdivid)
 		else
 			$('#BecalTodoDONEBtn').show();
 	}
-	
+
 	// create the (static) UI of the calendar app.
 	var createUI = function()
 	{
@@ -1350,7 +1351,7 @@ var BeCal = function(contentdivid)
 		txt+='<div id="'+BeCal.divNameStatus+'"></div>';
 		txt+='<div id="'+BeCal.divNameOverlay+'"></div>';	// the overlay for the jdoor windows.
 		$(m_contentDivID).html(txt);
-		
+
 		// create the windows.
 		// create the html for the edit entry view.
 		txt="";
@@ -1368,38 +1369,38 @@ var BeCal = function(contentdivid)
 			txt+='<div id="'+BeCal.divNameColorPicker+'">';
 				txt+='<input id="'+BeCal.inputNameColorPicker+'" />';
 			txt+='</div>';
-			
+
 			// the todo checkbox
 			txt+='<div id="todocheckboxdiv" onclick="BeCal.checkBoxTodo(true)">';
 			txt+='<nobr><input id="'+BeCal.inputNameCheckTodo+'" onclick="BeCal.checkBoxTodo(true)" class="check-todo" type="checkbox" value="unchecked" />';
 			txt+='<span class="TodoCheckName eventname"></span></nobr></div>';
-			
+
 			// the edit button container.
 			txt+='<div class="becalEditButtonDiv" id="'+BeCal.divNameEditContainer+'">';
 				txt+='<a href="javascript:" class="becalOkBtn becalEditBtn" onclick="BeCal.createNewEventBtnPressed()"></a>';
 			txt+='</div>';
-			
+
 			//TEST txt+='<a href="javascript:" onclick="switchCSS(\'customstyle\',\'style_minimal.css\')">CS</a>';
-			
+
 			// NEW: just the buttons for the show (update, not create) stuff, not more.
 			txt+='<div class="becalEditButtonDiv" id="'+BeCal.divNameShowContainer+'"><nobr>';
 				txt+='<a href="javascript:" class="becalBadBtn becalDeleteBtn" onclick="BeCal.deleteEventBtnPressed()"></a>&nbsp;';
 				txt+='<a href="javascript:" class="becalOkBtn becalEditBtn" onclick="BeCal.updateEventBtnPressed()"></a>';
 			txt+='</nobr></div>';
-			
+
 		txt+='</div>';
-		
+
 		// show the duration of the event.
 		txt+='<div class="becalEntryDurationDiv"></div>';
 		txt+='</div>';
-		
+
 		// create the title. It contains an input field and an audio record button.
 		var title ='<div id="'+BeCal.divNameEditTitle+'" onmouseover="statusfromvalue(\'#'+BeCal.inputNameEventTitle+'\')" onmouseout="status(\'\')">';
 			title+='<div id="eventView_has_audio_file"></div>'; // the speaker icon.
 			title+='<span id="audioRecordBtn" class="audioRecordBtn audio_not_recording" onclick="audioSwitchRecording()"></span>';
 			title+='<input type="text" id="'+BeCal.inputNameEventTitle+'" onclick="audioPlaySelectedEvent()" class="becalInputEventName" placeholder="Titel hinzufügen"></input>';
 		title+='</div>'; //<div id="'+BeCal.divNameShowTitle+'" class="becalInputEventName"> EVENT TITLE </div>';
-		
+
 		// create the window.
 		$('#'+BeCal.divNameOverlay).jdCreateWindow(BeCal.editEntryWindow,100,100,500,220, title, txt);
 
@@ -1413,13 +1414,13 @@ var BeCal = function(contentdivid)
 		txt+='</nobr></div></div>';
 		$('#'+BeCal.divNameOverlay).jdCreateWindow(BeCal.updateTodoWindow,100,100,180,60, '<div onclick="audioPlaySelectedEvent()">Todo..</div>', txt);
 		showTodoBtn();
-		
+
 		// *************************************************************
 		// the other entries window.
 		title ="Weitere";
 		txt='<div id="'+BeCal.divNameOtherEntries+'"></div>';
 		$('#'+BeCal.divNameOverlay).jdCreateWindow(BeCal.otherEntriesWindow,100,100,200,-200, title, txt);
-		
+
 		// *************************************************************
 
 		// create the pickers on the inputs.
@@ -1427,7 +1428,7 @@ var BeCal = function(contentdivid)
 		AnyTime.picker( BeCal.inputNameTime1, { format: "%H:%i" } );
 		AnyTime.picker( BeCal.inputNameDate2, { format: "%a, %d. %b. %z", firstDOW: 0 } );
 		AnyTime.picker( BeCal.inputNameTime2, { format: "%H:%i" } );
-		
+
 		// create the color picker.
 		$('#'+BeCal.inputNameColorPicker).spectrum({
 			color: BeCal.eventDefaultColor,
@@ -1659,26 +1660,32 @@ var BeCal = function(contentdivid)
 		m_renderDate = this.render(dt);
 		return m_renderDate;
 	};
-	
+
 	// show the window with all hidden events for a dayfield.
 	this.showHiddenEventView=function(dayfieldid)
 	{
 		//console.log("DFID: "+dayfieldid);
 		hideAllWindows();
-		
+
 		// get windows and content and stuff.
 		var win = $('#'+BeCal.otherEntriesWindow);
 		var div = $('#'+BeCal.divNameOtherEntries);
 		var content = $('#'+BeCal.divNameOverlay);
-			
+
 		var dayfield = m_datefieldArray[dayfieldid];
+		var today = new Date();
+		today = Date.removeTime(today);
 		var txt='';
 		var count = 0;
 		for(var i=0;i<m_eventArray.length;i++)
 		{
 			var e = m_eventArray[i];
-			if(Date.removeTime(e.startDate)<=Date.removeTime(dayfield.date) && Date.removeTime(e.endDate)>=Date.removeTime(dayfield.date))
+			// check if the event is on the field or if it is a todo and its the
+			// today field and the todo is <= today.
+			if((Date.removeTime(e.startDate)<=Date.removeTime(dayfield.date) && Date.removeTime(e.endDate)>=Date.removeTime(dayfield.date))||
+			(e.eventtype==1 && e.endDate <= today && Date.removeTime(dayfield.date).toString() == today.toString()))
 			{
+				console.log("TDY: "+today+" dfd:"+Date.removeTime(dayfield.date));
 				txt+='<div id="becalHiddenEventDiv_'+e.getID()+'" class="becalHiddenEvent" style="background-color:'+e.color+';" onclick="BeCal.openEventViewDialog('+e.getID()+')">'+e.title+'</div>';
 				count+=1;
 			}
@@ -1690,21 +1697,21 @@ var BeCal = function(contentdivid)
 		var mouse = $().Mouse();
 		var mouseX = mouse.x;
 		var mouseY = mouse.y;
-		
+
 		// get some values.
 		var w = win.width();
 		var h = win.height();
 		var cw=content.width();
-		var ch=content.height();	
-	
+		var ch=content.height();
+
 		mouseY -= ($('#content').height()-ch)+h; // first is the top bar height, second is the window height.
-		
+
 		// constrain values
 		if(mouseX+w>cw)
 			mouseX=mouseX-w;
 		if(mouseY+h>ch)
 			mouseY=ch-h-4;
-		
+
 		if(mouseX<0)
 			mouseX=0;
 		if(mouseY<0)
@@ -1713,37 +1720,37 @@ var BeCal = function(contentdivid)
 		// set position
 		win.css('left', mouseX+'px');
 		win.css('top', mouseY+'px');
-		
+
 		win.jdShow();
 		win.focus();
 	};
-	
+
 	// hide all UI windows.
 	var hideAllWindows = function()
 	{
 		// hide all time picker windows.
 		$(".AnyTime-win").each(function(){$(this).hide();});
-		
+
 		audioReset(false);
 		$('#'+BeCal.otherEntriesWindow).hide();
 		$('#'+BeCal.editEntryWindow).hide();
 		$('#'+BeCal.updateTodoWindow).hide();
 	};
-	
+
 	// change color of top bar in the entry/show window.
 	var changeEntryWindowEvtColor=function(col)
 	{
 		//console.log("Changing entry window top bar color to "+col+".");
 		var entrywindow=$('#'+BeCal.editEntryWindow);
 		var topbar = entrywindow.find('.jdwindow-top');
-		topbar.css('background-color', col);	
+		topbar.css('background-color', col);
 	};
-	
+
 	// show the edit window.
 	var showWindowPos = function(windowtitle, posX, posY, entryWidth)
 	{
 		hideAllWindows();
-	
+
 		var win = $('#'+windowtitle);
 		var content = $('#'+BeCal.divNameOverlay);
 		var w = win.width();
