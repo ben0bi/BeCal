@@ -1,8 +1,11 @@
- /* Ben0bis Calendar, V2.5 */
+ /* Ben0bis Calendar, V2.5.1 */
+
+var becalVersion = "2.5.2";
+var g_becalDatabaseFile = "DATA/becaldatabase.json";
 
 // show and hide UI-blocker functions.
 function hideBlocker() {$('#blocker').hide();}
-function showBlocker() {$('#blocker').show();}
+function showBlocker(message = "Bitte warten, ich arbeite..") {$("#blockercontent").html(message);$('#blocker').show();}
 hideBlocker();
 
 // show a status
@@ -657,7 +660,11 @@ var BeCal = function(contentdivid)
 		// create SQL strings from the dates.
 		var d1 = Date.toSQL(startdate);
 		var d2 = Date.toSQL(enddate);
-	
+
+// NEW: LOAD FROM JSON	
+
+// XHEREX
+
 		// set up the php request.
 		var url = 'php/ajax_getEvents.php';
 		var data = {startdate: d1, enddate: d2};

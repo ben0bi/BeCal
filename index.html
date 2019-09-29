@@ -15,10 +15,14 @@
 <div id ="content" class="calendarBackground"></div>
 <div id="blocker"><div id="blockercontent">Bitte warten, ich arbeite..</div></div>
 
+<!-- external libs (except jdoor) -->
 <script src="js/jquery-3.3.1.min.js"></script>
-<script src="plugins/jdoor/jdoor.js"></script>
+<script src="plugins/jdoor/jdoor.js"></script> <!-- this is beni native, too (see below) -->
 <script src="plugins/anytime/anytime.5.2.0.js"></script>
 <script src="plugins/spectrum/spectrum.js"></script>
+
+<!-- benis native libraries -->
+<script src="js/gimli-parser.js"></script>
 <script src="js/BeCal.js"></script>
 
 <script>
@@ -36,6 +40,78 @@
 			audiofile - VARCHAR(255)
 */
 
+/* new >2.5.2: json database instead of sql database.
+	so, first creating the parser for gimli-parser.js
+*/
+
+// a calendar event with the values seen above.
+var GMLParser_CALEVENT = function()
+{
+	var me = this;
+	this.id = -1;
+	this.title = "";
+	this.startdate = new Date();
+	this.enddate = new Date();
+	this.userID = 0;	// not used yet.
+	this.eventtype = 0;
+	this.summary = "";
+	this.color = "";
+	this.audiofile = "";
+	
+	this.parseGML = function(json, rootPath)
+	{
+		if(__defined(json['ID']))
+			me.id = parseInt(json['ID']);
+		if(this.id=="NaN")
+			me.id = -1;
+		if(__defined(json['TITLE']))
+			me.title = json['TITLE'];
+		if(__defined(json['STARTDATE']))
+			me.startdate = new Date(json['STARTDATE']);
+		if(__defined(json['ENDDATE']))
+			me.enddate = new Date(json['ENDDATE']);
+		if(__defined(json['USERID']))
+			me.userID = new Date(json['USERID']);
+		if(__defined(json['EVENTTYPE']))
+			me.eventtype = json['EVENTTYPE'];
+		if(__defined(json['SUMMARY']))
+			me.summary = json['SUMMARY'];
+		if(__defined(json['COLOR']))
+			me.color = json['COLOR'];
+		if(__defined(json['AUDIOFILE']))
+			me.audiofile = json['AUDIOFILE'];
+	};
+};
+
+// the parser which parses all the events out of the json.
+var GMLParser_CALENDAREVENTS = function()
+{
+	var me = this;
+	this.events = [];
+	var clear = function() {me.events = [];};
+	var parseGML = function(json, rootPath)
+	{
+		if(__defined(json['EVENTS']))
+		{
+			for(var i=0;i<json['EVENTS'].length;i++)
+			{
+				var evt = new GMLParser_CALEVENT();
+				evt.parseGML(json['EVENTS'][i], rootPath);
+				if(evt.id>=0) // only add it to the list if an id is given.
+				{
+					me.events.push(evt);
+				}else{
+					log("Event with no-id or NaN-id found at list index "+i+"!", LOG_WARN);
+				}
+			}
+		}else{
+			log("No events in the given file found.", LOG_WARN);
+		}
+	};
+};
+
+GMLParser.addParser("CALEVENTS", new GMLParser_CALENDAREVENTS());
+
 // resize the window.
 $(window).resize(function(){BeCal.render();});
 $(document).ready(function()
@@ -47,10 +123,8 @@ $(document).ready(function()
 
 	// create the calendar.
 	var calendar = new BeCal('#content');
-	//loadEvents(calendar);
 	
 	calendar.getToday();
-	//loadEvents2(calendar,new Date(), new Date());
 });
 
 </script>
