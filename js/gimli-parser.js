@@ -245,7 +245,7 @@ function __shortenDirectory(longdir)
 	AllLoadedInitFunction();
 	
 */
-function __loadJSON(urlToFile, successFunction)
+function __loadJSON(urlToFile, successFunction, errorFunction=null)
 {
 	__loadJSON.loadCounter = __loadJSON.loadCounter-1;
 	// Make an ajax call without jquery so we can load jquery with this loader.
@@ -261,7 +261,10 @@ function __loadJSON(urlToFile, successFunction)
 				if(typeof(successFunction)==="function")
 					successFunction(json);
        		} else {
-				log("Could not load file "+urlToFile+" / XHR: "+xhr.status, LOG_ERROR);
+				var errortext = "Could not load file "+urlToFile;
+				log(errortext+" / XHR: "+xhr.status, LOG_ERROR);
+				if(typeof(errorFunction)==="function")
+					errorFunction();
 			}
 			__loadJSON.loadCounter+=1;
        	}
@@ -300,6 +303,7 @@ var GMLParser = function()
 {
 	var me = this;
 	var m_afterLoadFunction = null; // your function called after loading all the files.
+	var m_errorFunction = null; // your function called if a file could not be loaded or such.
 	// This is the name with the array which holds your additional files.
 	// You can change it with GMLParser.instance.setFileArrayName
 	// remember that all json names will be converted to uppercase.
@@ -397,10 +401,11 @@ var GMLParser = function()
 	}
 	
 	// this is the main function you need to call after you added your gml parsers.
-	this.parseFile=function(filename, afterloadfunction = null)
+	this.parseFile=function(filename, afterloadfunction = null, errorfunction = null)
 	{
 		// get the new after loading function.
 		m_afterLoadFunction = afterloadfunction;
+		m_errorFunction = errorfunction;
 		// get all the files and parse them here.
 		// additional files will be added in the collect function,
 		// and the parseGML function of this class.
@@ -409,19 +414,19 @@ var GMLParser = function()
 		m_gmlFileArray.push(new GMLfile(gmurl));
 		m_collectioncounter = 0;
 		log("COLLECTOR: Starting with "+filename,LOG_DEBUG);
-		GIMLI.showBlocker(true, "Loading "+filename);
 		
 		// clear all data.
 		for(var i=0;i<parsers.length;i++)
 		{
 			parsers[i].parser.clear();
-		}
-		
+		}		
+		m_filefailcount = 0;
 		_collect();
 	}
 	
 	// this is the main file collector.
 	var m_collectioncounter = 0;
+	var m_filefailcount = 0;
 	var _collect = function()
 	{
 		m_collectioncounter++;
@@ -449,26 +454,32 @@ var GMLParser = function()
 					//log("Collected entry #"+i+": "+l.gmurl.getCombined(), LOG_DEBUG);
 					// repeat the collecting process until all gmls are collected.
 					_collect();
-				});
+				}, function() {m_filefailcount++;l.collected=true;_collect();});
 				break;
 			}//else{
 			//	log("COLLECTION entry #"+i+" already collected. ("+filepath+")");
 			//}
 		}
 		
-		// if nothing was found, all files were loaded.
-		// jump to the start room.
-		if(found==false)
+		log("LOADING FAILS "+m_filefailcount);
+		if(m_filefailcount>0 && typeof(m_errorFunction)==="function")
 		{
-			log(m_gmlFileArray.length+" files loaded.",LOG_DEBUG);
-			log("-------- NC: ENDOF COLLECTING GMLS ---------",LOG_DEBUG);
+			m_errorFunction();
+		}else{
+			// if nothing was found, all files were loaded.
+			// jump to the start room.
+			if(found==false)
+			{
+				log(m_gmlFileArray.length+" files loaded.",LOG_DEBUG);
+				log("-------- NC: ENDOF COLLECTING GMLS ---------",LOG_DEBUG);
 
-			if(typeof(m_afterLoadFunction)==="function")
-				m_afterLoadFunction()
+				if(typeof(m_afterLoadFunction)==="function")
+					m_afterLoadFunction()
+			}
 		}
 	}
 }
 GMLParser.instance = new GMLParser();
 GMLParser.addParser = function(name, parser) {GMLParser.instance.addParser(name, parser);};
-GMLParser.parseFile = PARSEGMLFILE = function(filename, afterloadfunction=null) {GMLParser.instance.parseFile(filename, afterloadfunction);};
+GMLParser.parseFile = PARSEGMLFILE = function(filename, afterloadfunction=null, errorfunction=null) {GMLParser.instance.parseFile(filename, afterloadfunction, errorfunction);};
 GMLParser.getParser = function(name) {return GMLParser.instance.getParser(name);}

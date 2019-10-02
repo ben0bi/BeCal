@@ -1,7 +1,7 @@
  /* Ben0bis Calendar, V2.5.1 */
 
-var becalVersion = "2.5.2";
-var g_becalDatabaseFile = "DATA/becaldatabase.json";
+var becalVersion = "2.5.3";
+var g_becalDatabaseFile = "DATA/becaldatabase.gml";
 
 // show and hide UI-blocker functions.
 function hideBlocker() {$('#blocker').hide();}
@@ -14,6 +14,126 @@ var m_statusdirection = -1;
 
 /* set another css file to a link with an id. */
 function switchCSS(cssid, newcssfilename) {$('#'+cssid).attr('href', 'css/'+newcssfilename);}
+
+/***************************************************************************************************************************************/
+// Switching code from SQL to JSON.
+/*
+	Table structure:
+		calendarevents
+			id - BIGINT - primary key
+			title - TEXT
+			startdate - DATETIME
+			enddate - DATETIME
+			userid - BIGINT
+			eventtype - INT
+			summary - TEXT
+			color - VARCHAR(10) - html #rrggbb
+			audiofile - VARCHAR(255)
+*/
+
+/* new >2.5.2: json database instead of sql database.
+	so, first creating the parser for gimli-parser.js
+*/
+
+// a calendar event with the values seen above.
+var GMLParser_CALEVENT = function()
+{
+	var me = this;
+	this.id = -1;
+	this.title = "";
+	this.startdate = new Date();
+	this.enddate = new Date();
+	this.userID = 0;	// not used yet.
+	this.eventtype = 0;
+	this.summary = "";
+	this.color = "";
+	this.audiofile = "";
+	
+	this.parseGML = function(json, rootPath)
+	{
+		if(__defined(json['ID']))
+			me.id = parseInt(json['ID']);
+		if(this.id=="NaN")
+			me.id = -1;
+		if(__defined(json['TITLE']))
+			me.title = json['TITLE'];
+		if(__defined(json['STARTDATE']))
+			me.startdate = new Date(json['STARTDATE']);
+		if(__defined(json['ENDDATE']))
+			me.enddate = new Date(json['ENDDATE']);
+		if(__defined(json['USERID']))
+			me.userID = new Date(json['USERID']);
+		if(__defined(json['EVENTTYPE']))
+			me.eventtype = json['EVENTTYPE'];
+		if(__defined(json['SUMMARY']))
+			me.summary = json['SUMMARY'];
+		if(__defined(json['COLOR']))
+			me.color = json['COLOR'];
+		if(__defined(json['AUDIOFILE']))
+			me.audiofile = json['AUDIOFILE'];
+	};
+};
+
+// the parser which parses all the events out of the json.
+var GMLParser_CALENDAREVENTS = function()
+{
+	var me = this;
+	this.events = [];
+	this.clear = function() {me.events = [];};
+	this.parseGML = function(json, rootPath)
+	{
+		if(__defined(json['EVENTS']))
+		{
+			for(var i=0;i<json['EVENTS'].length;i++)
+			{
+				var evt = new GMLParser_CALEVENT();
+				evt.parseGML(json['EVENTS'][i], rootPath);
+				if(evt.id>=0) // only add it to the list if an id is given.
+				{
+					me.events.push(evt);
+				}else{
+					log("Event with no-id or NaN-id found at list index "+i+"!", LOG_WARN);
+				}
+			}
+		}else{
+			log("No events in the given file found.", LOG_WARN);
+		}
+	};
+};
+
+GMLParser.addParser("CALEVENTS", new GMLParser_CALENDAREVENTS());
+GMLParser.EVENTS = function() {return GMLParser.getParser("CALEVENTS").events;};
+GMLParser.EVENTSBETWEEN = function(startdate, enddate)
+{
+	var events = GMLParser.events;
+	var retevents = events;
+	// XHEREX: get events between two dates.
+	return retevents;
+}
+	
+// do some funny loading texts.
+var getLoadingText = function()
+{
+	var sel = parseInt(Math.random()*10)
+	switch(sel)
+	{
+		case 0: return "Einen Moment, die Gläser werden gespült.."; break;
+		case 1: return "Bitte warten, ich füttere die Tiere..";break;
+		case 2: return "Einen Moment, ich denke nach..";break;
+		case 3: return "Bitte warten, ich zähle die Sterne..";
+		case 4: return "Sekunde, ich werfe die Würfel..";
+		case 5: return "Wasche Schwarzgeld..";
+		case 6: return "Erschnüffle Bankdaten..";
+		case 7: return "Kaufe Dekoration..";
+		case 8: return "Nicht stören, lese Buch!";
+		case 9: return "Schatz wird ausgegraben..";
+		case 9: return "Beweise werden verbrannt..";
+		default:
+			return "Ladebalken wird geladen..";
+	}
+}
+
+/***************************************************************************************************************************************/
 
 // show a status in the status line at the bottom.
 function status(text) 
@@ -651,22 +771,32 @@ var BeCal = function(contentdivid)
 			me.createDBEvent(d.id, startd, endd,d.eventtype, d.title, d.audiofile, d.summary, d.color);
 		}
 	};
-	
+		
 	// DB FUNCTIONS
 	var loadEventsBetween = function(startdate, enddate, successFunc)
 	{
-		showBlocker();
+		showBlocker(getLoadingText());
 	
-		// create SQL strings from the dates.
-		var d1 = Date.toSQL(startdate);
-		var d2 = Date.toSQL(enddate);
-
 // NEW: LOAD FROM JSON	
-
-// XHEREX
+		PARSEGMLFILE(g_becalDatabaseFile , function() 
+		{
+			var data = GMLParser.EVENTSBETWEEN(startdate, enddate);
+			log(data.length+" events loaded.");
+			clearAndFillEvents(data);
+			successFunc();
+			hideBlocker();
+		},
+		// the error function
+		function()
+		{
+			// just show the week field without data.
+			//showBlocker("ERROR: Could not load a GML file.");
+			status("Could not load the database file. Maybe it does not exist yet.");
+			hideBlocker();
+		});
 
 		// set up the php request.
-		var url = 'php/ajax_getEvents.php';
+/*		var url = 'php/ajax_getEvents.php';
 		var data = {startdate: d1, enddate: d2};
 		var success = function(data)
 		{
@@ -685,6 +815,7 @@ var BeCal = function(contentdivid)
 			success: success,
 			dataType: 'json'
 		});
+*/
 	};
 	
 	// load the todos for the todo screen.
