@@ -2,8 +2,6 @@
 
 // CUD - create, update or delete an item.
 
-//require __DIR__."/sql.php";
-
 // new > 2.5.4: json saveing.
 
 $CUD=$_POST['CUD'];
@@ -49,6 +47,48 @@ function get_Next_DBID()
 	return $id;
 }
 
+// delete an audio file if it exists.
+function deleteAudioFile($dbindex)
+{
+	global $json_data;
+	$audiofilename = $json_data['EVENTS'][$dbindex]['AUDIOFILE'];
+	if($audiofilename!=$summary && $audiofilename!="")
+		unlink("../DATA/AUDIO/$audiofilename");
+
+}
+
+function saveJsonData()
+{
+	global $json_data;
+	global $datafile;
+	$jdata = json_encode($json_data);
+	if(file_put_contents($datafile, $jdata))
+	{
+		echo("File saved.");
+	}else{
+	        echo "Error while saving the database.";
+	}
+}
+
+// maybe create a new data chunk.
+if(sizeof($json_data['EVENTS'])<=0)
+{
+	$json_data=[];
+	$json_data['EVENTS']=[];
+}
+
+// get old audio file name and delete the file when the name does not match the new one.
+$idx = -1;	// the real index.
+// search for the given id
+for($i=0;$i<sizeof($json_data['EVENTS']);$i++)
+{
+	if(intval($json_data['EVENTS'][$i]['ID'])==$dbid)
+	{
+		$idx=$i;
+		break;
+	}
+}
+
 // create or update an entry.
 if($CUD=='create')
 {
@@ -63,40 +103,18 @@ if($CUD=='create')
 		$nen['SUMMARY']=$summary;
 		$nen['USERID']=$userid;
 
-	// maybe create a new data chunk.
-	if(sizeof(json_data['EVENTS'])<=0)
-	{
-		$json_data=[];
-		$json_data['EVENTS']=[];
-	}
-
 	if($dbid==-1)
 	{
 		// set a new id.
 		$nen['ID'] = get_Next_DBID();
 		// add the entry
 		$json_data['EVENTS'][] = $nen;
-		// save the data
-
 	}else{
-		// get old audio file name and delete the file when the name does not match the new one.
-		$idx = -1;
-		// search for the given id
-		for($i=0;$i<sizeof($json_data['EVENTS']);$i++)
-		{
-			if(intval($json_data['EVENTS'][$i]['ID'])==$dbid)
-			{
-				$idx=$i;
-				break;
-			}
-		}
 		// we found the entry, change it.
 		if($idx>=0)
 		{
 			// maybe first delete the old audio file.
-			$audiofilename = $json_data['EVENTS'][$idx]['AUDIOFILE'];
-			if($audiofilename!=$summary && $audiofilename!="")
-				unlink("../DATA/AUDIO/$audiofilename");
+			deleteAudioFile($idx);
 			// set new old id
 			$nen['ID'] = $dbid;
 			$json_data['EVENTS'][$idx] = $nen;
@@ -105,13 +123,7 @@ if($CUD=='create')
 		}
 	}
 	// save the data.
-	$jdata = json_encode($json_data);
-	if(file_put_contents($datafile, $jdata))
-	{
-		echo("File saved.");
-	}else{
-	        echo "Error while saving the database.";
-	}
+	saveJsonData();
 }
 
 // delete an entry.
@@ -119,11 +131,17 @@ if($CUD=='delete')
 {
 	if($dbid>0)
 	{
-		$audiofilename = SQL::get_audio_filename($dbid);
-		if($audiofilename!="")
-			unlink("../DATA/AUDIO/$audiofilename");
-
-		SQL::query(SQL::delete_event($dbid));
+		deleteAudioFile($idx);
+		$n=[];
+		$n['EVENTS']=[];
+		// copy all except the one to delete.
+		foreach($json_data['EVENTS'] as $itm)
+		{
+			if($itm['ID']!=$dbid)
+				$n['EVENTS'][] = $itm;
+		}
+		$json_data = $n;
+		saveJsonData();
 	}else{
 		echo (" Delete failed: DBID <= 0 [$dbid]");
 	}
