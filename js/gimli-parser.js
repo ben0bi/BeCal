@@ -461,9 +461,9 @@ var GMLParser = function()
 			//}
 		}
 		
-		log("LOADING FAILS "+m_filefailcount);
 		if(m_filefailcount>0 && typeof(m_errorFunction)==="function")
 		{
+			log(m_filefailcount+" files not found.", LOG_WARN);
 			m_errorFunction();
 		}else{
 			// if nothing was found, all files were loaded.

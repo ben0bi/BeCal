@@ -114,7 +114,7 @@ GMLParser.EVENTSBETWEEN = function(startdate, enddate)
 // do some funny loading texts.
 var getLoadingText = function()
 {
-	var sel = parseInt(Math.random()*10)
+	var sel = parseInt(Math.random()*15)
 	switch(sel)
 	{
 		case 0: return "Katze wird gestreichelt.."; break;
@@ -127,7 +127,12 @@ var getLoadingText = function()
 		case 7: return "Dekoration wird angebracht..";
 		case 8: return "Hacke Sicherheitssystem..";
 		case 9: return "Schatz wird ausgegraben..";
-		case 9: return "Beweise werden verbrannt..";
+		case 10: return "Beweise werden vernichtet..";
+		case 11: return "Lade Akku auf..";
+		case 12: return "Erweitere Perspektive..";
+		case 13: return "Dokumente werden gefälscht..";
+		case 14: return "Atem wird angehalten..";
+		case 15: return "Atem wird angehalten..";
 		default:
 			return "Ladebalken wird geladen..";
 	}
