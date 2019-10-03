@@ -32,37 +32,28 @@ echo("OS: $json ".sizeof($json_data['EVENTS']));
 if(sizeof($json_data['EVENTS'])<=0)
 	$json_data['EVENTS']=[];
 
-// SQL::openConnection();
+// get the next unique id.
 function get_Next_DBID()
 {
-	echo("GET NEXT DBID");
 	global $json_data;
 	$id=0;
 	$q=0;
 	foreach($json_data['EVENTS'] as $e)
 	{
 		$q++;
-		echo("ENTRY # ".$q);
 		$i=intval($e['ID']);
 		if($i>=$id)
 			$id=$i+1;
 	}
+	echo("Next DB ID: $id");
 	return $id;
 }
 
 // create or update an entry.
-//if($CUD=='create')
+if($CUD=='create')
 {
-//	if($dbid==-1)
-//	{
-		//SQL::query(SQL::insert_event($title, $startdate, $enddate, $eventtype, $color, $audiofile, $summary));
-		if(sizeof(json_data['EVENTS'])<=0)
-		{
-			$json_data=[];
-			$json_data['EVENTS']=array();
-		}
-		$nen = [];
-		$nen['ID'] = get_Next_DBID();
+	// create an entry..
+	$nen = [];
 		$nen['TITLE']=$title;
 		$nen['STARTDATE']=$startdate;
 		$nen['ENDDATE']=$enddate;
@@ -71,22 +62,56 @@ function get_Next_DBID()
 		$nen['AUDIOFILE']=$audiofile;
 		$nen['SUMMARY']=$summary;
 		$nen['USERID']=$userid;
-		$json_data['EVENTS'][] = $nen;
-		$jdata = json_encode($json_data);
-		if(file_put_contents($datafile, $jdata))
-		{
-			echo("Added event: ".$nen['ID']." ".$title);
-	    	}else{
-	        	echo "Error while saving the data.";
-		}
-//	}else{
-		// get old audio file name and delete the file when the name does not match the new one.
-/*		$audiofilename = SQL::get_audio_filename($dbid);
-		if($audiofilename!=$summary && $audiofilename!="")
-			unlink("../DATA/AUDIO/$audiofilename");
-		SQL::query(SQL::update_event($dbid, $title, $startdate, $enddate, $eventtype, $color, $audiofile, $summary));
+
+	// maybe create a new data chunk.
+	if(sizeof(json_data['EVENTS'])<=0)
+	{
+		$json_data=[];
+		$json_data['EVENTS']=[];
 	}
-*/	echo(" DB write done.");
+
+	if($dbid==-1)
+	{
+		// set a new id.
+		$nen['ID'] = get_Next_DBID();
+		// add the entry
+		$json_data['EVENTS'][] = $nen;
+		// save the data
+
+	}else{
+		// get old audio file name and delete the file when the name does not match the new one.
+		$idx = -1;
+		// search for the given id
+		for($i=0;$i<sizeof($json_data['EVENTS']);$i++)
+		{
+			if(intval($json_data['EVENTS'][$i]['ID'])==$dbid)
+			{
+				$idx=$i;
+				break;
+			}
+		}
+		// we found the entry, change it.
+		if($idx>=0)
+		{
+			// maybe first delete the old audio file.
+			$audiofilename = $json_data['EVENTS'][$idx]['AUDIOFILE'];
+			if($audiofilename!=$summary && $audiofilename!="")
+				unlink("../DATA/AUDIO/$audiofilename");
+			// set new old id
+			$nen['ID'] = $dbid;
+			$json_data['EVENTS'][$idx] = $nen;
+		}else{
+			echo("Entry with ID $dbid not found.");
+		}
+	}
+	// save the data.
+	$jdata = json_encode($json_data);
+	if(file_put_contents($datafile, $jdata))
+	{
+		echo("File saved.");
+	}else{
+	        echo "Error while saving the database.";
+	}
 }
 
 // delete an entry.
@@ -104,10 +129,6 @@ if($CUD=='delete')
 	}
 	echo(" DB deletion done.");
 }
-
-SQL::closeConnection();
-if(SQL::Feedback()!="")
-	echo "SQL Feedback: ".SQL::Feedback();
 
 //echo "Order: $order Title: $title <br />Blogtitle: $blogtitle<br />BlogText: $blogtext<br />";
 ?>
