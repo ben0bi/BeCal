@@ -117,15 +117,15 @@ var getLoadingText = function()
 	var sel = parseInt(Math.random()*10)
 	switch(sel)
 	{
-		case 0: return "Einen Moment, die Gläser werden gespült.."; break;
+		case 0: return "Katze wird gestreichelt.."; break;
 		case 1: return "Bitte warten, ich füttere die Tiere..";break;
-		case 2: return "Einen Moment, ich denke nach..";break;
+		case 2: return "Pixel werden sortiert..";break;
 		case 3: return "Bitte warten, ich zähle die Sterne..";
 		case 4: return "Sekunde, ich werfe die Würfel..";
 		case 5: return "Wasche Schwarzgeld..";
 		case 6: return "Erschnüffle Bankdaten..";
-		case 7: return "Kaufe Dekoration..";
-		case 8: return "Nicht stören, lese Buch!";
+		case 7: return "Dekoration wird angebracht..";
+		case 8: return "Hacke Sicherheitssystem..";
 		case 9: return "Schatz wird ausgegraben..";
 		case 9: return "Beweise werden verbrannt..";
 		default:
@@ -777,7 +777,8 @@ var BeCal = function(contentdivid)
 	{
 		showBlocker(getLoadingText());
 	
-// NEW: LOAD FROM JSON	
+// NEW: LOAD FROM JSON
+		// load the file each time we load the events, for synced everything.
 		PARSEGMLFILE(g_becalDatabaseFile , function() 
 		{
 			var data = GMLParser.EVENTSBETWEEN(startdate, enddate);
@@ -792,6 +793,8 @@ var BeCal = function(contentdivid)
 			// just show the week field without data.
 			//showBlocker("ERROR: Could not load a GML file.");
 			status("Could not load the database file. Maybe it does not exist yet.");
+			clearAndFillEvents([]);
+			successFunc();
 			hideBlocker();
 		});
 
@@ -821,10 +824,30 @@ var BeCal = function(contentdivid)
 	// load the todos for the todo screen.
 	var loadTodos = function(successFunc)
 	{
-		showBlocker();
-		
+		showBlocker(getLoadingText());
+		// XHEREX
+// NEW: LOAD FROM JSON
+		// load the file each time we load the events, for synced everything.
+		PARSEGMLFILE(g_becalDatabaseFile , function() 
+		{
+			var data = GMLParser.TODOS();//(startdate, enddate);
+			log(data.length+" events loaded.");
+			clearAndFillEvents(data);
+			successFunc();
+			hideBlocker();
+		},
+		// the error function
+		function()
+		{
+			// just show the week field without data.
+			//showBlocker("ERROR: Could not load a GML file.");
+			status("Could not load the database file. Maybe it does not exist yet.");
+			clearAndFillEvents([]);
+			successFunc();
+			hideBlocker();
+		});
 		// set up the php request.
-		var url = 'php/ajax_getTodos.php';
+/*		var url = 'php/ajax_getTodos.php';
 		var data = {nop: 'null'};
 		var success = function(data)
 		{
@@ -843,7 +866,7 @@ var BeCal = function(contentdivid)
 			success: success,
 			dataType: 'json'
 		});
-
+*/
 	};
 	
 	// save an event to the DB.
