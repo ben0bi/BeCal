@@ -105,7 +105,7 @@ GMLParser.addParser("CALEVENTS", new GMLParser_CALENDAREVENTS());
 GMLParser.EVENTS = function() {return GMLParser.getParser("CALEVENTS").events;};
 GMLParser.EVENTSBETWEEN = function(startdate, enddate)
 {
-	var events = GMLParser.events;
+	var events = GMLParser.EVENTS();
 	var retevents = events;
 	// XHEREX: get events between two dates.
 	return retevents;
