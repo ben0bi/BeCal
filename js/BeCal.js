@@ -62,7 +62,7 @@ var GMLParser_CALEVENT = function()
 		if(__defined(json['ENDDATE']))
 			me.enddate = new Date(json['ENDDATE']);
 		if(__defined(json['USERID']))
-			me.userID = new Date(json['USERID']);
+			me.userID = json['USERID'];
 		if(__defined(json['EVENTTYPE']))
 			me.eventtype = json['EVENTTYPE'];
 		if(__defined(json['SUMMARY']))
@@ -106,8 +106,14 @@ GMLParser.EVENTS = function() {return GMLParser.getParser("CALEVENTS").events;};
 GMLParser.EVENTSBETWEEN = function(startdate, enddate)
 {
 	var events = GMLParser.EVENTS();
-	var retevents = events;
-	// XHEREX: get events between two dates.
+	var retevents = [];
+	// get all the events between two dates.
+	for(var i=0;i<events.length;i++)
+	{
+		var e = events[i];
+		if(e.enddate>=startdate && e.startdate<=enddate)
+			retevents.push(e);
+	}
 	return retevents;
 }
 	
