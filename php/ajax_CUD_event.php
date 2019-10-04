@@ -25,10 +25,14 @@ $json = file_get_contents($datafile);
 //Decode JSON
 $json_data = json_decode($json,true);
 
-echo("OS: $json ".sizeof($json_data['EVENTS']));
+//echo("OS: $json ".sizeof($json_data['EVENTS']));
 
+// maybe create a new data chunk.
 if(sizeof($json_data['EVENTS'])<=0)
+{
+	$json_data = [];
 	$json_data['EVENTS']=[];
+}
 
 // get the next unique id.
 function get_Next_DBID()
@@ -68,13 +72,6 @@ function saveJsonData()
 	}else{
 	        echo "Error while saving the database.";
 	}
-}
-
-// maybe create a new data chunk.
-if(sizeof($json_data['EVENTS'])<=0)
-{
-	$json_data=[];
-	$json_data['EVENTS']=[];
 }
 
 // get old audio file name and delete the file when the name does not match the new one.
@@ -129,7 +126,7 @@ if($CUD=='create')
 // delete an entry.
 if($CUD=='delete')
 {
-	if($dbid>0)
+	if($dbid>=0)
 	{
 		deleteAudioFile($idx);
 		$n=[];
@@ -143,7 +140,7 @@ if($CUD=='delete')
 		$json_data = $n;
 		saveJsonData();
 	}else{
-		echo (" Delete failed: DBID <= 0 [$dbid]");
+		echo (" Delete failed: DBID < 0 [$dbid]");
 	}
 	echo(" DB deletion done.");
 }
