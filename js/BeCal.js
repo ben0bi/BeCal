@@ -110,6 +110,7 @@ var GMLParser_CALEVENT = function()
 		// assign an unique id.
 		m_id=GMLParser_CALEVENT.arrID;
 		GMLParser_CALEVENT.arrID++;	
+		log("UNIQUE: "+m_id);
 	}
 	
 	// create the bar div and return it.
@@ -293,6 +294,7 @@ var GMLParser_CALEVENT = function()
 		return result;
 	};
 };
+GMLParser_CALEVENT.arrID = 1;
 
 // mouse is over an event bar.
 GMLParser_CALEVENT.eventMouseOver=function(evtid, mouseOut=false)
