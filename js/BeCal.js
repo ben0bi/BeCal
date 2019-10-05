@@ -98,7 +98,37 @@ var GMLParser_CALENDAREVENTS = function()
 		}else{
 			log("No events in the given file found.", LOG_WARN);
 		}
+		sortByDate();
 	};
+	// sort all the events by date ascending
+	var sortByDate = function()
+	{
+		var evts = me.events;
+		var found = true;
+		
+		// 0 or one event does not have to be sorted.
+		if(evts.length<=1)
+			return;
+		
+		while(found==true)
+		{
+			// reset found.
+			found = false;
+			for(var i=0;i<evts.length-1;i++)
+			{
+				var topevt = evts[i];
+				var btmevt = evts[i+1];
+				// sort.
+				if(topevt.startdate>btmevt.startdate)
+				{
+					evts[i]=btmevt;
+					evts[i+1]=topevt;
+					found=true;
+				}
+			}
+		}
+		me.events=evts;
+	}
 };
 
 GMLParser.addParser("CALEVENTS", new GMLParser_CALENDAREVENTS());
