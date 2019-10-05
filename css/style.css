@@ -30,7 +30,7 @@ body
 /* background when the calendar is on. */
 .calendarBackground
 {
-	background: url('../img/calendar_background.jpg');
+	background: url('../img/waldschattensonne.jpg');
 	background-repeat: no-repeat;
 	background-size: cover;	
 }
@@ -40,7 +40,7 @@ body
 {
 	background: url('../img/todo_background.jpg');
 	background-repeat: no-repeat;
-	background-size: cover;
+	background-size: 100% 100%;
 }
 
 /* background for the edit window and stuff. */
