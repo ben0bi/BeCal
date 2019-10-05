@@ -1,6 +1,6 @@
  /* Ben0bis Calendar, V2.5.1 */
 
-var becalVersion = "2.5.3";
+var becalVersion = "2.5.5";
 var g_becalDatabaseFile = "DATA/becaldatabase.gml";
 
 // show and hide UI-blocker functions.
@@ -112,6 +112,19 @@ GMLParser.EVENTSBETWEEN = function(startdate, enddate)
 	{
 		var e = events[i];
 		if(e.enddate>=startdate && e.startdate<=enddate)
+			retevents.push(e);
+	}
+	return retevents;
+}
+
+GMLParser.TODOS = function()
+{
+	var events = GMLParser.EVENTS();
+	var retevents = [];
+	for(var i=0;i<events.length;i++)
+	{
+		var e = events[i];
+		if(e.eventtype==1 || e.eventtype==2)
 			retevents.push(e);
 	}
 	return retevents;

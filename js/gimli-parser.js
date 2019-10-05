@@ -263,6 +263,7 @@ function __loadJSON(urlToFile, successFunction, errorFunction=null)
        		} else {
 				var errortext = "Could not load file "+urlToFile;
 				log(errortext+" / XHR: "+xhr.status, LOG_ERROR);
+				// 0.7.02 maybe call an error function.
 				if(typeof(errorFunction)==="function")
 					errorFunction();
 			}
@@ -389,6 +390,7 @@ var GMLParser = function()
 		var pd = new parserData(parser, name.toUpperCase());
 		parsers.push(pd);
 	}
+	// clear the parsers for another parser config.
 	this.clearParsers=function() {parsers=[]};
 	this.getParser=function(parserName) 
 	{
@@ -401,7 +403,7 @@ var GMLParser = function()
 	}
 	
 	// this is the main function you need to call after you added your gml parsers.
-	this.parseFile=function(filename, afterloadfunction = null, errorfunction = null)
+	this.parseFile=function(filename, afterloadfunction = null, errorfunction = null, cleardata = true)
 	{
 		// get the new after loading function.
 		m_afterLoadFunction = afterloadfunction;
@@ -416,10 +418,13 @@ var GMLParser = function()
 		log("COLLECTOR: Starting with "+filename,LOG_DEBUG);
 		
 		// clear all data.
-		for(var i=0;i<parsers.length;i++)
+		if(cleardata==true)
 		{
-			parsers[i].parser.clear();
-		}		
+			for(var i=0;i<parsers.length;i++)
+			{
+				parsers[i].parser.clear();
+			}
+		}
 		m_filefailcount = 0;
 		_collect();
 	}
@@ -481,5 +486,5 @@ var GMLParser = function()
 }
 GMLParser.instance = new GMLParser();
 GMLParser.addParser = function(name, parser) {GMLParser.instance.addParser(name, parser);};
-GMLParser.parseFile = PARSEGMLFILE = function(filename, afterloadfunction=null, errorfunction=null) {GMLParser.instance.parseFile(filename, afterloadfunction, errorfunction);};
+GMLParser.parseFile = PARSEGMLFILE = function(filename, afterloadfunction=null, errorfunction=null, cleardata=true) {GMLParser.instance.parseFile(filename, afterloadfunction, errorfunction, cleardata);};
 GMLParser.getParser = function(name) {return GMLParser.instance.getParser(name);}
