@@ -270,6 +270,7 @@ function __loadJSON(urlToFile, successFunction, errorFunction=null)
 			__loadJSON.loadCounter+=1;
        	}
    	};
+	urlToFile = urlToFile + "?"+(new Date()).toString();
    	xhr.open("GET", urlToFile, true);
 	xhr.responseType = "json";
    	xhr.send();

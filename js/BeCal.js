@@ -1,6 +1,6 @@
- /* Ben0bis Calendar, V2.5.1 */
+ /* Ben0bis Calendar, V2.5.7 */
 
-var becalVersion = "2.5.5";
+var becalVersion = "2.5.7";
 var g_becalDatabaseFile = "DATA/becaldatabase.gml";
 
 // show and hide UI-blocker functions.
@@ -39,14 +39,23 @@ function switchCSS(cssid, newcssfilename) {$('#'+cssid).attr('href', 'css/'+newc
 var GMLParser_CALEVENT = function()
 {
 	var me = this;
-	this.id = -1;
+	var m_dbID = -1;
+	this.getDBID = function() {return m_dbID;};
+	
+	// NP?
+	var m_id = -1;
+	this.getID = function() {return m_id;};	// return the unique id.
+	
 	this.title = "";
 	this.startdate = new Date();
 	this.enddate = new Date();
-	this.userID = 0;	// not used yet.
-	this.eventtype = 0;
+	this.userid = 0;	// not used yet.
+	this.eventtype = 0;	// event type:
+							// 0: calendar event.
+							// 1: A TODO, Not done yet.
+							// 2: TODO, DONE!
 	this.summary = "";
-	this.color = "";
+	this.color = BeCal.eventDefaultColor;
 	this.audiofile = "";
 	
 	this.parseGML = function(json, rootPath)
@@ -72,7 +81,478 @@ var GMLParser_CALEVENT = function()
 		if(__defined(json['AUDIOFILE']))
 			me.audiofile = json['AUDIOFILE'];
 	};
+	
+	// FROM OLD BECAL EVENT
+	// fill this event with some data.
+	this.create = function(start, end, newtype, newtitle, newaudiofile="", newsummary="", newcolor = "") 
+	{
+		me.title = newtitle;
+		me.summary = newsummary;
+		me.startdate = new Date(start);
+		me.enddate = new Date(end);
+		me.eventtype = newtype;
+		me.audiofile = newaudiofile;
+		
+		if(newcolor=="")
+			me.color=BeCal.eventDefaultColor;
+		else
+			me.color=newcolor;
+		
+		// dbID has to be <0 if the event is new.
+		m_dbID = -1;
+		
+		// assign an unique id.
+		m_id=GMLParser_CALEVENT.arrID;
+		GMLParser_CALEVENT.arrID++;	
+	};
+
+	// create the bar div and return it.
+	var getBarDivText=function(text, x,y,width, height, addclass = "")
+	{
+		var txt='<div onclick="BeCal.openEventViewDialog('+m_id+');" onmouseover="GMLParser_CALEVENT.eventMouseOver('+m_id+');" onmouseout="GMLParser_CALEVENT.eventMouseOver('+m_id+', true);" class="becalEventBar '+addclass+' becalEventMouseOut evt_'+m_id+'" style="background-color:'+me.color+'; top:'+y+'px; left:'+x+'px; width:'+width+'px; height:'+height+'px;">'+text+'</div>';
+		return txt;
+	};
+	
+	// create bars in the month view.
+	this.createMonthBars=function(calendar)
+	{
+		var dayfields = calendar.getDateFields();	// get the day fields from the calendar.
+
+		var posX=0;					// x position to calculate with.
+		var posY=0;					// y position to calculate with.
+		var realPosY=0;					// the real y position.
+		//var realPosX = 0;				// the real x position.
+		var width=0;					// the bar width.
+		var height=BeCal.eventBarHeight;	// the bar height.
+
+		var result = "";	// the returning html text.
+
+		var now = new Date();								// NOW date used for todos.
+		//console.log(now);
+
+		var firstDay = Date.removeTime(dayfields[0].date);					// first date on the table.
+		var lastDay = Date.removeTime(dayfields[dayfields.length-1].date);	// last date on the table.
+		lastDay.setHours(23);
+		lastDay.setMinutes(59);
+		lastDay.setSeconds(59);
+
+		var evtStartDay = Date.removeTime(me.startdate);					// start date of the event.
+		var evtEndDay = Date.removeTime(me.enddate);						// end date of the event.
+
+		// check if event is a todo. If so, maybe adjust dates.
+		if(me.eventtype==1 || me.eventtype==2)
+		{
+			// end day is start day for the todos.
+			if(evtEndDay<now)
+				evtEndDay = now;
+			evtStartDay = new Date(evtEndDay);
+			evtEndDay.setHours(evtStartDay.getHours()+1);
+		}
+
+		var actualdate = new Date(evtStartDay);								// actual date for the bars.
+		var mydayfield=dayfields[0];										// field on table for the actual date.
+
+		// get a free slot between the two dates.
+		var myslot = calendar.getFreeSlotBetween(evtStartDay,evtEndDay, true);
+
+		// check if event is on table.
+		if(evtStartDay>lastDay || evtEndDay<firstDay || myslot<0)
+		{
+			//console.log("-- event not on table or no free slot found --");
+			return result;
+		}
+
+		var processed =0;
+		var turn = 0;
+		//console.log("+++ Listing Event +++");
+
+		var done = false;
+		var firstone = true; // if this is set, it will add a border div to id.
+
+		// check if it is a todo.
+		pretext="";
+		if(me.eventtype==1)
+			pretext="(X)&nbsp;";
+
+		while(!done)
+		{
+			turn+=1;
+			// the date is in the future, abort.
+			if(actualdate>evtEndDay)
+				return result;
+
+			// adjust actual date to begin of table.
+			if(actualdate<firstDay)
+				actualdate = new Date(firstDay);
+
+			// get the remaining days between the two dates.
+			var remainingDays = Date.daysBetween(actualdate, evtEndDay);
+
+			//console.log("------ Turn "+turn+" -------------------------");
+			//console.log("Event lasts "+remainingDays+" day/s.\nStart: "+evtStartDay+"\nEnd: "+evtEndDay+"\nActual: "+actualdate);
+
+			// get the dayfield for the actual date.
+			if(actualdate>=firstDay)
+				mydayfield = calendar.getDayField(actualdate);
+			else
+				mydayfield=dayfields[0];
+
+			// check if the dayfield was found.
+			if(mydayfield==0)
+			{
+				console.log("Dayfield not found for date: "+actualdate.toString());
+				return result;
+			}
+
+			processed =0;
+
+			posX = mydayfield.left;
+			posY = mydayfield.top;
+			//realPosX = posX;
+			realPosY=mydayfield.top+BeCal.calendarFieldTopHeight+(myslot*BeCal.eventSlotHeight);
+
+			width = 0;
+
+			//console.log("X: "+parseInt(posX)+" Y: "+parseInt(posY));
+
+			var r = remainingDays;
+			var newline=false;
+			width-=5; // include padding into the width.
+			for(w=0;w<r;w++)
+			{
+				var nd = Date.removeTime(actualdate);
+				nd.setDate(nd.getDate()+w);
+
+				var newdayfield = calendar.getDayField(nd);
+				if(newdayfield!=0)
+				{
+					// check if the new day field is aligned with my day field.
+					if(parseInt(newdayfield.top) == parseInt(posY))
+					{
+						width+=newdayfield.width;
+						remainingDays-=1;
+						processed+=1;
+						//console.log("Adding width at top: "+newdayfield.top+" @ "+newdayfield.date.toString());
+					}else{
+						// * line break, leave the for loop.
+						// add the first marker.
+						if(firstone==true && evtStartDay>=firstDay)
+						{
+							// maybe add the start marker.
+							result += getBarDivText("", posX+1, realPosY, 10, height, "becalEventMarker");
+							posX+=5;
+							width-=5;
+							firstone = false;
+						}
+						// add the bar.
+						result += getBarDivText(pretext+this.title, posX, realPosY, width, height, "becalEventNoBorder");
+						actualdate = Date.removeTime(nd);
+						//console.log("--> (Processed "+processed+" Remaining "+remainingDays+") Setting date: "+nd.toString());
+						processed = 0;
+						newline = true;
+						break;
+					}
+				}else{
+					console.log("(2) Dayfield not found for date: "+nd.toString());
+					actualdate=Date.removeTime(nd);
+					break;
+				}
+			}
+
+			// * add the last div.
+
+			// add the start marker.
+			if(firstone==true && evtStartDay>=firstDay)
+			{
+				result += getBarDivText("", posX+1, realPosY, 10, height, "becalEventMarker");
+				posX+=5;
+				width-=5;
+				firstone = false;
+			}
+
+			// add the end marker.
+			if(evtEndDay<=lastDay)
+			{
+				width-=10;
+				result += getBarDivText("", posX+width-4, realPosY, 10, height, "becalEventMarker");
+			}
+
+			// add the last bar (see above)
+			result += getBarDivText(pretext+this.title, posX, realPosY, width, height, "becalEventNoBorder");
+
+			if(remainingDays<=0 && !newline)
+				done=true;
+		}
+		// return the html text.
+		return result;
+	};
 };
+
+// mouse is over an event bar.
+GMLParser_CALEVENT.eventMouseOver=function(evtid, mouseOut=false)
+{
+	if(mouseOut)
+	{
+		// out of the field.
+		$('.evt_'+evtid).removeClass('becalEventMouseOver');
+		$('.evt_'+evtid).addClass('becalEventMouseOut');
+	}else{
+		// into the field..
+		$('.evt_'+evtid).removeClass('becalEventMouseOut');
+		$('.evt_'+evtid).addClass('becalEventMouseOver');
+	}
+
+	// maybe set status.
+	if(BeCal.instance!=null)
+		BeCal.instance.eventMouseOver(evtid, mouseOut);
+};
+
+// NP a calendar event.
+/*
+var BeCalEvent = function()
+{
+	var me = this;
+	
+	// DB stuff
+//NP	var m_dbID = -1;							// DBid < 0 = new entry
+//NP	this.getDBID = function() {return m_dbID;}
+	//var m_hasChanged = false;					// has the entry changed (also if the entry is new)
+	
+	// ENTRY DATA
+	this.title = "Ohne Titel";				// title of the event.
+	this.summary = "";						// summary of the event. (NOT YET USED)
+	this.audiofile="";						// if there is some audio, it is linked to this variable per filename.
+	this.startdate = new Date();			// start date of the event.
+	this.enddate = new Date();				// end date of the event.
+	this.color = BeCal.eventDefaultColor;	// color of the event bars.
+	this.eventtype = 0;						// event type:
+											// 0: calendar event.
+											// 1: A TODO, Not done yet.
+											// 2: TODO, DONE!
+	this.userid = 0;						// The creator user id.
+	var m_id=-1;							// internal unique id for fast search and stuff.
+	this.getID = function() {return m_id;};	// return the unique id.
+	
+	// create the event.
+// NP
+	this.create = function(start, end, newtype, newtitle, newaudiofile="", newsummary="", newcolor = "") 
+	{
+		me.title = newtitle;
+		me.summary = newsummary;
+		me.startdate = new Date(start);
+		me.enddate = new Date(end);
+		me.eventtype = newtype;
+		me.audiofile = newaudiofile;
+		
+		if(newcolor=="")
+			me.color=BeCal.eventDefaultColor;
+		else
+			me.color=newcolor;
+		
+		// dbID has to be <0 if the event is new.
+		m_dbID = -1;
+		//m_hasChanged = true;
+		
+		// assign an unique id.
+		m_id=BeCalEvent.arrID;
+		BeCalEvent.arrID++;	
+
+//console.log("New entry with title: "+newtitle); 
+	};
+// ENDOF NP
+	
+	// create the entry from a database entry. This sets the dbid to >0 and haschanged to false.
+	this.createFromDB = function(dbid,start, end, newtype, newtitle, newaudiofile, newsummary, newcolor)
+	{
+		me.create(start, end, newtype, newtitle, newaudiofile, newsummary, newcolor);
+		m_dbID = dbid;
+		//m_hasChanged = false;
+	};
+
+	// create the bar div and return it.
+	var getBarDivText=function(text, x,y,width, height, addclass = "")
+	{
+		var txt='<div onclick="BeCal.openEventViewDialog('+m_id+');" onmouseover="BeCalEvent.eventMouseOver('+m_id+');" onmouseout="BeCalEvent.eventMouseOver('+m_id+', true);" class="becalEventBar '+addclass+' becalEventMouseOut evt_'+m_id+'" style="background-color:'+me.color+'; top:'+y+'px; left:'+x+'px; width:'+width+'px; height:'+height+'px;">'+text+'</div>';
+		return txt;
+	};
+
+	// create bars in the month view.
+	this.createMonthBars=function(calendar)
+	{
+		var dayfields = calendar.getDateFields();	// get the day fields from the calendar.
+
+		var posX=0;					// x position to calculate with.
+		var posY=0;					// y position to calculate with.
+		var realPosY=0;					// the real y position.
+		//var realPosX = 0;				// the real x position.
+		var width=0;					// the bar width.
+		var height=BeCal.eventBarHeight;	// the bar height.
+
+		var result = "";	// the returning html text.
+
+		var now = new Date();								// NOW date used for todos.
+		//console.log(now);
+
+		var firstDay = Date.removeTime(dayfields[0].date);					// first date on the table.
+		var lastDay = Date.removeTime(dayfields[dayfields.length-1].date);	// last date on the table.
+		lastDay.setHours(23);
+		lastDay.setMinutes(59);
+		lastDay.setSeconds(59);
+
+		var evtStartDay = Date.removeTime(me.startdate);					// start date of the event.
+		var evtEndDay = Date.removeTime(me.enddate);						// end date of the event.
+
+		// check if event is a todo. If so, maybe adjust dates.
+		if(me.eventtype==1 || me.eventtype==2)
+		{
+			// end day is start day for the todos.
+			if(evtEndDay<now)
+				evtEndDay = now;
+			evtStartDay = new Date(evtEndDay);
+			evtEndDay.setHours(evtStartDay.getHours()+1);
+		}
+
+		var actualdate = new Date(evtStartDay);								// actual date for the bars.
+		var mydayfield=dayfields[0];										// field on table for the actual date.
+
+		// get a free slot between the two dates.
+		var myslot = calendar.getFreeSlotBetween(evtStartDay,evtEndDay, true);
+
+		// check if event is on table.
+		if(evtStartDay>lastDay || evtEndDay<firstDay || myslot<0)
+		{
+			//console.log("-- event not on table or no free slot found --");
+			return result;
+		}
+
+		var processed =0;
+		var turn = 0;
+		//console.log("+++ Listing Event +++");
+
+		var done = false;
+		var firstone = true; // if this is set, it will add a border div to id.
+
+		// check if it is a todo.
+		pretext="";
+		if(me.eventtype==1)
+			pretext="(X)&nbsp;";
+
+		while(!done)
+		{
+			turn+=1;
+			// the date is in the future, abort.
+			if(actualdate>evtEndDay)
+				return result;
+
+			// adjust actual date to begin of table.
+			if(actualdate<firstDay)
+				actualdate = new Date(firstDay);
+
+			// get the remaining days between the two dates.
+			var remainingDays = Date.daysBetween(actualdate, evtEndDay);
+
+			//console.log("------ Turn "+turn+" -------------------------");
+			//console.log("Event lasts "+remainingDays+" day/s.\nStart: "+evtStartDay+"\nEnd: "+evtEndDay+"\nActual: "+actualdate);
+
+			// get the dayfield for the actual date.
+			if(actualdate>=firstDay)
+				mydayfield = calendar.getDayField(actualdate);
+			else
+				mydayfield=dayfields[0];
+
+			// check if the dayfield was found.
+			if(mydayfield==0)
+			{
+				console.log("Dayfield not found for date: "+actualdate.toString());
+				return result;
+			}
+
+			processed =0;
+
+			posX = mydayfield.left;
+			posY = mydayfield.top;
+			//realPosX = posX;
+			realPosY=mydayfield.top+BeCal.calendarFieldTopHeight+(myslot*BeCal.eventSlotHeight);
+
+			width = 0;
+
+			//console.log("X: "+parseInt(posX)+" Y: "+parseInt(posY));
+
+			var r = remainingDays;
+			var newline=false;
+			width-=5; // include padding into the width.
+			for(w=0;w<r;w++)
+			{
+				var nd = Date.removeTime(actualdate);
+				nd.setDate(nd.getDate()+w);
+
+				var newdayfield = calendar.getDayField(nd);
+				if(newdayfield!=0)
+				{
+					// check if the new day field is aligned with my day field.
+					if(parseInt(newdayfield.top) == parseInt(posY))
+					{
+						width+=newdayfield.width;
+						remainingDays-=1;
+						processed+=1;
+						//console.log("Adding width at top: "+newdayfield.top+" @ "+newdayfield.date.toString());
+					}else{
+						// * line break, leave the for loop.
+						// add the first marker.
+						if(firstone==true && evtStartDay>=firstDay)
+						{
+							// maybe add the start marker.
+							result += getBarDivText("", posX+1, realPosY, 10, height, "becalEventMarker");
+							posX+=5;
+							width-=5;
+							firstone = false;
+						}
+						// add the bar.
+						result += getBarDivText(pretext+this.title, posX, realPosY, width, height, "becalEventNoBorder");
+						actualdate = Date.removeTime(nd);
+						//console.log("--> (Processed "+processed+" Remaining "+remainingDays+") Setting date: "+nd.toString());
+						processed = 0;
+						newline = true;
+						break;
+					}
+				}else{
+					console.log("(2) Dayfield not found for date: "+nd.toString());
+					actualdate=Date.removeTime(nd);
+					break;
+				}
+			}
+
+			// * add the last div.
+
+			// add the start marker.
+			if(firstone==true && evtStartDay>=firstDay)
+			{
+				result += getBarDivText("", posX+1, realPosY, 10, height, "becalEventMarker");
+				posX+=5;
+				width-=5;
+				firstone = false;
+			}
+
+			// add the end marker.
+			if(evtEndDay<=lastDay)
+			{
+				width-=10;
+				result += getBarDivText("", posX+width-4, realPosY, 10, height, "becalEventMarker");
+			}
+
+			// add the last bar (see above)
+			result += getBarDivText(pretext+this.title, posX, realPosY, width, height, "becalEventNoBorder");
+
+			if(remainingDays<=0 && !newline)
+				done=true;
+		}
+		// return the html text.
+		return result;
+	}
+}
+// next unique id for an event.
+BeCalEvent.arrID = 0;
+*/
 
 // the parser which parses all the events out of the json.
 var GMLParser_CALENDAREVENTS = function()
@@ -457,269 +937,6 @@ Date.toShortTime = function(datetime)
 };
 
 // EVENT STRUCTURE ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-// a calendar event.
-var BeCalEvent = function()
-{
-	var me = this;
-	
-	// DB stuff
-	var m_dbID = -1;							// DBid < 0 = new entry
-	this.getDBID = function() {return m_dbID;}
-	//var m_hasChanged = false;					// has the entry changed (also if the entry is new)
-	
-	// ENTRY DATA
-	this.title = "Ohne Titel";				// title of the event.
-	this.summary = "";						// summary of the event. (NOT YET USED)
-	this.audiofile="";						// if there is some audio, it is linked to this variable per filename.
-	this.startdate = new Date();			// start date of the event.
-	this.enddate = new Date();				// end date of the event.
-	this.color = BeCal.eventDefaultColor;	// color of the event bars.
-	this.eventtype = 0;						// event type:
-											// 0: calendar event.
-											// 1: A TODO, Not done yet.
-											// 2: TODO, DONE!
-	this.userid = 0;						// The creator user id.
-	var m_id=-1;							// internal unique id for fast search and stuff.
-	this.getID = function() {return m_id;};	// return the unique id.
-	
-	// create the event.
-	this.create = function(start, end, newtype, newtitle, newaudiofile="", newsummary="", newcolor = "") 
-	{
-		me.title = newtitle;
-		me.summary = newsummary;
-		me.startdate = new Date(start);
-		me.enddate = new Date(end);
-		me.eventtype = newtype;
-		me.audiofile = newaudiofile;
-		
-		if(newcolor=="")
-			me.color=BeCal.eventDefaultColor;
-		else
-			me.color=newcolor;
-		
-		// dbID has to be <0 if the event is new.
-		m_dbID = -1;
-		//m_hasChanged = true;
-		
-		// assign an unique id.
-		m_id=BeCalEvent.arrID;
-		BeCalEvent.arrID++;	
-
-//console.log("New entry with title: "+newtitle); 
-	};
-	
-	// create the entry from a database entry. This sets the dbid to >0 and haschanged to false.
-	this.createFromDB = function(dbid,start, end, newtype, newtitle, newaudiofile, newsummary, newcolor)
-	{
-		me.create(start, end, newtype, newtitle, newaudiofile, newsummary, newcolor);
-		m_dbID = dbid;
-		//m_hasChanged = false;
-	};
-
-	// create the bar div and return it.
-	var getBarDivText=function(text, x,y,width, height, addclass = "")
-	{
-		var txt='<div onclick="BeCal.openEventViewDialog('+m_id+');" onmouseover="BeCalEvent.eventMouseOver('+m_id+');" onmouseout="BeCalEvent.eventMouseOver('+m_id+', true);" class="becalEventBar '+addclass+' becalEventMouseOut evt_'+m_id+'" style="background-color:'+me.color+'; top:'+y+'px; left:'+x+'px; width:'+width+'px; height:'+height+'px;">'+text+'</div>';
-		return txt;
-	};
-
-	// create bars in the month view.
-	this.createMonthBars=function(calendar)
-	{
-		var dayfields = calendar.getDateFields();	// get the day fields from the calendar.
-
-		var posX=0;					// x position to calculate with.
-		var posY=0;					// y position to calculate with.
-		var realPosY=0;					// the real y position.
-		//var realPosX = 0;				// the real x position.
-		var width=0;					// the bar width.
-		var height=BeCal.eventBarHeight;	// the bar height.
-
-		var result = "";	// the returning html text.
-
-		var now = new Date();								// NOW date used for todos.
-		//console.log(now);
-
-		var firstDay = Date.removeTime(dayfields[0].date);					// first date on the table.
-		var lastDay = Date.removeTime(dayfields[dayfields.length-1].date);	// last date on the table.
-		lastDay.setHours(23);
-		lastDay.setMinutes(59);
-		lastDay.setSeconds(59);
-
-		var evtStartDay = Date.removeTime(me.startdate);					// start date of the event.
-		var evtEndDay = Date.removeTime(me.enddate);						// end date of the event.
-
-		// check if event is a todo. If so, maybe adjust dates.
-		if(me.eventtype==1 || me.eventtype==2)
-		{
-			// end day is start day for the todos.
-			if(evtEndDay<now)
-				evtEndDay = now;
-			evtStartDay = new Date(evtEndDay);
-			evtEndDay.setHours(evtStartDay.getHours()+1);
-		}
-
-		var actualdate = new Date(evtStartDay);								// actual date for the bars.
-		var mydayfield=dayfields[0];										// field on table for the actual date.
-
-		// get a free slot between the two dates.
-		var myslot = calendar.getFreeSlotBetween(evtStartDay,evtEndDay, true);
-
-		// check if event is on table.
-		if(evtStartDay>lastDay || evtEndDay<firstDay || myslot<0)
-		{
-			//console.log("-- event not on table or no free slot found --");
-			return result;
-		}
-
-		var processed =0;
-		var turn = 0;
-		//console.log("+++ Listing Event +++");
-
-		var done = false;
-		var firstone = true; // if this is set, it will add a border div to id.
-
-		// check if it is a todo.
-		pretext="";
-		if(me.eventtype==1)
-			pretext="(X)&nbsp;";
-
-		while(!done)
-		{
-			turn+=1;
-			// the date is in the future, abort.
-			if(actualdate>evtEndDay)
-				return result;
-
-			// adjust actual date to begin of table.
-			if(actualdate<firstDay)
-				actualdate = new Date(firstDay);
-
-			// get the remaining days between the two dates.
-			var remainingDays = Date.daysBetween(actualdate, evtEndDay);
-
-			//console.log("------ Turn "+turn+" -------------------------");
-			//console.log("Event lasts "+remainingDays+" day/s.\nStart: "+evtStartDay+"\nEnd: "+evtEndDay+"\nActual: "+actualdate);
-
-			// get the dayfield for the actual date.
-			if(actualdate>=firstDay)
-				mydayfield = calendar.getDayField(actualdate);
-			else
-				mydayfield=dayfields[0];
-
-			// check if the dayfield was found.
-			if(mydayfield==0)
-			{
-				console.log("Dayfield not found for date: "+actualdate.toString());
-				return result;
-			}
-
-			processed =0;
-
-			posX = mydayfield.left;
-			posY = mydayfield.top;
-			//realPosX = posX;
-			realPosY=mydayfield.top+BeCal.calendarFieldTopHeight+(myslot*BeCal.eventSlotHeight);
-
-			width = 0;
-
-			//console.log("X: "+parseInt(posX)+" Y: "+parseInt(posY));
-
-			var r = remainingDays;
-			var newline=false;
-			width-=5; // include padding into the width.
-			for(w=0;w<r;w++)
-			{
-				var nd = Date.removeTime(actualdate);
-				nd.setDate(nd.getDate()+w);
-
-				var newdayfield = calendar.getDayField(nd);
-				if(newdayfield!=0)
-				{
-					// check if the new day field is aligned with my day field.
-					if(parseInt(newdayfield.top) == parseInt(posY))
-					{
-						width+=newdayfield.width;
-						remainingDays-=1;
-						processed+=1;
-						//console.log("Adding width at top: "+newdayfield.top+" @ "+newdayfield.date.toString());
-					}else{
-						// * line break, leave the for loop.
-						// add the first marker.
-						if(firstone==true && evtStartDay>=firstDay)
-						{
-							// maybe add the start marker.
-							result += getBarDivText("", posX+1, realPosY, 10, height, "becalEventMarker");
-							posX+=5;
-							width-=5;
-							firstone = false;
-						}
-						// add the bar.
-						result += getBarDivText(pretext+this.title, posX, realPosY, width, height, "becalEventNoBorder");
-						actualdate = Date.removeTime(nd);
-						//console.log("--> (Processed "+processed+" Remaining "+remainingDays+") Setting date: "+nd.toString());
-						processed = 0;
-						newline = true;
-						break;
-					}
-				}else{
-					console.log("(2) Dayfield not found for date: "+nd.toString());
-					actualdate=Date.removeTime(nd);
-					break;
-				}
-			}
-
-			// * add the last div.
-
-			// add the start marker.
-			if(firstone==true && evtStartDay>=firstDay)
-			{
-				result += getBarDivText("", posX+1, realPosY, 10, height, "becalEventMarker");
-				posX+=5;
-				width-=5;
-				firstone = false;
-			}
-
-			// add the end marker.
-			if(evtEndDay<=lastDay)
-			{
-				width-=10;
-				result += getBarDivText("", posX+width-4, realPosY, 10, height, "becalEventMarker");
-			}
-
-			// add the last bar (see above)
-			result += getBarDivText(pretext+this.title, posX, realPosY, width, height, "becalEventNoBorder");
-
-			if(remainingDays<=0 && !newline)
-				done=true;
-		}
-		// return the html text.
-		return result;
-	}
-}
-// next unique id for an event.
-BeCalEvent.arrID = 0;
-
-// mouse is over an event bar.
-BeCalEvent.eventMouseOver=function(evtid, mouseOut=false)
-{
-	if(mouseOut)
-	{
-		// out of the field.
-		$('.evt_'+evtid).removeClass('becalEventMouseOver');
-		$('.evt_'+evtid).addClass('becalEventMouseOut');
-	}else{
-		// into the field..
-		$('.evt_'+evtid).removeClass('becalEventMouseOut');
-		$('.evt_'+evtid).addClass('becalEventMouseOver');
-	}
-
-	// maybe set status.
-	if(BeCal.instance!=null)
-		BeCal.instance.eventMouseOver(evtid, mouseOut);
-};
-
 // A DAY FIELD IN THE UI +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 // a day field on the month view.
@@ -769,7 +986,7 @@ var BeCal = function(contentdivid)
 	var me = this;
 	var m_isChangingDateInput = false; // a thread safeness variable.
 	
-	var m_eventArray = new Array();		// array with all the events in it.
+// NP	var m_eventArray = new Array();		// array with all the events in it.
 	var m_datefieldArray = new Array(); // array with all the date fields in it (UI)
 	this.getDateFields = function() {return m_datefieldArray;};	// used in the events.
 	var m_maxEventSlots = 5;			// max slots on a field to put events into.
@@ -812,7 +1029,7 @@ var BeCal = function(contentdivid)
 	};
 	
 	// fill the events list with some data from the DB.
-	var clearAndFillEvents = function(data)
+/*	var clearAndFillEvents = function(data)
 	{
 		me.clearEvents();
 		for(var i=0;i<data.length;i++)
@@ -825,7 +1042,7 @@ var BeCal = function(contentdivid)
 			me.createDBEvent(d.id, startd, endd,d.eventtype, d.title, d.audiofile, d.summary, d.color);
 		}
 	};
-		
+*/		
 	// DB FUNCTIONS
 	var loadEventsBetween = function(startdate, enddate, successFunc)
 	{
@@ -837,7 +1054,7 @@ var BeCal = function(contentdivid)
 		{
 			var data = GMLParser.EVENTSBETWEEN(startdate, enddate);
 			log(data.length+" events loaded.");
-			clearAndFillEvents(data);
+//			clearAndFillEvents(data);
 			successFunc();
 			hideBlocker();
 		},
@@ -847,7 +1064,7 @@ var BeCal = function(contentdivid)
 			// just show the week field without data.
 			//showBlocker("ERROR: Could not load a GML file.");
 			status("Could not load the database file. Maybe it does not exist yet.");
-			clearAndFillEvents([]);
+//			clearAndFillEvents([]);
 			successFunc();
 			hideBlocker();
 		});
@@ -886,7 +1103,7 @@ var BeCal = function(contentdivid)
 		{
 			var data = GMLParser.TODOS();//(startdate, enddate);
 			log(data.length+" events loaded.");
-			clearAndFillEvents(data);
+// NP			clearAndFillEvents(data);
 			successFunc();
 			hideBlocker();
 		},
@@ -896,7 +1113,7 @@ var BeCal = function(contentdivid)
 			// just show the week field without data.
 			//showBlocker("ERROR: Could not load a GML file.");
 			status("Could not load the database file. Maybe it does not exist yet.");
-			clearAndFillEvents([]);
+// NP			clearAndFillEvents([]);
 			successFunc();
 			hideBlocker();
 		});
@@ -1061,14 +1278,19 @@ var BeCal = function(contentdivid)
 	
 	// ENDOF DB FUNCTIONS
 	
-	this.clearEvents = function() {m_eventArray = new Array();};
-	
-	// create an event and add it to the list.
+	this.clearEvents = function() 
+	{
+		// NP m_eventArray = new Array();};
+		GMLParser.EVENTS().clear();
+	}
+
+/* NP	// create an event and add it to the list.
 	this.createEvent = function(startdate, enddate, eventtype, title, audiofile="", summary="", color = "")
 	{
 		var e = new BeCalEvent();
 		e.create(startdate, enddate, eventtype, title, audiofile, summary, color);
-		m_eventArray.push(e);
+		GMLParser.EVENTS().push(e);
+		// NP m_eventArray.push(e);
 		return e;
 	};
 	
@@ -1080,14 +1302,15 @@ var BeCal = function(contentdivid)
 		m_eventArray.push(e);
 		return e;
 	};
-	
+*/	
 	// return an event by its id.
 	this.getEventByID = function(id)
 	{
-		for(var i=0;i<m_eventArray.length;i++)
+		var evts = GMLParser.EVENTS();
+		for(var i=0;i<evts.length;i++)
 		{
-			if(m_eventArray[i].getID()==id)
-				return m_eventArray[i];
+			if(evts[i].getID()==id)
+				return evts[i];
 		}
 		return null;
 	};
@@ -1180,7 +1403,9 @@ var BeCal = function(contentdivid)
 		loadTodos(function()
 		{
 			var txt='<div class="fullscreen scrollvertical"><br />';
-			var entries = m_eventArray;
+			// NP var entries = m_eventArray;
+			var entries = GMLParser.TODOS();
+			
 			// first get all entries in range.
 			// only push the timed events first.
 			var now = new Date();
@@ -1419,7 +1644,7 @@ var BeCal = function(contentdivid)
 	{
 		//console.log("Sorting between "+startdate+" / "+enddate);
 		var arr = new Array();
-		var entries = m_eventArray;
+		var entries = GMLParser.EVENTS(); // NP m_eventArray;
 
 		// first get all entries in range.
 		// only push the timed events first.
@@ -1893,9 +2118,10 @@ var BeCal = function(contentdivid)
 		today = Date.removeTime(today);
 		var txt='';
 		var count = 0;
-		for(var i=0;i<m_eventArray.length;i++)
+		var evtarr = GMLParser.EVENTS();
+		for(var i=0;i<evtarr.length;i++)
 		{
-			var e = m_eventArray[i];
+			var e = evtarr[i];
 			// check if the event is on the field or if it is a todo and its the
 			// today field and the todo is <= today.
 			if((Date.removeTime(e.startdate)<=Date.removeTime(dayfield.date) && Date.removeTime(e.enddate)>=Date.removeTime(dayfield.date))||
@@ -2160,7 +2386,7 @@ var BeCal = function(contentdivid)
 	this.createNewEventBtnPressed = function()
 	{
 		// create the entry with the date from the window.
-		var e = new BeCalEvent();
+		var e = new GMLParser_CALEVENT();
 		var start=Date.setTime(AnyTime.getCurrent(BeCal.inputNameDate1), AnyTime.getCurrent(BeCal.inputNameTime1));
 		var end=Date.setTime(AnyTime.getCurrent(BeCal.inputNameDate2), AnyTime.getCurrent(BeCal.inputNameTime2));
 		var evttype = 0;
@@ -2169,7 +2395,9 @@ var BeCal = function(contentdivid)
 			evttype=1;
 		
 		e.create(start, end, evttype, $('#'+BeCal.inputNameEventTitle).val(), "", "", this.newEntryColor);
-		m_eventArray.push(e);
+		
+		// XHEREX --> will be loaded again after saveing.
+		//m_eventArray.push(e);
 	
 		$('#'+BeCal.editEntryWindow).hide();
 		$('#'+BeCal.inputNameEventTitle).val("");
