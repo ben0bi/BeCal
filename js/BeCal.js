@@ -472,8 +472,8 @@ var BeCalEvent = function()
 	this.title = "Ohne Titel";				// title of the event.
 	this.summary = "";						// summary of the event. (NOT YET USED)
 	this.audiofile="";						// if there is some audio, it is linked to this variable per filename.
-	this.startDate = new Date();			// start date of the event.
-	this.endDate = new Date();				// end date of the event.
+	this.startdate = new Date();			// start date of the event.
+	this.enddate = new Date();				// end date of the event.
 	this.color = BeCal.eventDefaultColor;	// color of the event bars.
 	this.eventtype = 0;						// event type:
 											// 0: calendar event.
@@ -488,8 +488,8 @@ var BeCalEvent = function()
 	{
 		me.title = newtitle;
 		me.summary = newsummary;
-		me.startDate = new Date(start);
-		me.endDate = new Date(end);
+		me.startdate = new Date(start);
+		me.enddate = new Date(end);
 		me.eventtype = newtype;
 		me.audiofile = newaudiofile;
 		
@@ -547,8 +547,8 @@ var BeCalEvent = function()
 		lastDay.setMinutes(59);
 		lastDay.setSeconds(59);
 
-		var evtStartDay = Date.removeTime(me.startDate);					// start date of the event.
-		var evtEndDay = Date.removeTime(me.endDate);						// end date of the event.
+		var evtStartDay = Date.removeTime(me.startdate);					// start date of the event.
+		var evtEndDay = Date.removeTime(me.enddate);						// end date of the event.
 
 		// check if event is a todo. If so, maybe adjust dates.
 		if(me.eventtype==1 || me.eventtype==2)
@@ -800,11 +800,11 @@ var BeCal = function(contentdivid)
 					spc=" ";
 				
 				if(evttype==0)	// event
-					status(Date.toShortDate(evt.startDate)+" "+Date.toShortTime(evt.startDate)+" => "+Date.toShortDate(evt.endDate)+" "+Date.toShortTime(evt.endDate)+" : "+evt.title+spc+evt.summary);
+					status(Date.toShortDate(evt.startdate)+" "+Date.toShortTime(evt.startdate)+" => "+Date.toShortDate(evt.enddate)+" "+Date.toShortTime(evt.enddate)+" : "+evt.title+spc+evt.summary);
 				if(evttype==1) // TODO not done
-					status("<span class=\"statuscharpos kreuz\"></span> &nbsp;TODO: "+evt.title+spc+evt.summary+" bis am "+Date.toShortDate(evt.endDate)+" "+Date.toShortTime(evt.endDate));
+					status("<span class=\"statuscharpos kreuz\"></span> &nbsp;TODO: "+evt.title+spc+evt.summary+" bis am "+Date.toShortDate(evt.enddate)+" "+Date.toShortTime(evt.enddate));
 				if(evttype==2) // Done TODO
-					status("<span class=\"statuscharpos haken\"></span> &nbsp;ERLEDIGT: "+evt.title+spc+evt.summary+" am "+Date.toShortDate(evt.startDate)+" "+Date.toShortTime(evt.startDate));
+					status("<span class=\"statuscharpos haken\"></span> &nbsp;ERLEDIGT: "+evt.title+spc+evt.summary+" am "+Date.toShortDate(evt.startdate)+" "+Date.toShortTime(evt.startdate));
 			}
 		}else{
 			status("");
@@ -985,8 +985,8 @@ var BeCal = function(contentdivid)
 	function saveToDB_afteraudio(becalevt)
 	{
 		// create SQL strings from the dates.
-		var d1 = Date.toSQL(becalevt.startDate);
-		var d2 = Date.toSQL(becalevt.endDate);
+		var d1 = Date.toSQL(becalevt.startdate);
+		var d2 = Date.toSQL(becalevt.enddate);
 
 		// set up the php request.
 		var url = 'php/ajax_CUD_event.php';
@@ -1194,7 +1194,7 @@ var BeCal = function(contentdivid)
 					(e.eventtype==1 && m_actualTodoView==0))
 					continue;
 
-				var end = new Date(e.endDate);
+				var end = new Date(e.enddate);
 				if(end>=now && tdyfound==0)
 				{
 					txt+="<hr />++++ HEUTE: "+now.getDate()+"."+(now.getMonth()+1)+"."+now.getFullYear()+" ++++"
@@ -1366,6 +1366,7 @@ var BeCal = function(contentdivid)
 		// load the events asyncronous.
 		loadEventsBetween(startScreenDate, endScreenDate, function()
 		{
+			log("Loading events between "+startScreenDate.toString()+" to "+endScreenDate.toString(), LOG_USER);
 			// create all the event bars.
 			var sortedFields = sortEventsByLength(startScreenDate, endScreenDate);
 
@@ -1414,9 +1415,9 @@ var BeCal = function(contentdivid)
 	};
 
 	// sort all the events of the calendar by length. longest first.
-	var sortEventsByLength = function(startDate, endDate)
+	var sortEventsByLength = function(startdate, enddate)
 	{
-		//console.log("Sorting between "+startDate+" / "+endDate);
+		//console.log("Sorting between "+startdate+" / "+enddate);
 		var arr = new Array();
 		var entries = m_eventArray;
 
@@ -1425,7 +1426,7 @@ var BeCal = function(contentdivid)
 		for(var i = 0;i<entries.length;i++)
 		{
 			var e = entries[i];
-			if(e.eventtype==0 && e.startDate<=endDate && e.endDate>=startDate)
+			if(e.eventtype==0 && e.startdate<=enddate && e.enddate>=startdate)
 				arr.push(e);
 		}
 
@@ -1443,8 +1444,8 @@ var BeCal = function(contentdivid)
 					var a1 = arr[i];
 					var a2 = arr[i+1];
 
-					var d1 = Date.daysBetween(a1.startDate, a1.endDate);
-					var d2 = Date.daysBetween(a2.startDate, a2.endDate);
+					var d1 = Date.daysBetween(a1.startdate, a1.enddate);
+					var d2 = Date.daysBetween(a2.startdate, a2.enddate);
 
 					// maybe switch the values.
 					if(d2 > d1) // the more days, the further up we go.
@@ -1463,7 +1464,7 @@ var BeCal = function(contentdivid)
 		for(var i = 0;i<entries.length;i++)
 		{
 			var e = entries[i];
-			if(e.eventtype==1 && e.endDate<=endDate) // && e.endDate>=startDate)
+			if(e.eventtype==1 && e.enddate<=enddate) // && e.enddate>=startdate)
 				arr.push(e);
 		}
 
@@ -1897,8 +1898,8 @@ var BeCal = function(contentdivid)
 			var e = m_eventArray[i];
 			// check if the event is on the field or if it is a todo and its the
 			// today field and the todo is <= today.
-			if((Date.removeTime(e.startDate)<=Date.removeTime(dayfield.date) && Date.removeTime(e.endDate)>=Date.removeTime(dayfield.date))||
-			(e.eventtype==1 && e.endDate <= today && Date.removeTime(dayfield.date).toString() == today.toString()))
+			if((Date.removeTime(e.startdate)<=Date.removeTime(dayfield.date) && Date.removeTime(e.enddate)>=Date.removeTime(dayfield.date))||
+			(e.eventtype==1 && e.enddate <= today && Date.removeTime(dayfield.date).toString() == today.toString()))
 			{
 				console.log("TDY: "+today+" dfd:"+Date.removeTime(dayfield.date));
 				txt+='<div id="becalHiddenEventDiv_'+e.getID()+'" class="becalHiddenEvent" style="background-color:'+e.color+';" onclick="BeCal.openEventViewDialog('+e.getID()+')">'+e.title+'</div>';
@@ -2115,10 +2116,10 @@ var BeCal = function(contentdivid)
 		$('#'+BeCal.inputNameEventTitle).val(evt.title);
 	
 		// set the dates in the inputs so we can get their formatted values for the non-input text.
-		AnyTime.setCurrent( BeCal.inputNameDate1, evt.startDate);
-		AnyTime.setCurrent( BeCal.inputNameDate2, evt.endDate);
-		AnyTime.setCurrent( BeCal.inputNameTime1, evt.startDate);
-		AnyTime.setCurrent( BeCal.inputNameTime2, evt.endDate);
+		AnyTime.setCurrent( BeCal.inputNameDate1, evt.startdate);
+		AnyTime.setCurrent( BeCal.inputNameDate2, evt.enddate);
+		AnyTime.setCurrent( BeCal.inputNameTime1, evt.startdate);
+		AnyTime.setCurrent( BeCal.inputNameTime2, evt.enddate);
 	
 		// set the event color.
 		changeEntryWindowEvtColor(evt.color);
@@ -2128,7 +2129,7 @@ var BeCal = function(contentdivid)
 	
 		m_blockEntryDuration = false;
 		// show the duration of the event.
-		showEntryDuration(evt.startDate, evt.endDate);
+		showEntryDuration(evt.startdate, evt.enddate);
 
 		// maybe show the intermediary interface
 		if(eventtype>=1 && afterintermediary==false)
@@ -2187,8 +2188,8 @@ var BeCal = function(contentdivid)
 		}
 		
 		// The event is saved in the m_selectedEvent variable, just set the new values.
-		m_selectedEvent.startDate=Date.setTime(AnyTime.getCurrent(BeCal.inputNameDate1), AnyTime.getCurrent(BeCal.inputNameTime1));
-		m_selectedEvent.endDate=Date.setTime(AnyTime.getCurrent(BeCal.inputNameDate2), AnyTime.getCurrent(BeCal.inputNameTime2));
+		m_selectedEvent.startdate=Date.setTime(AnyTime.getCurrent(BeCal.inputNameDate1), AnyTime.getCurrent(BeCal.inputNameTime1));
+		m_selectedEvent.enddate=Date.setTime(AnyTime.getCurrent(BeCal.inputNameDate2), AnyTime.getCurrent(BeCal.inputNameTime2));
 		m_selectedEvent.title = $('#'+BeCal.inputNameEventTitle).val();
 		m_selectedEvent.color = $('#'+BeCal.inputNameColorPicker).spectrum('get').toHexString(); // TODO: Set new color
 		
