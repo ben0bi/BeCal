@@ -61,9 +61,9 @@ var GMLParser_CALEVENT = function()
 	this.parseGML = function(json, rootPath)
 	{
 		if(__defined(json['ID']))
-			me.id = parseInt(json['ID']);
-		if(this.id=="NaN")
-			me.id = -1;
+			m_dbID = parseInt(json['ID']);
+		if(m_dbID=="NaN")
+			m_dbID = -1;
 		if(__defined(json['TITLE']))
 			me.title = json['TITLE'];
 		if(__defined(json['STARTDATE']))
@@ -80,10 +80,12 @@ var GMLParser_CALEVENT = function()
 			me.color = json['COLOR'];
 		if(__defined(json['AUDIOFILE']))
 			me.audiofile = json['AUDIOFILE'];
+		setUniqueID();
 	};
 	
 	// FROM OLD BECAL EVENT
-	// fill this event with some data.
+	
+	// fill this event with some data (on creating new, not parsing.)
 	this.create = function(start, end, newtype, newtitle, newaudiofile="", newsummary="", newcolor = "") 
 	{
 		me.title = newtitle;
@@ -100,12 +102,16 @@ var GMLParser_CALEVENT = function()
 		
 		// dbID has to be <0 if the event is new.
 		m_dbID = -1;
-		
+		setUniqueID();
+	};
+
+	var setUniqueID = function()
+	{
 		// assign an unique id.
 		m_id=GMLParser_CALEVENT.arrID;
 		GMLParser_CALEVENT.arrID++;	
-	};
-
+	}
+	
 	// create the bar div and return it.
 	var getBarDivText=function(text, x,y,width, height, addclass = "")
 	{
@@ -568,7 +574,7 @@ var GMLParser_CALENDAREVENTS = function()
 			{
 				var evt = new GMLParser_CALEVENT();
 				evt.parseGML(json['EVENTS'][i], rootPath);
-				if(evt.id>=0) // only add it to the list if an id is given.
+				if(evt.getDBID()>=0) // only add it to the list if an id is given.
 				{
 					me.events.push(evt);
 				}else{
