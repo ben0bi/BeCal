@@ -1025,7 +1025,15 @@ var BeCal = function(contentdivid)
 					spc=" ";
 				
 				if(evttype==0)	// event
-					status(Date.toShortDate(evt.startdate)+" "+Date.toShortTime(evt.startdate)+" => "+Date.toShortDate(evt.enddate)+" "+Date.toShortTime(evt.enddate)+" : "+evt.title+spc+evt.summary);
+				{
+					var sts = Date.toShortDate(evt.startdate);
+					var ste = Date.toShortDate(evt.enddate);
+					var statustext = sts+" "+Date.toShortTime(evt.startdate)+" => ";
+					if(sts!=ste)
+						statustext=statustext+ste+" ";
+					statustext=statustext+Date.toShortTime(evt.enddate);
+					status(statustext+" : "+evt.title+spc+evt.summary);
+				}
 				if(evttype==1) // TODO not done
 					status("<span class=\"statuscharpos kreuz\"></span> &nbsp;TODO: "+evt.title+spc+evt.summary+" bis am "+Date.toShortDate(evt.enddate)+" "+Date.toShortTime(evt.enddate));
 				if(evttype==2) // Done TODO
