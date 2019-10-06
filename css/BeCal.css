@@ -143,8 +143,6 @@ input[type=checkbox].check-todo
 
     border: 0;
 
-    background-color: transparent;
-    color:#3333FF;
     white-space: nowrap;
     overflow:hidden;
 
@@ -167,7 +165,6 @@ input[type=checkbox]:checked.check-todo {
 }
 
 input[type=checkbox]:hover.check-todo {
-	color: #FFAA00;
     background-color: transparent;
 }
 
@@ -193,7 +190,6 @@ input[type=checkbox]:hover.check-todo {
 .becalInputDate, .becalInputTime
 {
 	width: 200px;
-	color: #FFFFFA;
 	background-color: transparent;
 	border: 0;
 	text-align: center;
@@ -218,7 +214,6 @@ input[type=checkbox]:hover.check-todo {
 .becalInputMouseOver:hover
 {
 	cursor: pointer;
-	background-color: #336633;
 	border: 0;
 }
 
@@ -270,16 +265,12 @@ input[type=checkbox]:hover.check-todo {
 	display: inline-block;
 	text-decoration: none;
 	padding: 10px;
-	background-color: #113311;
-	color: #FFFFFA;
-	border: 2px solid #333366;
 	border-radius: 5px;
 }
 
 .becalOkBtn:hover
 {
 	text-decoration: none;
-	background-color: #336633;
 }
 
 /* a "bad" button, like for deletion of stuff or such. */
@@ -288,84 +279,34 @@ input[type=checkbox]:hover.check-todo {
 	display: inline-block;
 	text-decoration: none;
 	padding: 10px;
-	background-color: #331111;
-	color: #FFFFFA;
-	border: 2px solid #333366;
 	border-radius: 5px;
 }
 
 .becalBadBtn:hover
 {
 	text-decoration: none;
-	background-color: #663333;
 }
 
-/* this button has an edit pencil in it. */
-.becalEditBtn
+/* some buttons. */
+.becalEditBtn, .becalHakenBtn, .becalKreuzBtn, .becalDeleteBtn
 {
 	width: 40px;
 	height: 40px;
 	padding: 0px !important;
 	border-radius: 20px !important;
-	background-image: url("../img/edit.png");
-	background-repeat: no-repeat;
-	background-position: center;
-}
-
-/* this button has an ok check thingy in it . */
-.becalHakenBtn
-{
-	width: 40px;
-	height: 40px;
-	padding: 0px !important;
-	border-radius: 20px !important;
-	background-image: url("../img/haken.png");
-	background-repeat: no-repeat;
-	background-position: center;
-}
-
-/* this button has a cross in it. */
-.becalKreuzBtn
-{
-	width: 40px;
-	height: 40px;
-	padding: 0px !important;
-	border-radius: 20px !important;
-	background-image: url("../img/kreuz.png");
-	background-repeat: no-repeat;
-	background-position: center;
-}
-
-/* this button has a red pencil rubber in it. */
-.becalDeleteBtn
-{
-	width: 40px;
-	height: 40px;
-	padding: 0px !important;
-	border-radius: 20px !important;
-	background-image: url("../img/delete.png");
 	background-repeat: no-repeat;
 	background-position: center;
 }
 
 /* the advance buttons. */
-.becalAdvanceBtn {color: #FFFFFA; text-decoration: none;}
-.becalAdvanceBtn:hover {color: #FFAA00;}
+.becalAdvanceBtn {text-decoration: none;}
 
 /* "a" button */
 .becalBtn 
 {
-	border: 1px solid #FFFFFA;
 	border-radius: 4px;
 	padding: 5px;
 	font-size: 12pt;
-	background-color: #333355;
-}
-
-.becalBtn:hover
-{
-	background-color: #FFAA00;
-	color: #333355;
 }
 
 /* becalField is an unspecific field on the table, becalDayField is a day field on the table. */
@@ -373,7 +314,6 @@ input[type=checkbox]:hover.check-todo {
 {
 	position: absolute;
 	display: block;
-	border-right: 1px solid #FFFFFA;
 	/*width: 14.2%;*/
 	width: 1px; /*will be set by code */
 }
@@ -382,27 +322,17 @@ input[type=checkbox]:hover.check-todo {
 {
 	/*height: 18%;*/
 	font-size: 10pt;
-	border-bottom: 1px solid #FFFFFA;
 }
 
 /* don't show borders on the left, right, top and bottom fields. */
 .becalLastCalField {border-right: 0px;}
 .becalLowestCalField {border-bottom: 0px;}
 
-/* the today field */
-.becalToday
-{
-	color: #FFFF33;
-	background-color: #333366;
-	border-top: 1px solid #FFFFFA;
-}
-
 /* specific settins for the day fields. */
 .becalDayField 
 {
 	height: 25px;
 	font-weight: bolder;
-	border-bottom: 1px dashed #FF0000;
 	font-size: 14pt;
 	/*padding-top: 5px;*/
 }
@@ -417,18 +347,6 @@ input[type=checkbox]:hover.check-todo {
 	font-weight: bolder;
 	font-size: 14pt;
 	position: absolute;
-}
-
-.becalStatusOn
-{
-	background-image: url('../img/semitransparentbg.png');	
-	border-top: 1px solid #FF0000;
-}
-
-.becalStatusOff
-{
-	background-image: none;
-	border-top: 1px solid #FFFFFF;
 }
 
 #statusadvancer
@@ -470,10 +388,6 @@ input[type=checkbox]:hover.check-todo {
 	right: 5px;
 	cursor: pointer;
 }
-.becalDayHiddenEvents:hover
-{
-	background-color: 336633;
-}
 
 /* a calender event bar. */
 .becalEventBar
@@ -498,14 +412,6 @@ input[type=checkbox]:hover.check-todo {
 	cursor: pointer;
 }
 
-/* mouse action classes for an event. */
-.becalEventMouseOver
-{
-	border: 2px solid #FFFFFA;
-}
-
-.becalEventMouseOut {border: 2px solid #666699; }
-
 /* no border at the edges. */
 .becalEventNoBorder
 {
@@ -519,7 +425,6 @@ input[type=checkbox]:hover.check-todo {
 	position: relative;
 	width: 172px;
 	z-index: 5;
-	border: 2px solid #666699;
 	font-family: 'calFontSmall', sans-serif;
 	font-size: 8pt;
 	padding-left: 5px;
@@ -527,9 +432,8 @@ input[type=checkbox]:hover.check-todo {
 	border-radius: 7px;
 	margin-top: 1px;
 }
-.becalHiddenEvent:hover {border: 2px solid #FFFFFA;}
-/* div with the hidden events in it. */
 
+/* div with the hidden events in it. */
 #becalOtherEntriesDiv
 {
 	position: absolute;
@@ -549,11 +453,6 @@ input[type=checkbox]:hover.check-todo {
 #becalEditEntryWindow .jdwindow-top
 {
 	height: 50px !important;
-}
-
-#becalEditEntryWindow .jdwindow-top:hover
-{
-	background-color: #336633;
 }
 
 /* top icon of entry window */
@@ -596,38 +495,12 @@ input[type=checkbox]:hover.check-todo {
 	padding-top: 3px;
 	cursor: pointer;
 	/*border: 1px solid #FF0000;*/
-	background-image: url('../img/semitransparentbg.png');
 	/*border-bottom: 1px solid #FFAA00;*/
-}
-
-/* hovering over a todo item */
-.becalTodo:hover
-{
-	background-color: #000033;
-}
-
-.becalTodo:hover > .becalTodoText,
-.becalTodo > .kreuz:hover,
-.becalTodo > .haken:hover
-{
-	color: #FFAA00 !important;
 }
 
 .becalTodoText
 {
 	margin-left: 30px;
-}
-
-.becalTodoDone
-{
-	text-decoration: line-through;
-	color: #AAFFAA;
-}
-
-.becalTodoNotDone
-{
-	text-decoration: none;
-	color: FFFFFA;
 }
 
 /* fullscreen and scrolling classes. */

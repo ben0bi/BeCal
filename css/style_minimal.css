@@ -206,3 +206,175 @@ input[type=checkbox]:checked:after
 	/*bottom: 0px;*/
 }
 
+/* The checkbox to switch between todos and calendar on the edit entry window. */
+input[type=checkbox].check-todo
+{
+    background-color: transparent;
+    color:#3333FF;
+}
+
+input[type=checkbox]:hover.check-todo {
+	color: #FFAA00;
+}
+
+/* these are the date and time pickers on the create entry window. */
+.becalInputDate, .becalInputTime
+{
+	color: #FFFFFA;
+}
+
+/* mouseover over a date input. */
+.becalInputMouseOver:hover
+{
+	background-color: #336633;
+}
+
+/* an ok button. */
+.becalOkBtn, .becalOkBtn:visited
+{
+	background-color: #113311;
+	color: #FFFFFA;
+	border: 2px solid #333366;
+}
+
+.becalOkBtn:hover
+{
+	background-color: #336633;
+}
+
+/* a "bad" button, like for deletion of stuff or such. */
+.becalBadBtn, .becalBadBtn:visited
+{
+	background-color: #331111;
+	color: #FFFFFA;
+	border: 2px solid #333366;
+}
+
+.becalBadBtn:hover
+{
+	background-color: #663333;
+}
+
+/* this button has an edit pencil in it. */
+.becalEditBtn
+{
+	background-image: url("../img/edit.png");
+}
+
+/* this button has an ok check thingy in it . */
+.becalHakenBtn
+{
+	background-image: url("../img/haken.png");
+}
+
+/* this button has a cross in it. */
+.becalKreuzBtn
+{
+	background-image: url("../img/kreuz.png");
+}
+
+/* this button has a red pencil rubber in it. */
+.becalDeleteBtn
+{
+	background-image: url("../img/delete.png");
+}
+
+/* the advance buttons. */
+.becalAdvanceBtn {color: #FFFFFA;}
+.becalAdvanceBtn:hover {color: #FFAA00;}
+
+/* "a" button */
+.becalBtn 
+{
+	border: 1px solid #FFFFFA;
+	background-color: #333355;
+}
+
+.becalBtn:hover
+{
+	background-color: #FFAA00;
+	color: #333355;
+}
+
+/* becalField is an unspecific field on the table, becalDayField is a day field on the table. */
+.becalField, .becalDayField
+{
+	border-right: 1px solid #FFFFFA;
+}
+
+.becalField 
+{
+	border-bottom: 1px solid #FFFFFA;
+}
+
+/* the today field */
+.becalToday
+{
+	color: #FFFF33;
+	background-color: #333366;
+	border-top: 1px solid #FFFFFA;
+}
+
+/* specific settins for the day fields. */
+.becalDayField 
+{
+	border-bottom: 1px dashed #FF0000;
+}
+
+/* status line colors */
+.becalStatusOn
+{
+	background-image: url('../img/semitransparentbg.png');	
+	border-top: 1px solid #FF0000;
+}
+
+.becalStatusOff
+{
+	background-image: none;
+	border-top: 1px solid #FFFFFF;
+}
+
+/* hovering over the hidden events. */
+.becalDayHiddenEvents:hover {background-color: #336633;}
+
+/* mouse action classes for an event. */
+.becalEventMouseOver{border: 2px solid #FFFFFA;}
+.becalEventMouseOut {border: 2px solid #666699; }
+
+/* an event in the hidden event window. */
+.becalHiddenEvent {border: 2px solid #666699;}
+.becalHiddenEvent:hover {border: 2px solid #FFFFFA;}
+
+/* top bar of entry window */
+#becalEditEntryWindow .jdwindow-top:hover {background-color: #336633;}
+
+/* a todo entry in the todo view. */
+.becalTodo
+{
+	/*border: 1px solid #FF0000;*/
+	background-image: url('../img/semitransparentbg.png');
+	/*border-bottom: 1px solid #FFAA00;*/
+}
+
+/* hovering over a todo item */
+.becalTodo:hover {background-color: #000033;}
+
+.becalTodo:hover > .becalTodoText,
+.becalTodo > .kreuz:hover,
+.becalTodo > .haken:hover
+{
+	color: #FFAA00 !important;
+}
+
+/* a todo item. */
+.becalTodoDone
+{
+	text-decoration: line-through;
+	color: #AAFFAA;
+}
+
+.becalTodoNotDone
+{
+	text-decoration: none;
+	color: FFFFFA;
+}
