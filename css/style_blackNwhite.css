@@ -82,7 +82,8 @@ body
 }
 #todocheckboxdiv:hover
 {
-	color: #AAAAAA !important;
+	color: #000000 !important;
+	background-color: #aaaaaa !important;
 }
 
 /* The TODO checkbox content. */
@@ -292,8 +293,8 @@ input[type=checkbox]:hover.check-todo {
 }
 
 /* the advance buttons. */
-.becalAdvanceBtn {color: #000000;}
-.becalAdvanceBtn:hover {color: #000000;}
+.becalAdvanceBtn {color: #000000; background-color: #ffffff;}
+.becalAdvanceBtn:hover {color: #ffffff; background-color: #aaaaaa;}
 
 /* "a" button */
 .becalBtn 
@@ -350,6 +351,8 @@ input[type=checkbox]:hover.check-todo {
 /* hovering over the hidden events. */
 .becalDayHiddenEvents:hover {background-color: #aaaaaa;}
 
+.becalEventBar {color: #000000; background-color: #ffffff !important;}
+
 /* mouse action classes for an event. */
 .becalEventMouseOver 
 {
@@ -395,7 +398,7 @@ input[type=checkbox]:hover.check-todo {
 .becalTodo > .kreuz:hover,
 .becalTodo > .haken:hover
 {
-	color: #aaaaaa !important;
+	color: #ffffff !important;
 }
 
 /* a todo item. */
@@ -426,7 +429,7 @@ input[type=checkbox]:hover.check-todo {
 /* the top bar of the window (to move it) */
 .jdwindow-top 
 {
-	background-color: #ffffff;
+	background-color: #ffffff !important;
 	padding-left: 10px;
 }
 
