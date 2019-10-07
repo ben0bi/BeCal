@@ -1200,7 +1200,7 @@ var BeCal = function(contentdivid)
 					tdyfound = 2;
 				}
 
-				txt+='<div class="becalTodo" onmouseover="BeCalEvent.eventMouseOver('+e.getID()+')" onmouseout="status(\'\')">';
+				txt+='<div class="becalTodo" onmouseover="GMLParser_CALEVENT.eventMouseOver('+e.getID()+')" onmouseout="status(\'\')">';
 				if(e.eventtype==1)
 				{
 					txt+='<span class="todocharpos kreuz" onclick="BeCal.updateEventType('+e.getID()+', 2)"></span> <span class="becalTodoText becalTodoNotDone" onclick="BeCal.openEventViewDialog('+e.getID()+')">';
