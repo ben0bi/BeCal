@@ -397,8 +397,8 @@ input[type=checkbox]:hover.check-todo {
 	z-index: 5;
 	font-family: 'calFontSmall', sans-serif;
 	font-size: 8pt;
-	border-right: 0;
-	border-left: 0;
+	border-right: 0px;
+	border-left: 0px;
 	padding-left: 5px;
 	overflow: hidden;
 	cursor: pointer;
@@ -415,8 +415,8 @@ input[type=checkbox]:hover.check-todo {
 /* no border at the edges. */
 .becalEventNoBorder
 {
-	border-left: 0;
-	border-right: 0;
+	border-left: 0px;
+	border-right: 0px;
 }
 
 /* an event in the hidden event window. */

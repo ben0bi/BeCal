@@ -3,26 +3,21 @@
   font-family: 'calFont';
   font-style: normal;
   font-weight: 400;
-/*  src: url('../fonts/PressStart2P.ttf'); */
+  src: url('../fonts/PressStart2P.ttf');
 }
 
 @font-face {
   font-family: 'calFontSmall_Bold';
   font-style: normal;
   font-weight: 400;
-  /* src: url('../fonts/Play-Bold.ttf'); */
+  src: url('../fonts/Play-Bold.ttf');
 }
 
 @font-face {
   font-family: 'calFontSmall';
   font-style: normal;
   font-weight: 400;
-  /* src: url('../fonts/Play-Regular.ttf'); */
-}
-
-html, body
-{
-	font-family: 'calFont', sans-serif;
+  src: url('../fonts/Play-Regular.ttf');
 }
 
 body
@@ -35,25 +30,34 @@ body
 /* background when the calendar is on. */
 .calendarBackground
 {
-	background-color: #003300;
+	background: url('../img/waldschattensonne.jpg');
+	background-repeat: no-repeat;
+	background-size: cover;	
 }
 
 /* background when the todo state is on. */
 .todoBackground
 {
-	background-color: #000033;
+	background: url('../img/todo_background.jpg');
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
 }
 
 /* background for the edit window and stuff. */
 .becalWindow
 {
-	background-color: #000033;
+	width: 100%;
+	height: 100%;
+	background-image: url('../img/bg_repeat.png');
 }
 
 /* this one blocks the whole content when someting will be made with the db. */
 #blocker
 {
 	background-color: #663300;
+	background: url('../img/blocker_background.png');
+	background-repeat: repeat;
+	/*background-size: 100% 100%;*/
 }
 
 /* the calendar top bar menu */
@@ -74,7 +78,7 @@ body
 }
 #todocheckboxdiv:hover
 {
-	color: #33AAFF !important;
+	color: #FFAA00 !important;
 }
 
 /* The TODO checkbox content. */
@@ -338,12 +342,32 @@ input[type=checkbox]:hover.check-todo {
 .becalDayHiddenEvents:hover {background-color: #336633;}
 
 /* mouse action classes for an event. */
-.becalEventMouseOver{border: 2px solid #FFFFFA;}
-.becalEventMouseOut {border: 2px solid #666699; }
+.becalEventMouseOver 
+{
+	border-top: 2px solid #fffffa;
+	border-bottom: 2px solid #fffffa;
+}
+.becalEventMouseOut
+{
+	border-bottom: 2px solid #555599;
+	border-top: 2px solid #555599;
+}
+.becalEventMarker.becalEventMouseOver
+{
+	border-left:2px solid #fffffa;
+	border-right:2px solid #fffffa;
+}
+.becalEventMarker.becalEventMouseOut
+{
+	border-left:2px solid #555599;
+	border-right:2px solid #555599;
+}
 
 /* an event in the hidden event window. */
 .becalHiddenEvent {border: 2px solid #666699;}
 .becalHiddenEvent:hover {border: 2px solid #FFFFFA;}
+
+/* SPECIFICS FOR SINGLE WINDOWS. */
 
 /* top bar of entry window */
 #becalEditEntryWindow .jdwindow-top:hover {background-color: #336633;}
@@ -377,4 +401,43 @@ input[type=checkbox]:hover.check-todo {
 {
 	text-decoration: none;
 	color: FFFFFA;
+}
+
+/* The jDoor window theme. */
+/* (graphical) stuff for the window class. 
+	for layouting it, refer to jdoors.css */
+/* the whole window */
+.jdwindow
+{
+	border: 2px solid #FFFFFA;
+	border-radius: 5px;
+	background-color: #111133;
+	color: #FFFFFA;
+}
+
+/* the top bar of the window (to move it) */
+.jdwindow-top 
+{
+	background-color: #113311;
+	padding-left: 10px;
+}
+
+/* the hide button. 
+	a window will not be deleted, only hidden.
+	remember that. You can show it again with jQuery and the window name given. 
+	$('#mywindow').show();
+*/
+.jdwindow-hide 
+{
+	background-color: #333366;
+	color: #FFFFFA;
+	padding-left: 2px;
+	font-family: "calFont", sans-serif;
+	font-size: 15pt;
+}
+
+.jdwindow-hide:hover
+{
+	background-color: #336633;
+	color: #FF3333;
 }

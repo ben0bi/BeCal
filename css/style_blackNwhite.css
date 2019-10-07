@@ -22,25 +22,26 @@
 
 body
 {
-	background-color: #111133;
-	color: #FFFFFA;
+	background-color: #ffffff;
+	color: #000000;
 	font-family: 'calFont', sans-serif;
 }
 
 /* background when the calendar is on. */
 .calendarBackground
 {
-	background: url('../img/waldschattensonne.jpg');
+/*	background: url('../img/waldschattensonne.jpg');
 	background-repeat: no-repeat;
-	background-size: cover;	
+	background-size: cover;*/	
 }
 
 /* background when the todo state is on. */
 .todoBackground
 {
-	background: url('../img/todo_background.jpg');
+/*	background: url('../img/todo_background.jpg');
 	background-repeat: no-repeat;
 	background-size: 100% 100%;
+*/
 }
 
 /* background for the edit window and stuff. */
@@ -48,22 +49,25 @@ body
 {
 	width: 100%;
 	height: 100%;
-	background-image: url('../img/bg_repeat.png');
+/*	background-image: url('../img/bg_repeat.png'); */
+	background-color: #FFFFFF;
+	color: #000000;
 }
 
 /* this one blocks the whole content when someting will be made with the db. */
 #blocker
 {
-	background-color: #663300;
-	background: url('../img/blocker_background.png');
-	background-repeat: repeat;
+	background-color: #000000;
+	color: #FFFFFF;
+/*	background: url('../img/blocker_background.png');
+	background-repeat: repeat; */
 	/*background-size: 100% 100%;*/
 }
 
 /* the calendar top bar menu */
 #becalTopMenuDiv
 {
-	border-bottom: 1px solid #FFFFFA;
+	border-bottom: 1px solid #000000;
 	font-weight: bolder;
 	font-size: 26pt;
 	padding-top: 10px;
@@ -78,7 +82,7 @@ body
 }
 #todocheckboxdiv:hover
 {
-	color: #FFAA00 !important;
+	color: #AAAAAA !important;
 }
 
 /* The TODO checkbox content. */
@@ -91,7 +95,7 @@ input[type=checkbox].check-todo:after
 /* it is a todo. */
 input[type=checkbox]:checked:after 
 {
-	color: #33FF33;
+	color: #000000;
 	content: '\2714';
 }
 
@@ -101,7 +105,7 @@ input[type=checkbox]:checked:after
 {
 	font-family: 'calFont', sans-serif;
 	font-size: 15pt;
-	color: #FFFFFA;
+	color: #000000;
 	padding-top: 15px;	
 	background-color: transparent;
 	border: 0;
@@ -110,7 +114,7 @@ input[type=checkbox]:checked:after
 /* todo checked */
 .haken
 {	
-	color: #33FF33;
+	color: #000000;
 	font-size: 20pt;
 }
 .haken:after
@@ -121,7 +125,7 @@ input[type=checkbox]:checked:after
 /* todo unchecked */
 .kreuz
 {
-	color: #FF3333;	
+	color: #000000;	
 	font-size: 20pt;
 }
 .kreuz:after
@@ -139,12 +143,12 @@ input[type=checkbox]:checked:after
 	width: 50px;
 	height: 100%;
 	font-size: 28pt;
-	background-color: #3333FF;
+	background-color: #FFFFFF;
 	text-align: center;
 }
 .audioRecordBtn:hover
 {
-	background-color: #FFAA00;
+	background-color: #AAAAAA;
 }
 
 .audio_not_recording:after
@@ -155,7 +159,7 @@ input[type=checkbox]:checked:after
 .audio_recording:after
 {
 	content: '\23F9';
-	color: #FF0000;
+	color: #000000;
 }
 
 /* show that the event has an audio file associated to it. */
@@ -165,10 +169,10 @@ input[type=checkbox]:checked:after
 	position: absolute;
 	top: 24px;
 	right: 78px;
-	background-color: #000033;
+	background-color: #ffffff;
 	color: #000000;
 	border-radius: 5px;
-	border: 2px solid #FFAA00;
+	border: 2px solid #000000;
 	z-index: 10;
 	width: 20px;
 	height: 20px;
@@ -187,8 +191,8 @@ input[type=checkbox]:checked:after
 	height: 20px;
 	width: 20px;
 	text-align: center;
-	background-color: #000033;
-	border: 2px solid #FFAA00;
+	background-color: #ffffff;
+	border: 2px solid #000000;
 	border-radius: 5px;
 }
 .todoDisplay_has_audio_file:after {content: '\1F50A';}
@@ -214,211 +218,215 @@ input[type=checkbox]:checked:after
 input[type=checkbox].check-todo
 {
     background-color: transparent;
-    color:#3333FF;
+    color:#000000;
 }
 
 input[type=checkbox]:hover.check-todo {
-	color: #FFAA00;
+	color: #aaaaaa;
 }
 
 /* these are the date and time pickers on the create entry window. */
 .becalInputDate, .becalInputTime
 {
-	color: #FFFFFA;
+	color: #000000;
 }
 
 /* mouseover over a date input. */
 .becalInputMouseOver:hover
 {
-	background-color: #336633;
+	background-color: #aaaaaa;
 }
 
 /* an ok button. */
 .becalOkBtn, .becalOkBtn:visited
 {
-	background-color: #113311;
-	color: #FFFFFA;
-	border: 2px solid #333366;
+	background-color: #ffffff;
+	color: #000000;
+	border: 2px solid #000000;
 }
 
 .becalOkBtn:hover
 {
-	background-color: #336633;
+	background-color: #aaaaaa;
 }
 
 /* a "bad" button, like for deletion of stuff or such. */
 .becalBadBtn, .becalBadBtn:visited
 {
-	background-color: #331111;
-	color: #FFFFFA;
-	border: 2px solid #333366;
+	background-color: #ffffff;
+	color: #000000;
+	border: 2px solid #000000;
 }
 
 .becalBadBtn:hover
 {
-	background-color: #663333;
+	background-color: #aaaaaa;
 }
 
 /* this button has an edit pencil in it. */
 .becalEditBtn
 {
+	background-color: #000000;
 	background-image: url("../img/edit.png");
 }
 
 /* this button has an ok check thingy in it . */
 .becalHakenBtn
 {
+	background-color: #000000;
 	background-image: url("../img/haken.png");
 }
 
 /* this button has a cross in it. */
 .becalKreuzBtn
 {
+	background-color: #000000;
 	background-image: url("../img/kreuz.png");
 }
 
 /* this button has a red pencil rubber in it. */
 .becalDeleteBtn
 {
+	background-color: #000000;
 	background-image: url("../img/delete.png");
 }
 
 /* the advance buttons. */
-.becalAdvanceBtn {color: #FFFFFA;}
-.becalAdvanceBtn:hover {color: #FFAA00;}
+.becalAdvanceBtn {color: #000000;}
+.becalAdvanceBtn:hover {color: #000000;}
 
 /* "a" button */
 .becalBtn 
 {
-	border: 1px solid #FFFFFA;
-	background-color: #333355;
+	border: 1px solid #000000;
+	background-color: #ffffff;
 }
 
 .becalBtn:hover
 {
-	background-color: #FFAA00;
-	color: #333355;
+	background-color: #aaaaaa;
+	color: #ffffff;
 }
 
 /* becalField is an unspecific field on the table, becalDayField is a day field on the table. */
 .becalField, .becalDayField
 {
-	border-right: 1px solid #FFFFFA;
+	border-right: 1px solid #000000;
 }
 
 .becalField 
 {
-	border-bottom: 1px solid #FFFFFA;
+	border-bottom: 1px solid #000000;
 }
 
 /* the today field */
 .becalToday
 {
-	color: #FFFF33;
-	background-color: #333366;
-	border-top: 1px solid #FFFFFA;
+	color: #ffffff;
+	background-color: #000000;
+	border-top: 1px solid #000000;
 }
 
 /* specific settins for the day fields. */
 .becalDayField 
 {
-	border-bottom: 1px dashed #FF0000;
+	border-bottom: 1px dashed #000000;
 }
 
 /* status line colors */
 .becalStatusOn
 {
-	background-image: url('../img/semitransparentbg.png');	
-	border-top: 1px solid #FF0000;
+	background-color: transparent;
+/*	background-image: url('../img/semitransparentbg.png');	*/
+	border-top: 1px solid #000000;
 }
 
 .becalStatusOff
 {
 	background-image: none;
-	border-top: 1px solid #FFFFFF;
+	border-top: 1px solid #000000;
 }
 
 /* hovering over the hidden events. */
-.becalDayHiddenEvents:hover {background-color: #336633;}
+.becalDayHiddenEvents:hover {background-color: #aaaaaa;}
 
 /* mouse action classes for an event. */
 .becalEventMouseOver 
 {
-	border-top: 2px solid #fffffa;
-	border-bottom: 2px solid #fffffa;
+	border-top: 2px solid #aaaaaa;
+	border-bottom: 2px solid #aaaaaa;
 }
 .becalEventMouseOut
 {
-	border-bottom: 2px solid #555599;
-	border-top: 2px solid #555599;
+	border-bottom: 2px solid #000000;
+	border-top: 2px solid #000000;
 }
 .becalEventMarker.becalEventMouseOver
 {
-	border-left:2px solid #fffffa;
-	border-right:2px solid #fffffa;
+	border-left:2px solid #aaaaaa;
+	border-right:2px solid #aaaaaa;
 }
 .becalEventMarker.becalEventMouseOut
 {
-	border-left:2px solid #555599;
-	border-right:2px solid #555599;
+	border-left:2px solid #000000;
+	border-right:2px solid #000000;
 }
 
 /* an event in the hidden event window. */
-.becalHiddenEvent {border: 2px solid #666699;}
-.becalHiddenEvent:hover {border: 2px solid #FFFFFA;}
+.becalHiddenEvent {border: 2px solid #000000;}
+.becalHiddenEvent:hover {border: 2px solid #aaaaaa;}
 
 /* SPECIFICS FOR SINGLE WINDOWS. */
 
 /* top bar of entry window */
-#becalEditEntryWindow .jdwindow-top:hover {background-color: #336633;}
+#becalEditEntryWindow .jdwindow-top:hover {background-color: #ffffff;}
 
 /* a todo entry in the todo view. */
 .becalTodo
 {
-	/*border: 1px solid #FF0000;*/
-	background-image: url('../img/semitransparentbg.png');
-	/*border-bottom: 1px solid #FFAA00;*/
+	border-bottom: 1px solid #000000;*/
+/*	background-image: url('../img/semitransparentbg.png'); */
 }
 
 /* hovering over a todo item */
-.becalTodo:hover {background-color: #000033;}
+.becalTodo:hover {background-color: #aaaaaa;}
 
 .becalTodo:hover > .becalTodoText,
 .becalTodo > .kreuz:hover,
 .becalTodo > .haken:hover
 {
-	color: #FFAA00 !important;
+	color: #aaaaaa !important;
 }
 
 /* a todo item. */
 .becalTodoDone
 {
 	text-decoration: line-through;
-	color: #AAFFAA;
+	color: #000000;
 }
 
 .becalTodoNotDone
 {
 	text-decoration: none;
-	color: FFFFFA;
+	color: 000000;
 }
 
-/* The jDoor window theme. */
+/* The jDoor Window theme. */
 /* (graphical) stuff for the window class. 
 	for layouting it, refer to jdoors.css */
 /* the whole window */
 .jdwindow
 {
-	border: 2px solid #FFFFFA;
+	border: 2px solid #000000;
 	border-radius: 5px;
-	background-color: #111133;
-	color: #FFFFFA;
+	background-color: #ffffff;
+	color: #000000;
 }
 
 /* the top bar of the window (to move it) */
 .jdwindow-top 
 {
-	background-color: #113311;
+	background-color: #ffffff;
 	padding-left: 10px;
 }
 
@@ -429,8 +437,8 @@ input[type=checkbox]:hover.check-todo {
 */
 .jdwindow-hide 
 {
-	background-color: #333366;
-	color: #FFFFFA;
+	background-color: #ffffff;
+	color: #000000;
 	padding-left: 2px;
 	font-family: "calFont", sans-serif;
 	font-size: 15pt;
@@ -438,6 +446,6 @@ input[type=checkbox]:hover.check-todo {
 
 .jdwindow-hide:hover
 {
-	background-color: #336633;
-	color: #FF3333;
+	background-color: #aaaaaa;
+	color: #ffffff;
 }
