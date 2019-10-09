@@ -1121,7 +1121,7 @@ var BeCal = function(contentdivid)
 		mt+='<div id="'+BeCal.divNameTopbarAdvancer+'">';
 			mt+='<span class="becalAdvanceBtn">&nbsp;</span>';
 			mt+='<a href="javascript:" class="becalMainBtn '+actTodo+'" onclick="BeCal.switchTodoView();"></a>&nbsp;';
-			mt+='<a href="javascript:" class="becalAdvanceBtn becalBtn" onclick="BeCal.setStateMonth();">-&gt; Kalender</a>';
+			mt+='<a href="javascript:" class="becalMainBtn becalToCalendarBtn" onclick="BeCal.setStateMonth();"></a>&nbsp;';
 			
 			mt+='<a href="javascript:" class="becalMainBtn becalSettingsBtn" onclick="BeCal.showSettings();"></a>';
 

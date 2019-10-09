@@ -264,6 +264,7 @@ input[type=checkbox]:hover.check-todo {
 
 /* the button images for the calendar and todo view. */
 .becalSettingsBtn {background-image: url("../img/settings.png");}
+.becalToCalendarBtn {background-image: url("../img/to_calendar.png");}
 .becalToTodosBtn {background-image: url("../img/to_todos.png");}
 .becalToTodayBtn {background-image: url("../img/today.png");}
 .becalNextMonthBtn {background-image: url("../img/nextmonth.png");}
@@ -335,6 +336,7 @@ input[type=checkbox]:hover.check-todo {
 	color: #ffffff;
 	background-color: #000000;
 	border-top: 1px solid #000000;
+	border-left: 1px solid #000000;
 }
 
 /* specific settins for the day fields. */

@@ -40,7 +40,7 @@
      showgrid="false"
      borderlayer="true"
      inkscape:zoom="18.108728"
-     inkscape:cx="-6.041795"
+     inkscape:cx="4.1393626"
      inkscape:cy="15.466798"
      inkscape:window-x="82"
      inkscape:window-y="-11"
@@ -91,9 +91,8 @@
      id="layer3"
      inkscape:label="Teil"
      style="display:inline"><g
-       id="g907"
-       transform="translate(0.13022937,-0.22088815)"><g
-         transform="translate(4.983801,16.215159)"
+       id="g1493"><g
+         transform="translate(5.1140304,15.994271)"
          id="g877"><path
            style="fill:none;stroke:#f9ffff;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            d="M 3.0924315,9.0044432 H 15.848711"
@@ -103,7 +102,7 @@
            d="m 11.872728,5.6591104 5.750149,3.3198498 -5.838424,3.3708158"
            id="path859"
            inkscape:connector-curvature="0" /></g><g
-         transform="translate(-1.2287264,-9.0765141)"
+         transform="translate(-1.098497,-9.2974023)"
          id="g883"><path
            style="fill:none;stroke:#ffffff;stroke-width:2.33955073;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            d="m 12.302753,21.001572 c 1.505275,1.431907 2.447888,2.863815 3.455958,4.295722 0.956636,-3.78643 3.63569,-7.480731 6.395134,-9.721897"
