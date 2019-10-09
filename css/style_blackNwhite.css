@@ -254,7 +254,6 @@ input[type=checkbox]:hover.check-todo {
 }
 
 /* ================================================================ */
-/* NEW add to all styles. */
 /* style added to all the below buttons. */
 .becalMainBtn
 {
@@ -269,6 +268,7 @@ input[type=checkbox]:hover.check-todo {
 .becalToTodayBtn {background-image: url("../img/today.png");}
 .becalNextMonthBtn {background-image: url("../img/nextmonth.png");}
 .becalPrevMonthBtn {background-image: url("../img/previousmonth.png");}
+/* endof main main buttons. */
 /* ================================================================ */
 
 /* this button has an edit pencil in it. */

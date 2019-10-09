@@ -259,6 +259,20 @@ input[type=checkbox]:hover.check-todo {
 	background-color: #663333;
 }
 
+.becalMainBtn
+{
+	background-color: transparent;
+	border: 2px solid transparent;
+}
+.becalMainBtn:hover {background-color: #000099; border: 2px solid #ffffff;}
+
+/* the button images. */
+.becalSettingsBtn {background-image: url("../img/settings.png");}
+.becalToTodosBtn {background-image: url("../img/to_todos.png");}
+.becalToTodayBtn {background-image: url("../img/today.png");}
+.becalNextMonthBtn {background-image: url("../img/nextmonth.png");}
+.becalPrevMonthBtn {background-image: url("../img/previousmonth.png");}
+
 /* this button has an edit pencil in it. */
 .becalEditBtn
 {
@@ -282,10 +296,6 @@ input[type=checkbox]:hover.check-todo {
 {
 	background-image: url("../img/delete.png");
 }
-
-/* the advance buttons. */
-.becalAdvanceBtn {color: #FFFFFA;}
-.becalAdvanceBtn:hover {color: #FFAA00;}
 
 /* "a" button */
 .becalBtn 
