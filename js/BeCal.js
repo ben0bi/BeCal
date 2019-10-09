@@ -1542,6 +1542,21 @@ var BeCal = function(contentdivid)
 		$(m_contentDivID).html(txt);
 
 		// create the windows.
+		txt="";
+
+		// *************************************************************
+		// the SETTINGS window.
+		title ="";
+		txt+='<div id="'+BeCal.divNameSettings+'">';
+		txt+='<div id="'+BeCal.divNameLogin+'">';
+		txt+='TODO: Login';
+		txt+='</div>';
+		txt+='<div onclick="BeCal.showStyleSwitcher();" class="becalBtn" style="width: 238px;">Anpassen..</div>';
+		txt+='</div>';
+		$('#'+BeCal.divNameOverlay).jdCreateWindow(BeCal.settingsWindow,100,100,250,300, title, txt);
+
+		// *************************************************************
+
 		// create the html for the edit entry view.
 		txt="";
 		txt+='<div class="becalWindow">';
@@ -1594,6 +1609,7 @@ var BeCal = function(contentdivid)
 		$('#'+BeCal.divNameOverlay).jdCreateWindow(BeCal.editEntryWindow,100,100,500,220, title, txt);
 
 		// *************************************************************
+		
 		// the window to check a todo before the edit window pops up.
 		txt='<div class="becalWindow"><div class="intermediaryTodoButtons"><nobr>';
 				txt+='<a href="javascript:" id="BecalTodoDONEBtn" class="becalOkBtn becalHakenBtn" onclick="BeCal.updateEventBtnPressed(2)"></a>';
@@ -1605,7 +1621,7 @@ var BeCal = function(contentdivid)
 		showTodoBtn();
 
 		// *************************************************************
-		// the other entries window.
+		// the other entries window when clicked on a day field.
 		title ="Weitere";
 		txt='<div id="'+BeCal.divNameOtherEntries+'"></div>';
 		$('#'+BeCal.divNameOverlay).jdCreateWindow(BeCal.otherEntriesWindow,100,100,200,-200, title, txt);
@@ -1974,6 +1990,16 @@ var BeCal = function(contentdivid)
 		me.newEntryColor = col.toHexString();
 		changeEntryWindowEvtColor(me.newEntryColor);
 	};
+
+	// open the settings dialog.
+	this.openSettingsDialog = function()
+	{
+		var menuHeight = $('#'+BeCal.divNameTopMenu).height();//+$('.becalDayField').height();
+		var win = $('#'+BeCal.settingsWindow);
+		win.css('left', (window.innerWidth-254)+'px');
+		win.css('top', menuHeight+'px');
+		win.jdShow();
+	}
 	
 	// open the edit entry dialog.
 	this.openEditDialog = function(datefieldid)
@@ -2219,6 +2245,14 @@ var BeCal = function(contentdivid)
 /************************************************************************************************* GLOBAL FUNCTIONS *****************************/
 
 BeCal.instance = null;	// the singleton instance of this calendar.
+
+// show the settings window.
+BeCal.showSettings = function()
+{
+	if(BeCal.instance!=null)
+		BeCal.instance.openSettingsDialog();
+};
+
 // create a new entry from the new entry window.
 BeCal.createNewEventBtnPressed = function()
 {
@@ -2370,12 +2404,16 @@ BeCal.monthNamesL = ["Januar", "Februar", "März", "April", "Mai", "Juni",
 BeCal.editEntryWindow = "becalEditEntryWindow";
 BeCal.otherEntriesWindow = "becalOtherEntriesWindow";
 BeCal.updateTodoWindow = "becalUpdateTodoWindow";
+BeCal.settingsWindow = "becalSettingsWindow";
 
 // ids for the main items.
 BeCal.divNameTopMenu = "becalTopMenuDiv";
 BeCal.divNameContent = "becalContentDiv";
 BeCal.divNameStatus = "becalStatusDiv";
 BeCal.divNameOverlay = "becalOverlayDiv";
+
+// ids for the settings window.
+BeCal.divNameSettings = "becalSettingsDiv";
 
 // ids for the other entries window.
 BeCal.divNameOtherEntries = "becalOtherEntriesDiv";

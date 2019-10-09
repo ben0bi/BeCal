@@ -316,6 +316,7 @@ input[type=checkbox]:hover.check-todo {
 	border-radius: 4px;
 	padding: 5px;
 	font-size: 12pt;
+	cursor: pointer;
 }
 
 /* becalField is an unspecific field on the table, becalDayField is a day field on the table. */
