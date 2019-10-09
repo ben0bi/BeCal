@@ -1542,17 +1542,10 @@ var BeCal = function(contentdivid)
 		$(m_contentDivID).html(txt);
 
 		// create the windows.
-		txt="";
 
 		// *************************************************************
 		// the SETTINGS window.
 		title ="";
-		txt+='<div id="'+BeCal.divNameSettings+'">';
-		txt+='<div id="'+BeCal.divNameLogin+'">';
-		txt+='TODO: Login';
-		txt+='</div>';
-		txt+='<div onclick="BeCal.showStyleSwitcher();" class="becalBtn" style="width: 238px;">Anpassen..</div>';
-		txt+='</div>';
 		$('#'+BeCal.divNameOverlay).jdCreateWindow(BeCal.settingsWindow,100,100,250,300, title, txt);
 
 		// *************************************************************
@@ -1998,6 +1991,35 @@ var BeCal = function(contentdivid)
 		var win = $('#'+BeCal.settingsWindow);
 		win.css('left', (window.innerWidth-254)+'px');
 		win.css('top', menuHeight+'px');
+
+		var txt="";
+		txt+='<div id="'+BeCal.divNameSettings+'">';
+		txt+='<div id="'+BeCal.divNameLogin+'">';
+		txt+='TODO: Login';
+		txt+='</div>';
+		txt+='<div onclick="BeCal.showStyleSwitcher();" class="becalBtn" style="width: 238px;">Anpassen..</div>';
+		txt+='</div>';
+
+		win.jdHTML(txt)		
+		win.jdShow();
+	}
+	
+	this.showStyleSwitcher = function()
+	{
+		var menuHeight = $('#'+BeCal.divNameTopMenu).height();//+$('.becalDayField').height();
+		var win = $('#'+BeCal.settingsWindow);
+		win.css('left', (window.innerWidth-254)+'px');
+		win.css('top', menuHeight+'px');
+
+		var txt="";
+		txt+='<div onclick="BeCal.showSettings();" class="becalBtn" style="width: 238px;">&lt;--</div>';
+
+		// TODO: XHEREX show css files.
+
+		txt+='<div onclick="switchCSS(\'customstyle\', \'style_default.css\');" class="becalBtn" style="width: 238px;">STANDARD</div>';
+		txt+='<div onclick="switchCSS(\'customstyle\', \'style_blackNwhite.css\');" class="becalBtn" style="width: 238px;">B & W</div>';
+
+		win.jdHTML(txt);		
 		win.jdShow();
 	}
 	
@@ -2252,6 +2274,13 @@ BeCal.showSettings = function()
 	if(BeCal.instance!=null)
 		BeCal.instance.openSettingsDialog();
 };
+
+// show the style switcher window.
+BeCal.showStyleSwitcher = function()
+{
+	if(BeCal.instance!=null)
+		BeCal.instance.showStyleSwitcher();
+}
 
 // create a new entry from the new entry window.
 BeCal.createNewEventBtnPressed = function()
