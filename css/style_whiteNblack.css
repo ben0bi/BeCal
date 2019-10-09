@@ -22,8 +22,8 @@
 
 body
 {
-	background-color: #ffffff;
-	color: #000000;
+	background-color: #000000;
+	color: #ffffff;
 	font-family: 'calFont', sans-serif;
 }
 
@@ -50,15 +50,15 @@ body
 	width: 100%;
 	height: 100%;
 /*	background-image: url('../img/bg_repeat.png'); */
-	background-color: #FFFFFF;
-	color: #000000;
+	background-color: #000000;
+	color: #ffffff;
 }
 
 /* this one blocks the whole content when someting will be made with the db. */
 #blocker
 {
-	background-color: #000000;
-	color: #FFFFFF;
+	background-color: #ffffff;
+	color: #000000;
 /*	background: url('../img/blocker_background.png');
 	background-repeat: repeat; */
 	/*background-size: 100% 100%;*/
@@ -67,7 +67,7 @@ body
 /* the calendar top bar menu */
 #becalTopMenuDiv
 {
-	border-bottom: 1px solid #000000;
+	border-bottom: 1px solid #ffffff;
 	font-weight: bolder;
 	font-size: 26pt;
 	padding-top: 10px;
@@ -82,7 +82,7 @@ body
 }
 #todocheckboxdiv:hover
 {
-	color: #000000 !important;
+	color: #ffffff !important;
 	background-color: #aaaaaa !important;
 }
 
@@ -96,14 +96,14 @@ input[type=checkbox].check-todo:after
 /* it is a todo. */
 input[type=checkbox]:checked:after 
 {
-	color: #000000;
+	color: #ffffff;
 	content: '\2714';
 }
 
 /* todo checked */
 .haken
 {	
-	color: #000000;
+	color: #ffffff;
 	font-size: 20pt;
 }
 .haken:after
@@ -114,7 +114,7 @@ input[type=checkbox]:checked:after
 /* todo unchecked */
 .kreuz
 {
-	color: #000000;	
+	color: #ffffff;
 	font-size: 20pt;
 }
 .kreuz:after
@@ -132,8 +132,8 @@ input[type=checkbox]:checked:after
 	width: 50px;
 	height: 100%;
 	font-size: 26pt;
-	background-color: #FFFFFF;
-	border-right: 2px solid #000000;
+	background-color: #000000;
+	border-right: 2px solid #ffffff;
 	text-align: center;
 }
 .audioRecordBtn:hover
@@ -149,7 +149,7 @@ input[type=checkbox]:checked:after
 .audio_recording:after
 {
 	content: '\23F9';
-	color: #000000;
+	color: #ffffff;
 }
 
 /* show that the event has an audio file associated to it. */
@@ -159,10 +159,10 @@ input[type=checkbox]:checked:after
 	position: absolute;
 	top: 24px;
 	right: 78px;
-	background-color: #ffffff;
-	color: #000000;
+	background-color: #000000;
+	color: #ffffff;
 	border-radius: 5px;
-	border: 2px solid #000000;
+	border: 2px solid #ffffff;
 	z-index: 10;
 	width: 20px;
 	height: 20px;
@@ -181,8 +181,8 @@ input[type=checkbox]:checked:after
 	height: 20px;
 	width: 20px;
 	text-align: center;
-	background-color: #ffffff;
-	border: 2px solid #000000;
+	background-color: #000000;
+	border: 2px solid #ffffff;
 	border-radius: 5px;
 }
 .todoDisplay_has_audio_file:after {content: '\1F50A';}
@@ -208,7 +208,7 @@ input[type=checkbox]:checked:after
 input[type=checkbox].check-todo
 {
     background-color: transparent;
-    color:#000000;
+    color:#ffffff;
 }
 
 input[type=checkbox]:hover.check-todo {
@@ -218,7 +218,7 @@ input[type=checkbox]:hover.check-todo {
 /* these are the date and time pickers on the create entry window. */
 .becalInputDate, .becalInputTime
 {
-	color: #000000;
+	color: #ffffff;
 }
 
 /* mouseover over a date input. */
@@ -230,9 +230,9 @@ input[type=checkbox]:hover.check-todo {
 /* an ok button. */
 .becalOkBtn, .becalOkBtn:visited
 {
-	background-color: #ffffff;
-	color: #000000;
-	border: 2px solid #000000;
+	background-color: #000000;
+	color: #ffffff;
+	border: 2px solid #ffffff;
 }
 
 .becalOkBtn:hover
@@ -243,9 +243,9 @@ input[type=checkbox]:hover.check-todo {
 /* a "bad" button, like for deletion of stuff or such. */
 .becalBadBtn, .becalBadBtn:visited
 {
-	background-color: #ffffff;
-	color: #000000;
-	border: 2px solid #000000;
+	background-color: #000000;
+	color: #ffffff;
+	border: 2px solid #ffffff;
 }
 
 .becalBadBtn:hover
@@ -257,8 +257,8 @@ input[type=checkbox]:hover.check-todo {
 /* style added to all the below buttons. */
 .becalMainBtn
 {
-	background-color: #000000;
-	border: 2px solid #000000;
+	background-color: #000000; /* the icons are white so the buttons need to be black. */
+	border: 2px solid #ffffff;
 }
 .becalMainBtn:hover {background-color: #aaaaaa;}
 
@@ -309,40 +309,40 @@ input[type=checkbox]:hover.check-todo {
 /* "a" button */
 .becalBtn 
 {
-	border: 1px solid #000000;
-	background-color: #ffffff;
+	border: 1px solid #ffffff;
+	background-color: #000000;
 }
 
 .becalBtn:hover
 {
 	background-color: #aaaaaa;
-	color: #ffffff;
+	color: #000000;
 }
 
 /* becalField is an unspecific field on the table, becalDayField is a day field on the table. */
 .becalField, .becalDayField
 {
-	border-right: 1px solid #000000;
+	border-right: 1px solid #ffffff;
 }
 
 .becalField 
 {
-	border-bottom: 1px solid #000000;
+	border-bottom: 1px solid #ffffff;
 }
 
 /* the today field */
 .becalToday
 {
-	color: #ffffff;
-	background-color: #000000;
-	border-top: 1px solid #000000;
-	border-left: 1px solid #000000;
+	color: #000000;
+	background-color: #ffffff;
+	border-top: 1px solid #ffffff;
+	border-left: 1px solid #ffffff;
 }
 
 /* specific settins for the day fields. */
 .becalDayField 
 {
-	border-bottom: 1px dashed #000000;
+	border-bottom: 1px dashed #ffffff;
 }
 
 /* status line colors */
@@ -350,20 +350,20 @@ input[type=checkbox]:hover.check-todo {
 {
 	background-color: transparent;
 /*	background-image: url('../img/semitransparentbg.png');	*/
-	border-top: 1px solid #000000;
+	border-top: 1px solid #ffffff;
 }
 
 .becalStatusOff
 {
 	background-image: none;
-	border-top: 1px solid #000000;
+	border-top: 1px solid #ffffff;
 }
 
 /* hovering over the hidden events. */
 .becalDayHiddenEvents:hover {background-color: #aaaaaa;}
 
 /* an event bar on the calendar view. color will be set by code. */
-.becalEventBar {color: #000000; background-color: #ffffff !important;}
+.becalEventBar {color: #ffffff; background-color: #000000 !important;}
 
 /* mouse action classes for an event. */
 .becalEventMouseOver 
@@ -373,8 +373,8 @@ input[type=checkbox]:hover.check-todo {
 }
 .becalEventMouseOut
 {
-	border-bottom: 2px solid #000000;
-	border-top: 2px solid #000000;
+	border-bottom: 2px solid #ffffff;
+	border-top: 2px solid #ffffff;
 }
 .becalEventMarker.becalEventMouseOver
 {
@@ -383,12 +383,12 @@ input[type=checkbox]:hover.check-todo {
 }
 .becalEventMarker.becalEventMouseOut
 {
-	border-left:2px solid #000000;
-	border-right:2px solid #000000;
+	border-left:2px solid #ffffff;
+	border-right:2px solid #ffffff;
 }
 
 /* an event in the hidden event window. */
-.becalHiddenEvent {border: 2px solid #000000;}
+.becalHiddenEvent {border: 2px solid #ffffff;}
 .becalHiddenEvent:hover {border: 2px solid #aaaaaa;}
 
 /* SPECIFICS FOR SINGLE WINDOWS. */
@@ -396,7 +396,7 @@ input[type=checkbox]:hover.check-todo {
 /* a todo entry in the todo view. */
 .becalTodo
 {
-	border-bottom: 1px solid #000000;
+	border-bottom: 1px solid #ffffff;
 /*	background-image: url('../img/semitransparentbg.png'); */
 }
 
@@ -407,20 +407,20 @@ input[type=checkbox]:hover.check-todo {
 .becalTodo > .kreuz:hover,
 .becalTodo > .haken:hover
 {
-	color: #ffffff !important;
+	color: #000000 !important;
 }
 
 /* a todo item. */
 .becalTodoDone
 {
 	text-decoration: line-through;
-	color: #000000;
+	color: #ffffff;
 }
 
 .becalTodoNotDone
 {
 	text-decoration: none;
-	color: #000000;
+	color: #ffffff;
 }
 
 /* The jDoor Window theme. */
@@ -429,20 +429,20 @@ input[type=checkbox]:hover.check-todo {
 /* the whole window */
 .jdwindow
 {
-	border: 2px solid #000000;
+	border: 2px solid #ffffff;
 	border-radius: 5px;
-	background-color: #ffffff;
-	color: #000000;
+	background-color: #000000;
+	color: #ffffff;
 }
 
 /* top bar of entry window */
-/*#becalEditEntryWindow */ .jdwindow-top {border-bottom: 2px solid #000000;}
+/*#becalEditEntryWindow */ .jdwindow-top {border-bottom: 2px solid #ffffff;}
 #becalEditEntryWindow .jdwindow-top:hover {background-color: #aaaaaa !important;}
 
 /* the top bar of the window (to move it) */
 .jdwindow-top 
 {
-	background-color: #ffffff !important;
+	background-color: #000000 !important;
 	padding-left: 10px;
 }
 
@@ -453,17 +453,17 @@ input[type=checkbox]:hover.check-todo {
 */
 .jdwindow-hide 
 {
-	background-color: #ffffff;
-	color: #000000;
+	background-color: #000000;
+	color: #ffffff;
 	padding-left: 2px;
 	font-family: "calFont", sans-serif;
 	font-size: 15pt;
-	border-left: 2px solid #000000;
-	border-bottom: 2px solid #000000;
+	border-left: 2px solid #ffffff;
+	border-bottom: 2px solid #ffffff;
 }
 
 .jdwindow-hide:hover
 {
 	background-color: #aaaaaa;
-	color: #ffffff;
+	color: #000000;
 }

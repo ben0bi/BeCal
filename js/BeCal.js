@@ -1534,7 +1534,7 @@ var BeCal = function(contentdivid)
 	var createUI = function()
 	{
 		// first, fill the content div.
-		var txt = "";
+		var txt="";
 		txt+='<div id="'+BeCal.divNameTopMenu+'"></div>';	// the top bar menu.
 		txt+='<div id="'+BeCal.divNameContent+'"></div>';	// the calendar content.
 		txt+='<div id="'+BeCal.divNameStatus+'"></div>';
@@ -1993,7 +1993,7 @@ var BeCal = function(contentdivid)
 		win.css('top', menuHeight+'px');
 
 		var txt="";
-		txt+='<div id="'+BeCal.divNameSettings+'">';
+		txt+='<div id="'+BeCal.divNameSettings+'" class="becalWindow">';
 		txt+='<div id="'+BeCal.divNameLogin+'">';
 		txt+='TODO: Login';
 		txt+='</div>';
@@ -2012,13 +2012,15 @@ var BeCal = function(contentdivid)
 		win.css('top', menuHeight+'px');
 
 		var txt="";
+		txt+='<div id="'+BeCal.divNameSettings+'" class="becalWindow">';
 		txt+='<div onclick="BeCal.showSettings();" class="becalBtn" style="width: 238px;">&lt;--</div>';
 
-		// TODO: XHEREX show css files.
+		// TODO: XHEREX show css files from directory.
 
 		txt+='<div onclick="switchCSS(\'customstyle\', \'style_default.css\');" class="becalBtn" style="width: 238px;">STANDARD</div>';
 		txt+='<div onclick="switchCSS(\'customstyle\', \'style_blackNwhite.css\');" class="becalBtn" style="width: 238px;">B & W</div>';
-
+		txt+='<div onclick="switchCSS(\'customstyle\', \'style_whiteNblack.css\');" class="becalBtn" style="width: 238px;">W & B</div>';
+		txt+='</div>';
 		win.jdHTML(txt);		
 		win.jdShow();
 	}
