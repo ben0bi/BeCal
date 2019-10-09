@@ -335,7 +335,7 @@ input[type=checkbox]:hover.check-todo {
 
 /* don't show borders on the left, right, top and bottom fields. */
 .becalLastCalField {border-right: 0px;}
-.becalLowestCalField {border-bottom: 0px;}
+.becalLowestCalField {border-bottom: 0px !important;}
 
 /* specific settins for the day fields. */
 .becalDayField 
