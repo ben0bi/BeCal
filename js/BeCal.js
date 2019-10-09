@@ -399,6 +399,8 @@ GMLParser.TODOS = function()
 	}
 	return retevents;
 }
+
+/***************************************************************************************************************************************/
 	
 // do some funny loading texts.
 var getLoadingText = function()
@@ -426,8 +428,6 @@ var getLoadingText = function()
 			return "Ladebalken wird geladen..";
 	}
 }
-
-/***************************************************************************************************************************************/
 
 // show a status in the status line at the bottom.
 function status(text) 
@@ -796,21 +796,6 @@ var BeCal = function(contentdivid)
 		}
 	};
 	
-	// fill the events list with some data from the DB.
-/*	var clearAndFillEvents = function(data)
-	{
-		me.clearEvents();
-		for(var i=0;i<data.length;i++)
-		{
-			var d = data[i];
-			var startd = new Date(d.startdate);
-			var endd = new Date(d.enddate);
-			//console.log(i+":"+d.title+" from "+d.startdate+" to "+d.enddate);
-			//console.log(" -> from "+startd+" to "+endd);
-			me.createDBEvent(d.id, startd, endd,d.eventtype, d.title, d.audiofile, d.summary, d.color);
-		}
-	};
-*/		
 	// DB FUNCTIONS
 	var loadEventsBetween = function(startdate, enddate, successFunc)
 	{
@@ -864,14 +849,12 @@ var BeCal = function(contentdivid)
 	var loadTodos = function(successFunc)
 	{
 		showBlocker(getLoadingText());
-		// XHEREX
 // NEW: LOAD FROM JSON
 		// load the file each time we load the events, for synced everything.
 		PARSEGMLFILE(g_becalDatabaseFile , function() 
 		{
 			var data = GMLParser.TODOS();//(startdate, enddate);
 			log(data.length+" events loaded.");
-// NP			clearAndFillEvents(data);
 			successFunc();
 			hideBlocker();
 		},
@@ -881,7 +864,6 @@ var BeCal = function(contentdivid)
 			// just show the week field without data.
 			//showBlocker("ERROR: Could not load a GML file.");
 			status("Could not load the database file. Maybe it does not exist yet.");
-// NP			clearAndFillEvents([]);
 			successFunc();
 			hideBlocker();
 		});
@@ -1051,26 +1033,7 @@ var BeCal = function(contentdivid)
 		// NP m_eventArray = new Array();};
 		GMLParser.EVENTS().clear();
 	}
-
-/* NP	// create an event and add it to the list.
-	this.createEvent = function(startdate, enddate, eventtype, title, audiofile="", summary="", color = "")
-	{
-		var e = new BeCalEvent();
-		e.create(startdate, enddate, eventtype, title, audiofile, summary, color);
-		GMLParser.EVENTS().push(e);
-		// NP m_eventArray.push(e);
-		return e;
-	};
 	
-	// create an event from the DB.
-	this.createDBEvent = function(dbid, startdate, enddate, eventtype, title, audiofile="", summary="", color="")
-	{
-		var e = new BeCalEvent();
-		e.createFromDB(dbid, startdate, enddate, eventtype, title, audiofile, summary, color);
-		m_eventArray.push(e);
-		return e;
-	};
-*/	
 	// return an event by its id.
 	this.getEventByID = function(id)
 	{
@@ -1128,7 +1091,7 @@ var BeCal = function(contentdivid)
 		$(m_contentDivID).addClass(newbackgroundclass);
 	}
 
-	// initialize the TODO-display.
+	// initialize the Calendar-display.
 	this.setStateMonth = function()
 	{
 		setBackground('calendarBackground');
@@ -1258,10 +1221,13 @@ var BeCal = function(contentdivid)
 		var mt = "";
 		mt = '<div id="'+BeCal.divNameTopbarDate+'">'+BeCal.monthNamesL[renderdate.getMonth()]+" "+renderdate.getFullYear()+"</div>";
 		mt+='<div id="'+BeCal.divNameTopbarAdvancer+'">';
-			mt+='<a href="javascript:" class="becalAdvanceBtn" onclick="BeCal.advanceMonth(-1);">&nbsp;&lt;&nbsp;</a>';
-			mt+='<a href="javascript:" class="becalAdvanceBtn" onclick="BeCal.advanceMonth(1);">&nbsp;&gt;&nbsp;</a>';
-			mt+='<a href="javascript:" class="becalAdvanceBtn becalBtn" onclick="BeCal.getToday();">Heute</a>&nbsp;';
-			mt+='<a href="javascript:" class="becalAdvanceBtn becalBtn" onclick="BeCal.setStateTodos();">-&gt; To-Do\'s</a>';
+			mt+='<a href="javascript:" class="becalMainBtn becalPrevMonthBtn" onclick="BeCal.advanceMonth(-1);"></a>';
+			mt+='<a href="javascript:" class="becalMainBtn becalToTodayBtn" onclick="BeCal.getToday();"></a>';
+			mt+='<a href="javascript:" class="becalMainBtn becalNextMonthBtn" onclick="BeCal.advanceMonth(1);"></a>';
+			mt+='&nbsp;&nbsp;';
+			mt+='<a href="javascript:" class="becalMainBtn becalToTodosBtn" onclick="BeCal.setStateTodos();"></a>';
+			mt+='&nbsp;&nbsp;';
+			mt+='<a href="javascript:" class="becalMainBtn becalSettingsBtn" onclick="BeCal.showSettings();"></a>';
 		mt+='</div>';
 		$('#'+BeCal.divNameTopMenu).html(mt);
 
@@ -2163,9 +2129,6 @@ var BeCal = function(contentdivid)
 			evttype=1;
 		
 		e.create(start, end, evttype, $('#'+BeCal.inputNameEventTitle).val(), "", "", this.newEntryColor);
-		
-		// XHEREX --> will be loaded again after saveing.
-		//m_eventArray.push(e);
 	
 		$('#'+BeCal.editEntryWindow).hide();
 		$('#'+BeCal.inputNameEventTitle).val("");

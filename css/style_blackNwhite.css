@@ -100,18 +100,6 @@ input[type=checkbox]:checked:after
 	content: '\2714';
 }
 
-/* font settings of the input with the title of the event on the create entry window. 
-	also the title of the show entry window. */
-.becalInputEventName
-{
-	font-family: 'calFont', sans-serif;
-	font-size: 15pt;
-	color: #000000;
-	padding-top: 15px;	
-	background-color: transparent;
-	border: 0;
-}
-
 /* todo checked */
 .haken
 {	
@@ -143,8 +131,9 @@ input[type=checkbox]:checked:after
 	display: inline-block;
 	width: 50px;
 	height: 100%;
-	font-size: 28pt;
+	font-size: 26pt;
 	background-color: #FFFFFF;
+	border-right: 2px solid #000000;
 	text-align: center;
 }
 .audioRecordBtn:hover
@@ -264,6 +253,24 @@ input[type=checkbox]:hover.check-todo {
 	background-color: #aaaaaa;
 }
 
+/* ================================================================ */
+/* NEW add to all styles. */
+/* style added to all the below buttons. */
+.becalMainBtn
+{
+	background-color: #000000;
+	border: 2px solid #000000;
+}
+.becalMainBtn:hover {background-color: #aaaaaa;}
+
+/* the button images. */
+.becalSettingsBtn {background-image: url("../img/settings.png");}
+.becalToTodosBtn {background-image: url("../img/to_todos.png");}
+.becalToTodayBtn {background-image: url("../img/today.png");}
+.becalNextMonthBtn {background-image: url("../img/nextmonth.png");}
+.becalPrevMonthBtn {background-image: url("../img/previousmonth.png");}
+/* ================================================================ */
+
 /* this button has an edit pencil in it. */
 .becalEditBtn
 {
@@ -291,10 +298,6 @@ input[type=checkbox]:hover.check-todo {
 	background-color: #000000;
 	background-image: url("../img/delete.png");
 }
-
-/* the advance buttons. */
-.becalAdvanceBtn {color: #000000; background-color: #ffffff;}
-.becalAdvanceBtn:hover {color: #ffffff; background-color: #aaaaaa;}
 
 /* "a" button */
 .becalBtn 
@@ -351,6 +354,7 @@ input[type=checkbox]:hover.check-todo {
 /* hovering over the hidden events. */
 .becalDayHiddenEvents:hover {background-color: #aaaaaa;}
 
+/* an event bar on the calendar view. color will be set by code. */
 .becalEventBar {color: #000000; background-color: #ffffff !important;}
 
 /* mouse action classes for an event. */
@@ -380,9 +384,6 @@ input[type=checkbox]:hover.check-todo {
 .becalHiddenEvent:hover {border: 2px solid #aaaaaa;}
 
 /* SPECIFICS FOR SINGLE WINDOWS. */
-
-/* top bar of entry window */
-#becalEditEntryWindow .jdwindow-top:hover {background-color: #ffffff;}
 
 /* a todo entry in the todo view. */
 .becalTodo
@@ -426,6 +427,10 @@ input[type=checkbox]:hover.check-todo {
 	color: #000000;
 }
 
+/* top bar of entry window */
+/*#becalEditEntryWindow */ .jdwindow-top {border-bottom: 2px solid #000000;}
+#becalEditEntryWindow .jdwindow-top:hover {background-color: #aaaaaa !important;}
+
 /* the top bar of the window (to move it) */
 .jdwindow-top 
 {
@@ -445,6 +450,8 @@ input[type=checkbox]:hover.check-todo {
 	padding-left: 2px;
 	font-family: "calFont", sans-serif;
 	font-size: 15pt;
+	border-left: 2px solid #000000;
+	border-bottom: 2px solid #000000;
 }
 
 .jdwindow-hide:hover

@@ -176,6 +176,11 @@ input[type=checkbox]:hover.check-todo {
 	top: 0px;
 	left: 52px;
 	width: 380px;
+	font-family: 'calFont', sans-serif;
+	font-size: 15pt;
+	padding-top: 15px;
+	background-color: transparent;
+	border: 0;
 }
 
 /* div with the duration of the event in the edit entry window. */
@@ -288,8 +293,10 @@ input[type=checkbox]:hover.check-todo {
 }
 
 /* some buttons. */
-.becalEditBtn, .becalHakenBtn, .becalKreuzBtn, .becalDeleteBtn
+.becalEditBtn, .becalHakenBtn, .becalKreuzBtn, .becalDeleteBtn,
+.becalMainBtn
 {
+	display: inline-block;
 	width: 40px;
 	height: 40px;
 	padding: 0px !important;
@@ -298,8 +305,10 @@ input[type=checkbox]:hover.check-todo {
 	background-position: center;
 }
 
-/* the advance buttons. */
-.becalAdvanceBtn {text-decoration: none;}
+.becalMainBtn
+{
+	margin-right: 10px;
+}
 
 /* "a" button */
 .becalBtn 
