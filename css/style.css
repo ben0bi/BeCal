@@ -32,7 +32,7 @@ body
 {
 	background: url('../img/waldschattensonne.jpg');
 	background-repeat: no-repeat;
-	background-size: cover;	
+	background-size: 100% 100%;	
 }
 
 /* background when the todo state is on. */
@@ -259,6 +259,8 @@ input[type=checkbox]:hover.check-todo {
 	background-color: #663333;
 }
 
+/* ================================================================ */
+/* style added to all the below buttons. */
 .becalMainBtn
 {
 	background-color: transparent;
@@ -266,12 +268,20 @@ input[type=checkbox]:hover.check-todo {
 }
 .becalMainBtn:hover {background-color: #000099; border: 2px solid #ffffff;}
 
-/* the button images. */
+/* the button images for the calendar and todo view. */
 .becalSettingsBtn {background-image: url("../img/settings.png");}
 .becalToTodosBtn {background-image: url("../img/to_todos.png");}
 .becalToTodayBtn {background-image: url("../img/today.png");}
 .becalNextMonthBtn {background-image: url("../img/nextmonth.png");}
 .becalPrevMonthBtn {background-image: url("../img/previousmonth.png");}
+
+/* todo view specific */
+.becalTodoDoneBtn {background-image: url("../img/todos_done.png");}
+.becalTodoUndoneBtn {background-image: url("../img/todos_undone.png");}
+.becalTodoAllBtn {background-image: url("../img/todos_all.png");}
+
+/* endof main main buttons. */
+/* ================================================================ */
 
 /* this button has an edit pencil in it. */
 .becalEditBtn

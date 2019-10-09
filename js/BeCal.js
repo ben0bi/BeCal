@@ -1113,15 +1113,19 @@ var BeCal = function(contentdivid)
 		// build menu.
 		var mt = "";
 		var actTodo = "#unset";
-		if(m_actualTodoView==0) actTodo= "DONE";
-		if(m_actualTodoView==1) actTodo= "ALLE";
-		if(m_actualTodoView==2) actTodo= "TODO";
+		if(m_actualTodoView==2) actTodo= "becalTodoUndoneBtn";
+		if(m_actualTodoView==1) actTodo= "becalTodoAllBtn";
+		if(m_actualTodoView==0) actTodo= "becalTodoDoneBtn";
 
 		mt = '<div id="'+BeCal.divNameTopbarDate+'">TO-DOs</div>';
 		mt+='<div id="'+BeCal.divNameTopbarAdvancer+'">';
 			mt+='<span class="becalAdvanceBtn">&nbsp;</span>';
-			mt+='<a href="javascript:" class="becalAdvanceBtn becalBtn" onclick="BeCal.switchTodoView();">'+actTodo+'</a>&nbsp;';
+			mt+='<a href="javascript:" class="becalMainBtn '+actTodo+'" onclick="BeCal.switchTodoView();"></a>&nbsp;';
 			mt+='<a href="javascript:" class="becalAdvanceBtn becalBtn" onclick="BeCal.setStateMonth();">-&gt; Kalender</a>';
+			
+			mt+='<a href="javascript:" class="becalMainBtn becalSettingsBtn" onclick="BeCal.showSettings();"></a>';
+
+			
 //			mt+='<a href="javascript:" class="becalAdvanceBtn" onclick="BeCal.advanceMonth(1);">&nbsp;&gt;&nbsp;</a>';
 		mt+='</div>';
 		$('#'+BeCal.divNameTopMenu).html(mt);
@@ -1141,6 +1145,7 @@ var BeCal = function(contentdivid)
 			// only push the timed events first.
 			var now = new Date();
 			var tdyfound = 0;
+			var entrycount = 0;
 			for(var i = 0;i<entries.length;i++)
 			{
 				var e = entries[i];
@@ -1150,10 +1155,12 @@ var BeCal = function(contentdivid)
 					(e.eventtype==1 && m_actualTodoView==0))
 					continue;
 
+				entrycount++;
+				
 				var end = new Date(e.enddate);
 				if(end>=now && tdyfound==0)
 				{
-					txt+="<hr />++++ HEUTE: "+now.getDate()+"."+(now.getMonth()+1)+"."+now.getFullYear()+" ++++"
+					txt+="<hr />++++ HEUTE: "+now.getDate()+"."+(now.getMonth()+1)+"."+now.getFullYear()+" ++++";
 					tdyfound=1;
 				}
 
@@ -1178,6 +1185,13 @@ var BeCal = function(contentdivid)
 
 				// create the text for the entry.
 				txt+=end.getDate()+"."+(end.getMonth()+1)+"."+end.getFullYear()+": "+audio+e.title+"</span></div>";
+			}
+
+			// if no entry was found, show a message.
+			if(entrycount<=0)
+			{
+				txt+="<hr />++++ HEUTE: "+now.getDate()+"."+(now.getMonth()+1)+"."+now.getFullYear()+" ++++";
+				txt+="<hr />&nbsp;Keine Einträge gefunden!";
 			}
 
 			txt+="</div>";
@@ -1224,9 +1238,9 @@ var BeCal = function(contentdivid)
 			mt+='<a href="javascript:" class="becalMainBtn becalPrevMonthBtn" onclick="BeCal.advanceMonth(-1);"></a>';
 			mt+='<a href="javascript:" class="becalMainBtn becalToTodayBtn" onclick="BeCal.getToday();"></a>';
 			mt+='<a href="javascript:" class="becalMainBtn becalNextMonthBtn" onclick="BeCal.advanceMonth(1);"></a>';
-			mt+='&nbsp;&nbsp;';
+			mt+='&nbsp;';
 			mt+='<a href="javascript:" class="becalMainBtn becalToTodosBtn" onclick="BeCal.setStateTodos();"></a>';
-			mt+='&nbsp;&nbsp;';
+			mt+='&nbsp;';
 			mt+='<a href="javascript:" class="becalMainBtn becalSettingsBtn" onclick="BeCal.showSettings();"></a>';
 		mt+='</div>';
 		$('#'+BeCal.divNameTopMenu).html(mt);
