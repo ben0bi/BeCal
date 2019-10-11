@@ -13,9 +13,39 @@ var m_statustimer = null;
 var m_statusdirection = -1;
 
 /* set another css file to a link with an id. */
-function switchCSS(cssid, newcssfilename) {$('#'+cssid).attr('href', 'css/'+newcssfilename);}
+function switchCSS(cssid, newcssfilename) 
+{
+	$('#'+cssid).attr('href', 'css/'+newcssfilename);
+	// set the cookie to save the layout setting.
+	setCookie("becal_layout_"+cssid, newcssfilename, 180);
+}
 
 /***************************************************************************************************************************************/
+// cookie code stolen from here: https://stackoverflow.com/questions/14573223/set-cookie-and-get-cookie-with-javascript
+function setCookie(name,value,days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days*24*60*60*1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+}
+function getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    }
+    return null;
+}
+function eraseCookie(name) {   
+    document.cookie = name+'=; Max-Age=-99999999;';  
+}
+/***************************************************************************************************************************************/
+
 // Switching code from SQL to JSON.
 /*
 	Table structure:
@@ -1680,7 +1710,8 @@ var BeCal = function(contentdivid)
 		$('#'+BeCal.divNameOverlay).jdHideAllWindows();
 		
 		// show a welcome message in the status field.
-		status("Welcome to BeCal. Date: "+Date().toString());
+		var d = new Date();
+		status("Welcome to BeCal. Date: "+Date.toShortDate(d)+" "+Date.toShortTime(d)+" / This website uses cookies to save your layout settings.");
 	};
 		
 	// constrain the date inputs so that the end date cannot be < start date.
@@ -2004,6 +2035,7 @@ var BeCal = function(contentdivid)
 		win.jdShow();
 	}
 	
+	// show the settings dialog with the style switcher.
 	this.showStyleSwitcher = function()
 	{
 		var menuHeight = $('#'+BeCal.divNameTopMenu).height();//+$('.becalDayField').height();
@@ -2260,6 +2292,12 @@ var BeCal = function(contentdivid)
 	{	
 		BeCal.instance = me;
 		createUI();
+
+		// get the cookie and maybe switch the layout.
+		var layoutcookie = getCookie("becal_layout_customstyle");
+		if(layoutcookie!=null)
+			switchCSS('customstyle', layoutcookie);
+		
 		BeCal.checkBoxTodo();
 	}else{
 		console.log("WARNING: There is already a BeCal instance. Aborting.");
