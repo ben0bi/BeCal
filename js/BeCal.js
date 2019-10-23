@@ -1,6 +1,6 @@
  /* Ben0bis Calendar, V3.0.00 */
 
-var becalVersion = "3.0.00";
+var becalVersion = "3.0.02";
 var g_becalDatabaseFile = "DATA/becaldatabase.gml";
 
 // show and hide UI-blocker functions.
@@ -837,7 +837,6 @@ var BeCal = function(contentdivid)
 		{
 			var data = GMLParser.EVENTSBETWEEN(startdate, enddate);
 			log(data.length+" events loaded.");
-//			clearAndFillEvents(data);
 			successFunc();
 			hideBlocker();
 		},
@@ -847,32 +846,9 @@ var BeCal = function(contentdivid)
 			// just show the week field without data.
 			//showBlocker("ERROR: Could not load a GML file.");
 			status("Could not load the database file. Maybe it does not exist yet.");
-//			clearAndFillEvents([]);
 			successFunc();
 			hideBlocker();
 		});
-
-		// set up the php request.
-/*		var url = 'php/ajax_getEvents.php';
-		var data = {startdate: d1, enddate: d2};
-		var success = function(data)
-		{
-			console.log(data.length+" events loaded.");
-			clearAndFillEvents(data);
-			// do something.
-			successFunc();
-			hideBlocker();
-		};
-
-		// send the ajax request.
-		$.ajax({
-			type: 'POST',
-			url: url,
-			data: data,
-			success: success,
-			dataType: 'json'
-		});
-*/
 	};
 	
 	// load the todos for the todo screen.
@@ -897,27 +873,6 @@ var BeCal = function(contentdivid)
 			successFunc();
 			hideBlocker();
 		});
-		// set up the php request.
-/*		var url = 'php/ajax_getTodos.php';
-		var data = {nop: 'null'};
-		var success = function(data)
-		{
-			console.log(data.length+" TODO's loaded.");
-			clearAndFillEvents(data);
-			// do something.
-			successFunc();
-			hideBlocker();
-		};
-		
-		// send the ajax request.
-		$.ajax({
-			type: 'POST',
-			url: url,
-			data: data,
-			success: success,
-			dataType: 'json'
-		});
-*/
 	};
 	
 	// save an event to the DB.
@@ -1154,9 +1109,6 @@ var BeCal = function(contentdivid)
 			mt+='<a href="javascript:" class="becalMainBtn becalToCalendarBtn" onclick="BeCal.setStateMonth();"></a>&nbsp;';
 			
 			mt+='<a href="javascript:" class="becalMainBtn becalSettingsBtn" onclick="BeCal.showSettings();"></a>';
-
-			
-//			mt+='<a href="javascript:" class="becalAdvanceBtn" onclick="BeCal.advanceMonth(1);">&nbsp;&gt;&nbsp;</a>';
 		mt+='</div>';
 		$('#'+BeCal.divNameTopMenu).html(mt);
 
@@ -1167,7 +1119,7 @@ var BeCal = function(contentdivid)
 
 		loadTodos(function()
 		{
-			var txt='<div class="fullscreen scrollvertical"><br />';
+			var txt='<div class="fullscreen scrollvertical" onclick="BeCal.openEditDialog(\'TODOS\')"><br />';
 			// NP var entries = m_eventArray;
 			var entries = GMLParser.TODOS();
 			
@@ -1200,7 +1152,7 @@ var BeCal = function(contentdivid)
 					tdyfound = 2;
 				}
 
-				txt+='<div class="becalTodo" onmouseover="GMLParser_CALEVENT.eventMouseOver('+e.getID()+')" onmouseout="status(\'\')">';
+				txt+='<div class="becalTodo" onmouseover="GMLParser_CALEVENT.eventMouseOver('+e.getID()+')" onmouseout="status(\'\')" onclick="(arguments[0] || window.event).stopPropagation();">';
 				if(e.eventtype==1)
 				{
 					txt+='<span class="todocharpos kreuz" onclick="BeCal.updateEventType('+e.getID()+', 2)"></span> <span class="becalTodoText becalTodoNotDone" onclick="BeCal.openEventViewDialog('+e.getID()+')">';
@@ -1567,7 +1519,7 @@ var BeCal = function(contentdivid)
 		var txt="";
 		txt+='<div id="'+BeCal.divNameTopMenu+'"></div>';	// the top bar menu.
 		txt+='<div id="'+BeCal.divNameContent+'"></div>';	// the calendar content.
-		txt+='<div id="'+BeCal.divNameStatus+'"></div>';
+		txt+='<div id="'+BeCal.divNameStatus+'"></div>';	// the status line.
 		txt+='<div id="'+BeCal.divNameOverlay+'"></div>';	// the overlay for the jdoor windows.
 		$(m_contentDivID).html(txt);
 
@@ -1711,7 +1663,7 @@ var BeCal = function(contentdivid)
 		
 		// show a welcome message in the status field.
 		var d = new Date();
-		status("Welcome to BeCal. Date: "+Date.toShortDate(d)+" "+Date.toShortTime(d)+" / This website uses cookies to save your layout settings.");
+		status("Welcome to BeCal v"+becalVersion+". Date: "+Date.toShortDate(d)+" "+Date.toShortTime(d)+" / This website uses cookies to save your layout settings.");
 	};
 		
 	// constrain the date inputs so that the end date cannot be < start date.
@@ -1965,6 +1917,7 @@ var BeCal = function(contentdivid)
 		$('#'+BeCal.otherEntriesWindow).hide();
 		$('#'+BeCal.editEntryWindow).hide();
 		$('#'+BeCal.updateTodoWindow).hide();
+		$('#'+BeCal.settingsWindow).hide();
 	};
 
 	// change color of top bar in the entry/show window.
@@ -2060,15 +2013,6 @@ var BeCal = function(contentdivid)
 	// open the edit entry dialog.
 	this.openEditDialog = function(datefieldid)
 	{
-		// reset the selected event.
-		m_selectedEvent = null;
-		
-		$('#eventView_has_audio_file').hide();
-		//audioReset(); // it will stop on hideallwindows in showwindowpos.
-		
-		// hide the intermediary interface window.
-		$('#'+BeCal.updateTodoWindow).hide();
-
 		// get the date field where the click happened.
 		var f = m_datefieldArray[datefieldid];
 	
@@ -2084,15 +2028,41 @@ var BeCal = function(contentdivid)
 		var day2 = new Date(day);
 		day2.setHours(day2.getHours()+1);
 	
+		var menuHeight = $('#'+BeCal.divNameTopMenu).height()+$('.becalDayField').height();
+	
+		realOpenEditDialog(day, day2, parseInt(f.left),parseInt(f.top)+menuHeight, f.width);
+	};
+	
+	// open the edit dialog in the todo window.
+	this.openEditDialog_TODO = function()
+	{
+		var now = new Date();
+		now.setSeconds(0);
+
+		var day2 = new Date(now);
+		day2.setHours(day2.getHours()+1);
+		
+		realOpenEditDialog(now, day2, 100, 100, 1);
+	}
+	
+	var realOpenEditDialog = function(day, day2, px, py, pwidth)
+	{
+		// reset the selected event.
+		m_selectedEvent = null;
+		
+		$('#eventView_has_audio_file').hide();
+		//audioReset(); // it will stop on hideallwindows in showwindowpos.
+		
+		// hide the intermediary interface window.
+		$('#'+BeCal.updateTodoWindow).hide();
+
 		// set the date fields.
 		AnyTime.setCurrent( BeCal.inputNameDate1, day);
 		AnyTime.setCurrent( BeCal.inputNameTime1, day);
 
 		AnyTime.setCurrent( BeCal.inputNameDate2, day2);
 		AnyTime.setCurrent( BeCal.inputNameTime2, day2);
-	
-		var menuHeight = $('#'+BeCal.divNameTopMenu).height()+$('.becalDayField').height();
-	
+		
 		// it is a new entry, so we show the input stuff and hide the show stuff (entry mode).
 		$('#'+BeCal.divNameEditContainer).show();
 
@@ -2102,9 +2072,9 @@ var BeCal = function(contentdivid)
 		changeEntryWindowEvtColor(me.newEntryColor);
 		$('#'+BeCal.inputNameColorPicker).spectrum("set", me.newEntryColor);
 	
-		showWindowPos(BeCal.editEntryWindow, parseInt(f.left),parseInt(f.top)+menuHeight, f.width);
+		showWindowPos(BeCal.editEntryWindow, px,py,pwidth);
 		$('#'+BeCal.inputNameEventTitle).focus();
-	};
+	}
 	
 	// open the dialog to show the event view.
 	m_selectedEvent = null;
@@ -2375,7 +2345,12 @@ BeCal.showHiddenEventView=function(dayfieldid)
 BeCal.openEditDialog = function(dayfieldid)
 {
 	if(BeCal.instance!=null)
-		BeCal.instance.openEditDialog(dayfieldid);
+	{
+		if(dayfieldid=="TODOS")
+			BeCal.instance.openEditDialog_TODO();
+		else
+			BeCal.instance.openEditDialog(dayfieldid);
+	}
 };
 
 // open the event view dialog.
