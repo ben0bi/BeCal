@@ -1,0 +1,469 @@
+/* Fonts for the calendar app. */
+@font-face {
+  font-family: 'calFont';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/PressStart2P.ttf');
+}
+
+@font-face {
+  font-family: 'calFontSmall_Bold';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/Play-Bold.ttf');
+}
+
+@font-face {
+  font-family: 'calFontSmall';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/Play-Regular.ttf');
+}
+
+body
+{
+	background-color: #ffffff;
+	color: #000000;
+	font-family: 'calFont', sans-serif;
+}
+
+/* background when the calendar is on. */
+.calendarBackground
+{
+/*	background: url('../img/waldschattensonne.jpg');
+	background-repeat: no-repeat;
+	background-size: cover;*/	
+}
+
+/* background when the todo state is on. */
+.todoBackground
+{
+/*	background: url('../img/todo_background.jpg');
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+*/
+}
+
+/* background for the edit window and stuff. */
+.becalWindow
+{
+	width: 100%;
+	height: 100%;
+/*	background-image: url('../img/bg_repeat.png'); */
+	background-color: #FFFFFF;
+	color: #000000;
+}
+
+/* this one blocks the whole content when someting will be made with the db. */
+#blocker
+{
+	background-color: #000000;
+	color: #FFFFFF;
+/*	background: url('../img/blocker_background.png');
+	background-repeat: repeat; */
+	/*background-size: 100% 100%;*/
+}
+
+/* the calendar top bar menu */
+#becalTopMenuDiv
+{
+	border-bottom: 1px solid #000000;
+	font-weight: bolder;
+	font-size: 26pt;
+	padding-top: 10px;
+}
+
+/* The checkbox and title for the todo/event selector. */
+#todocheckboxdiv
+{
+	font-family: 'calFont';
+	color: inherit;
+	/*border: 1px solid #FFA000;*/
+}
+#todocheckboxdiv:hover
+{
+	color: #000000 !important;
+	background-color: #aaaaaa !important;
+}
+
+/* The TODO checkbox content. */
+/* it is an event. */
+input[type=checkbox].check-todo:after
+{
+	content: '\1F4C5';
+}
+
+/* it is a todo. */
+input[type=checkbox]:checked:after 
+{
+	color: #000000;
+	content: '\2714';
+}
+
+/* todo checked */
+.haken
+{	
+	color: #000000;
+	font-size: 20pt;
+}
+.haken:after
+{
+	content: '\2611';
+}
+
+/* todo unchecked */
+.kreuz
+{
+	color: #000000;	
+	font-size: 20pt;
+}
+.kreuz:after
+{
+	content: '\2610';
+}
+
+/* The audio record button. */
+.audioRecordBtn
+{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	display: inline-block;
+	width: 50px;
+	height: 100%;
+	font-size: 26pt;
+	background-color: #FFFFFF;
+	border-right: 2px solid #000000;
+	text-align: center;
+}
+.audioRecordBtn:hover
+{
+	background-color: #AAAAAA;
+}
+
+.audio_not_recording:after
+{
+	content: '\1f3a4';
+}
+
+.audio_recording:after
+{
+	content: '\23F9';
+	color: #000000;
+}
+
+/* show that the event has an audio file associated to it. */
+/* this is the icon in the event view window. */
+#eventView_has_audio_file
+{
+	position: absolute;
+	top: 24px;
+	right: 78px;
+	background-color: #ffffff;
+	color: #000000;
+	border-radius: 5px;
+	border: 2px solid #000000;
+	z-index: 10;
+	width: 20px;
+	height: 20px;
+	text-align: center;
+	font-size: 10pt;
+	z-index: 10;
+	pointer-events: none;
+}
+#eventView_has_audio_file:after {content: '\1F50A';}
+
+/* The icon on a line in the todo display. */
+.todoDisplay_has_audio_file
+{
+	display: inline-block;
+	font-size: 10pt;
+	height: 20px;
+	width: 20px;
+	text-align: center;
+	background-color: #ffffff;
+	border: 2px solid #000000;
+	border-radius: 5px;
+}
+.todoDisplay_has_audio_file:after {content: '\1F50A';}
+
+/* position of the todo check on the todo view. */
+.todocharpos
+{
+	display: inline-block;
+	position: absolute;
+	top: -7px;	
+}
+
+/* position of the todo check on the status. */
+.statuscharpos
+{
+	display: inline-block;
+	position: absolute;
+	top: -10px;
+	/*bottom: 0px;*/
+}
+
+/* The checkbox to switch between todos and calendar on the edit entry window. */
+input[type=checkbox].check-todo
+{
+    background-color: transparent;
+    color:#000000;
+}
+
+input[type=checkbox]:hover.check-todo {
+	color: #aaaaaa;
+}
+
+/* these are the date and time pickers on the create entry window. */
+.becalInputDate, .becalInputTime
+{
+	color: #000000;
+}
+
+/* mouseover over a date input. */
+.becalInputMouseOver:hover
+{
+	background-color: #aaaaaa;
+}
+
+/* an ok button. */
+.becalOkBtn, .becalOkBtn:visited
+{
+	background-color: #ffffff;
+	color: #000000;
+	border: 2px solid #000000;
+}
+
+.becalOkBtn:hover
+{
+	background-color: #aaaaaa;
+}
+
+/* a "bad" button, like for deletion of stuff or such. */
+.becalBadBtn, .becalBadBtn:visited
+{
+	background-color: #ffffff;
+	color: #000000;
+	border: 2px solid #000000;
+}
+
+.becalBadBtn:hover
+{
+	background-color: #aaaaaa;
+}
+
+/* ================================================================ */
+/* style added to all the below buttons. */
+.becalMainBtn
+{
+	background-color: #000000;
+	border: 2px solid #000000;
+}
+.becalMainBtn:hover {background-color: #aaaaaa;}
+
+/* the button images for the calendar and todo view. */
+.becalSettingsBtn {background-image: url("../img/settings.png");}
+.becalToCalendarBtn {background-image: url("../img/to_calendar.png");}
+.becalToTodosBtn {background-image: url("../img/to_todos.png");}
+.becalToTodayBtn {background-image: url("../img/today.png");}
+.becalNextMonthBtn {background-image: url("../img/nextmonth.png");}
+.becalPrevMonthBtn {background-image: url("../img/previousmonth.png");}
+
+/* todo view specific */
+.becalTodoDoneBtn {background-image: url("../img/todos_done.png");}
+.becalTodoUndoneBtn {background-image: url("../img/todos_undone.png");}
+.becalTodoAllBtn {background-image: url("../img/todos_all.png");}
+
+/* endof main main buttons. */
+/* ================================================================ */
+
+/* this button has an edit pencil in it. */
+.becalEditBtn
+{
+	background-color: #000000;
+	background-image: url("../img/edit.png");
+}
+
+/* this button has an ok check thingy in it . */
+.becalHakenBtn
+{
+	background-color: #000000;
+	background-image: url("../img/haken.png");
+}
+
+/* this button has a cross in it. */
+.becalKreuzBtn
+{
+	background-color: #000000;
+	background-image: url("../img/kreuz.png");
+}
+
+/* this button has a red pencil rubber in it. */
+.becalDeleteBtn
+{
+	background-color: #000000;
+	background-image: url("../img/delete.png");
+}
+
+/* "a" button */
+.becalBtn 
+{
+	border: 1px solid #000000;
+	background-color: #ffffff;
+}
+
+.becalBtn:hover
+{
+	background-color: #aaaaaa;
+	color: #ffffff;
+}
+
+/* becalField is an unspecific field on the table, becalDayField is a day field on the table. */
+.becalField, .becalDayField
+{
+	border-right: 1px solid #000000;
+}
+
+.becalField 
+{
+	border-bottom: 1px solid #000000;
+}
+
+/* the today field */
+.becalToday
+{
+	color: #ffffff;
+	background-color: #000000;
+	border-top: 1px solid #000000;
+	border-left: 1px solid #000000;
+}
+
+/* specific settins for the day fields. */
+.becalDayField 
+{
+	border-bottom: 1px dashed #000000;
+}
+
+/* status line colors */
+.becalStatusOn
+{
+	background-color: transparent;
+/*	background-image: url('../img/semitransparentbg.png');	*/
+	border-top: 1px solid #000000;
+}
+
+.becalStatusOff
+{
+	background-image: none;
+	border-top: 1px solid #000000;
+}
+
+/* hovering over the hidden events. */
+.becalDayHiddenEvents:hover {background-color: #aaaaaa;}
+
+/* an event bar on the calendar view. color will be set by code. */
+.becalEventBar {color: #FFFFFF; background-color: #000000 !important;}
+
+/* mouse action classes for an event. */
+.becalEventMouseOver 
+{
+	border-top: 2px solid #aaaaaa;
+	border-bottom: 2px solid #aaaaaa;
+}
+.becalEventMouseOut
+{
+	border-bottom: 2px solid #ffffff;
+	border-top: 2px solid #ffffff;
+}
+.becalEventMarker.becalEventMouseOver
+{
+	border-left:2px solid #aaaaaa;
+	border-right:2px solid #aaaaaa;
+}
+.becalEventMarker.becalEventMouseOut
+{
+	border-left:2px solid #ffffff;
+	border-right:2px solid #ffffff;
+}
+
+/* an event in the hidden event window. */
+.becalHiddenEvent {border: 2px solid #ffffff;}
+.becalHiddenEvent:hover {border: 2px solid #aaaaaa;}
+
+/* SPECIFICS FOR SINGLE WINDOWS. */
+
+/* a todo entry in the todo view. */
+.becalTodo
+{
+	border-bottom: 1px solid #000000;
+/*	background-image: url('../img/semitransparentbg.png'); */
+}
+
+/* hovering over a todo item */
+.becalTodo:hover {background-color: #aaaaaa;}
+
+.becalTodo:hover > .becalTodoText,
+.becalTodo > .kreuz:hover,
+.becalTodo > .haken:hover
+{
+	color: #ffffff !important;
+}
+
+/* a todo item. */
+.becalTodoDone
+{
+	text-decoration: line-through;
+	color: #000000;
+}
+
+.becalTodoNotDone
+{
+	text-decoration: none;
+	color: #000000;
+}
+
+/* The jDoor Window theme. */
+/* (graphical) stuff for the window class. 
+	for layouting it, refer to jdoors.css */
+/* the whole window */
+.jdwindow
+{
+	border: 2px solid #000000;
+	border-radius: 5px;
+	background-color: #ffffff;
+	color: #000000;
+}
+
+/* top bar of entry window */
+/*#becalEditEntryWindow */ .jdwindow-top {border-bottom: 2px solid #000000;}
+#becalEditEntryWindow .jdwindow-top:hover {background-color: #aaaaaa !important;}
+
+/* the top bar of the window (to move it) */
+.jdwindow-top 
+{
+	background-color: #ffffff !important;
+	padding-left: 10px;
+}
+
+/* the hide button. 
+	a window will not be deleted, only hidden.
+	remember that. You can show it again with jQuery and the window name given. 
+	$('#mywindow').show();
+*/
+.jdwindow-hide 
+{
+	background-color: #ffffff;
+	color: #000000;
+	padding-left: 2px;
+	font-family: "calFont", sans-serif;
+	font-size: 15pt;
+	border-left: 2px solid #000000;
+	border-bottom: 2px solid #000000;
+}
+
+.jdwindow-hide:hover
+{
+	background-color: #aaaaaa;
+	color: #ffffff;
+}

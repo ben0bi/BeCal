@@ -1,6 +1,6 @@
  /* Ben0bis Calendar, V3.0.00 */
 
-var becalVersion = "3.0.02";
+var becalVersion = "3.0.03";
 var g_becalDatabaseFile = "DATA/becaldatabase.gml";
 
 // show and hide UI-blocker functions.
@@ -2000,11 +2000,13 @@ var BeCal = function(contentdivid)
 		txt+='<div id="'+BeCal.divNameSettings+'" class="becalWindow">';
 		txt+='<div onclick="BeCal.showSettings();" class="becalBtn" style="width: 238px;">&lt;--</div>';
 
-		// TODO: XHEREX show css files from directory.
+		// TODO: XHEREX show css files from directory. Or load GML file, at least.
 
 		txt+='<div onclick="switchCSS(\'customstyle\', \'style_default.css\');" class="becalBtn" style="width: 238px;">STANDARD</div>';
 		txt+='<div onclick="switchCSS(\'customstyle\', \'style_blackNwhite.css\');" class="becalBtn" style="width: 238px;">B & W</div>';
+		txt+='<div onclick="switchCSS(\'customstyle\', \'style_blackNwhite_HC.css\');" class="becalBtn" style="width: 238px;">B & W HC</div>';
 		txt+='<div onclick="switchCSS(\'customstyle\', \'style_whiteNblack.css\');" class="becalBtn" style="width: 238px;">W & B</div>';
+		txt+='<div onclick="switchCSS(\'customstyle\', \'style_whiteNblack_HC.css\');" class="becalBtn" style="width: 238px;">W & B HC</div>';
 		txt+='</div>';
 		win.jdHTML(txt);		
 		win.jdShow();
