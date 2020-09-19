@@ -1984,6 +1984,7 @@ var BeCal = function(contentdivid)
 		txt+='TODO: Login';
 		txt+='</div>';
 		txt+='<div onclick="BeCal.showStyleSwitcher();" class="becalBtn" style="width: 238px;">Anpassen..</div>';
+		txt+='<div onclick="BeCal.showAboutWindow();" class="becalBtn" style="width: 238px;">Info</div>';
 		txt+='</div>';
 
 		win.jdHTML(txt)		
@@ -2010,6 +2011,27 @@ var BeCal = function(contentdivid)
 		txt+='<div onclick="switchCSS(\'customstyle\', \'style_whiteNblack.css\');" class="becalBtn" style="width: 238px;">W & B</div>';
 		txt+='<div onclick="switchCSS(\'customstyle\', \'style_whiteNblack_HC.css\');" class="becalBtn" style="width: 238px;">W & B HC</div>';
 		txt+='</div>';
+		win.jdHTML(txt);		
+		win.jdShow();
+	}
+	
+	this.showAboutWindow = function()
+	{
+		var menuHeight = $('#'+BeCal.divNameTopMenu).height();//+$('.becalDayField').height();
+		var win = $('#'+BeCal.settingsWindow);
+		win.css('left', (window.innerWidth-254)+'px');
+		win.css('top', menuHeight+'px');
+
+		var txt="";
+		txt+='<div id="'+BeCal.divNameSettings+'" class="becalWindow">';
+		txt+='<div onclick="BeCal.showSettings();" class="becalBtn" style="width: 238px;">&lt;--</div>';
+
+
+		txt+='<center><br /><img src="img/grafbon.jpg" style="width: 170px;"></img><br />';
+		txt+='<a href="https://github.com/ben0bi/BeCal">BeCal</a> by<br />';
+		txt+='<a href="https://twitter.com/ben0bi">Beni Yager</a><br />';
+		txt+='2018,2020'
+		txt+='</center></div>';
 		win.jdHTML(txt);		
 		win.jdShow();
 	}
@@ -2281,6 +2303,13 @@ var BeCal = function(contentdivid)
 /************************************************************************************************* GLOBAL FUNCTIONS *****************************/
 
 BeCal.instance = null;	// the singleton instance of this calendar.
+
+// show the about window.
+BeCal.showAboutWindow = function()
+{
+	if(BeCal.instance!=null)
+		BeCal.instance.showAboutWindow();
+}
 
 // show the settings window.
 BeCal.showSettings = function()
