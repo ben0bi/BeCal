@@ -467,3 +467,10 @@ input[type=checkbox]:hover.check-todo {
 	background-color: #aaaaaa;
 	color: #000000;
 }
+
+
+/* This one is set by code by default. */
+.becalInputEventName
+{
+	color: #ffffff !important;
+}
