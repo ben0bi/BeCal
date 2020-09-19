@@ -41,8 +41,8 @@ function getCookie(name) {
     }
     return null;
 }
-function eraseCookie(name) {   
-    document.cookie = name+'=; Max-Age=-99999999;';  
+function eraseCookie(name) {
+    document.cookie = name+'=; Max-Age=-99999999;';
 }
 /***************************************************************************************************************************************/
 
@@ -71,11 +71,11 @@ var GMLParser_CALEVENT = function()
 	var me = this;
 	var m_dbID = -1;
 	this.getDBID = function() {return m_dbID;};
-	
+
 	// NP?
 	var m_id = -1;
 	this.getID = function() {return m_id;};	// return the unique id.
-	
+
 	this.title = "";
 	this.startdate = new Date();
 	this.enddate = new Date();
@@ -87,7 +87,7 @@ var GMLParser_CALEVENT = function()
 	this.summary = "";
 	this.color = BeCal.eventDefaultColor;
 	this.audiofile = "";
-	
+
 	this.parseGML = function(json, rootPath)
 	{
 		if(__defined(json['ID']))
@@ -112,9 +112,9 @@ var GMLParser_CALEVENT = function()
 			me.audiofile = json['AUDIOFILE'];
 		setUniqueID();
 	};
-	
+
 	// FROM OLD BECAL EVENT
-	
+
 	// fill this event with some data (on creating new, not parsing.)
 	this.create = function(start, end, newtype, newtitle, newaudiofile="", newsummary="", newcolor = "") 
 	{
@@ -124,12 +124,12 @@ var GMLParser_CALEVENT = function()
 		me.enddate = new Date(end);
 		me.eventtype = newtype;
 		me.audiofile = newaudiofile;
-		
+
 		if(newcolor=="")
 			me.color=BeCal.eventDefaultColor;
 		else
 			me.color=newcolor;
-		
+
 		// dbID has to be <0 if the event is new.
 		m_dbID = -1;
 		setUniqueID();
@@ -139,16 +139,16 @@ var GMLParser_CALEVENT = function()
 	{
 		// assign an unique id.
 		m_id=GMLParser_CALEVENT.arrID;
-		GMLParser_CALEVENT.arrID++;	
+		GMLParser_CALEVENT.arrID++;
 	}
-	
+
 	// create the bar div and return it.
 	var getBarDivText=function(text, x,y,width, height, addclass = "")
 	{
 		var txt='<div onclick="BeCal.openEventViewDialog('+m_id+');" onmouseover="GMLParser_CALEVENT.eventMouseOver('+m_id+');" onmouseout="GMLParser_CALEVENT.eventMouseOver('+m_id+', true);" class="becalEventBar '+addclass+' becalEventMouseOut evt_'+m_id+'" style="background-color:'+me.color+'; top:'+y+'px; left:'+x+'px; width:'+width+'px; height:'+height+'px;">'+text+'</div>';
 		return txt;
 	};
-	
+
 	// create bars in the month view.
 	this.createMonthBars=function(calendar)
 	{
@@ -207,8 +207,10 @@ var GMLParser_CALEVENT = function()
 
 		// check if it is a todo.
 		pretext="";
+		if(me.audiofile!="")
+			pretext='<span class="with_audio_file"></span>&nbsp;';
 		if(me.eventtype==1)
-			pretext="(X)&nbsp;";
+			pretext+="(X)&nbsp;";
 
 		while(!done)
 		{

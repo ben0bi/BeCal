@@ -179,7 +179,7 @@ input[type=checkbox]:checked:after
 }
 #eventView_has_audio_file:after {content: '\1F50A';}
 
-/* The icon on a line in the todo display. */
+/* The audio icon on a line in the todo display. */
 .todoDisplay_has_audio_file
 {
 	display: inline-block;
@@ -192,6 +192,22 @@ input[type=checkbox]:checked:after
 	border-radius: 5px;
 }
 .todoDisplay_has_audio_file:after {content: '\1F50A';}
+
+/* The audio icon on an event in the month display. */
+.with_audio_file
+{
+	position: relative;
+	top: -2px;
+	display: inline-block;
+	font-size: 6pt;
+	height: 10px;
+	width: 10px;
+	text-align: center;
+	background-color: #000033;
+	border: 1px solid #FFAA00;
+	border-radius: 2px;
+}
+.with_audio_file:after {content: '\1F50A';}
 
 /* position of the todo check on the todo view. */
 .todocharpos
