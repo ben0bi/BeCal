@@ -455,7 +455,7 @@ var getLoadingText = function()
 		case 12: return "Erweitere Perspektive..";
 		case 13: return "Dokumente werden gefälscht..";
 		case 14: return "Atem wird angehalten..";
-		case 15: return "Atem wird angehalten..";
+		case 15: return "Zimmer wird gelüftet..";
 		default:
 			return "Ladebalken wird geladen..";
 	}
@@ -777,7 +777,7 @@ var BeCal = function(contentdivid)
 	var m_contentDivID = contentdivid;
 	var me = this;
 	var m_isChangingDateInput = false; // a thread safeness variable.
-	
+	var m_monthswitcher = parseInt(getCookie('month_view_style')); // change that for getting another month name view on the top bar. January => Jan. => 1. => I.	
 // NP	var m_eventArray = new Array();		// array with all the events in it.
 	var m_datefieldArray = new Array(); // array with all the date fields in it (UI)
 	this.getDateFields = function() {return m_datefieldArray;};	// used in the events.
@@ -1217,7 +1217,17 @@ var BeCal = function(contentdivid)
 
 		// build menu.
 		var mt = "";
-		mt = '<div id="'+BeCal.divNameTopbarDate+'">'+BeCal.monthNamesL[renderdate.getMonth()]+" "+renderdate.getFullYear()+"</div>";
+		var monthname = BeCal.monthNamesL[renderdate.getMonth()];
+		switch(m_monthswitcher)
+		{
+			case 1: monthname = BeCal.monthNames[renderdate.getMonth()]; break;
+			case 2: monthname = BeCal.monthNumbers[renderdate.getMonth()]; break;
+			case 3: monthname = BeCal.monthNumbersRom[renderdate.getMonth()]; break;
+			case 0:
+			default:
+				break;
+		}
+		mt = '<div id="'+BeCal.divNameTopbarDate+'" onclick="BeCal.switchmonthview();" style="cursor: pointer;">'+monthname+renderdate.getFullYear()+"</div>";
 		mt+='<div id="'+BeCal.divNameTopbarAdvancer+'">';
 			mt+='<a href="javascript:" class="becalMainBtn becalPrevMonthBtn" onclick="BeCal.advanceMonth(-1);"></a>';
 			mt+='<a href="javascript:" class="becalMainBtn becalToTodayBtn" onclick="BeCal.getToday();"></a>';
@@ -1512,6 +1522,19 @@ var BeCal = function(contentdivid)
 			$('#BecalTodoDOBtn').show();
 		else
 			$('#BecalTodoDONEBtn').show();
+	}
+	
+	// switch the month in month view including setting a cookie.
+	this.switchmonthview=function()
+	{
+		// switch between the possible views of a month name.
+		m_monthswitcher++;
+		if(m_monthswitcher>3)
+		{
+			m_monthswitcher=0;
+		}
+		setCookie("month_view_style",m_monthswitcher,180);
+		me.setStateMonth();
 	}
 
 	// create the (static) UI of the calendar app.
@@ -2468,12 +2491,21 @@ BeCal.updateEventType = function(evtid, evttype)
 		BeCal.instance.updateEventType(evtid, evttype);
 };
 
+// switch the month view in the top bar.
+BeCal.switchmonthview=function()
+{
+	if(BeCal.instance!=null)
+		BeCal.instance.switchmonthview();
+}
+
 // TEXT MONTH NAMES ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-BeCal.monthNames = ["Jan.", "Feb.", "März", "April", "Mai", "Juni",
-					"July", "Aug.", "Sept.", "Okt.", "Nov.", "Dez."];
-BeCal.monthNamesL = ["Januar", "Februar", "März", "April", "Mai", "Juni",
-					"July", "August", "September", "Oktober", "November", "Dezember"];
+BeCal.monthNames = ["Jan.", "Feb.", "März ", "April ", "Mai ", "Juni ",
+					"July ", "Aug.", "Sept.", "Okt.", "Nov.", "Dez."];
+BeCal.monthNamesL = ["Januar ", "Februar ", "März ", "April ", "Mai ", "Juni ",
+					"July ", "August ", "September ", "Oktober ", "November ", "Dezember "];
+BeCal.monthNumbers=["1.", "2.", "3.", "4.", "5.", "6.", "7.", "8.", "9.", "10.", "11.", "12."];
+BeCal.monthNumbersRom=["I.","II.","III.","IV.","V.","VI.","VII.","VIII.","IX.","X.", "XI.", "XII."];
 
 // DIV and other IDs +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
