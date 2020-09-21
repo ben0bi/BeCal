@@ -1,6 +1,6 @@
- /* Ben0bis Calendar, V3.0.00 */
+ /* Ben0bis Calendar, V3.1.00 */
 
-var becalVersion = "3.0.04";
+var becalVersion = "3.1.00";
 var g_becalDatabaseFile = "DATA/becaldatabase.gml";
 
 // show and hide UI-blocker functions.
