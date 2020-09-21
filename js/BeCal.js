@@ -1225,6 +1225,7 @@ var BeCal = function(contentdivid)
 			case 3: monthname = BeCal.monthNumbersRom[renderdate.getMonth()]; break;
 			case 0:
 			default:
+				m_monthswitcher=0;
 				break;
 		}
 		mt = '<div id="'+BeCal.divNameTopbarDate+'" onclick="BeCal.switchmonthview();" style="cursor: pointer;">'+monthname+renderdate.getFullYear()+"</div>";
@@ -1528,12 +1529,14 @@ var BeCal = function(contentdivid)
 	this.switchmonthview=function()
 	{
 		// switch between the possible views of a month name.
+		m_monthswitcher = parseInt(m_monthswitcher);
 		m_monthswitcher++;
 		if(m_monthswitcher>3)
 		{
 			m_monthswitcher=0;
 		}
 		setCookie("month_view_style",m_monthswitcher,180);
+		console.log("MM:"+m_monthswitcher);
 		me.setStateMonth();
 	}
 
