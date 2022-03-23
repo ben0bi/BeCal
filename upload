@@ -3,5 +3,5 @@
 sudo git add .
 sudo git commit -m "$1"
 #sudo git push -u origin master
-sudo git push 'https://ben0bi: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@github.com/BeCal.biz/file.git'
+sudo git push 'https://ben0bi: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@github.com/ben0bi/BeCal.git'
 
