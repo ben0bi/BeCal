@@ -1,6 +1,6 @@
- /* Ben0bis Calendar, V3.1.00 */
+ /* Ben0bis Calendar, V3.2.00 */
 
-var becalVersion = "3.1.01";
+var becalVersion = "3.2.00";
 var g_becalDatabaseFile = "DATA/becaldatabase.gml";
 
 // show and hide UI-blocker functions.
@@ -135,6 +135,7 @@ var GMLParser_CALEVENT = function()
 		setUniqueID();
 	};
 
+	// set an unique id
 	var setUniqueID = function()
 	{
 		// assign an unique id.
@@ -585,6 +586,7 @@ function audioStopRecord(doplay = true)
 	}
 }
 
+// switch audio recording
 function audioSwitchRecording()
 {
 	if(g_audioRecorder==null)
@@ -595,6 +597,7 @@ function audioSwitchRecording()
 	}
 }
 
+// reset the audio
 function audioReset(doplay = true)
 {
 	g_lastRecordedAudio=-1;
@@ -608,6 +611,7 @@ function audioPlayEvent(evt)
 		audioPlayFile(evt.audiofile);
 }
 
+// play the audio of the selected event
 function audioPlaySelectedEvent()
 {
 	if(m_selectedEvent!=null)
@@ -936,6 +940,7 @@ var BeCal = function(contentdivid)
 		}
 	}
 
+	// save an event to the db after audio has been recorded.
 	function saveToDB_afteraudio(becalevt)
 	{
 		// create SQL strings from the dates.
@@ -1015,7 +1020,7 @@ var BeCal = function(contentdivid)
 
 	// ENDOF DB FUNCTIONS
 
-	this.clearEvents = function() 
+	this.clearEvents = function()
 	{
 		// NP m_eventArray = new Array();};
 		GMLParser.EVENTS().clear();
@@ -1896,7 +1901,8 @@ var BeCal = function(contentdivid)
 			(e.eventtype==1 && e.enddate <= today && Date.removeTime(dayfield.date).toString() == today.toString()))
 			{
 				console.log("TDY: "+today+" dfd:"+Date.removeTime(dayfield.date));
-				txt+='<div id="becalHiddenEventDiv_'+e.getID()+'" class="becalHiddenEvent" style="background-color:'+e.color+';" onclick="BeCal.openEventViewDialog('+e.getID()+')">'+e.title+'</div>';
+				txt+='<div id="becalHiddenEventDiv_'+e.getID()+'" class="becalHiddenEvent" style="background-color:'+e.color+';" onclick="BeCal.openEventViewDialog('+e.getID()+')" onmouseover="GMLParser_CALEVENT.eventMouseOver('+e.getID()+')" onmouseout=GMLParser_CALEVENT.eventMouseOver('+e.getID()+',true)">'+e.title+'</div>';
+
 				count+=1;
 			}
 		}
