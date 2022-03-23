@@ -1,6 +1,6 @@
  /* Ben0bis Calendar, V3.1.00 */
 
-var becalVersion = "3.1.00";
+var becalVersion = "3.1.01";
 var g_becalDatabaseFile = "DATA/becaldatabase.gml";
 
 // show and hide UI-blocker functions.
@@ -13,7 +13,7 @@ var m_statustimer = null;
 var m_statusdirection = -1;
 
 /* set another css file to a link with an id. */
-function switchCSS(cssid, newcssfilename) 
+function switchCSS(cssid, newcssfilename)
 {
 	$('#'+cssid).attr('href', 'css/'+newcssfilename);
 	// set the cookie to save the layout setting.
@@ -377,11 +377,11 @@ var GMLParser_CALENDAREVENTS = function()
 	{
 		var evts = me.events;
 		var found = true;
-		
+
 		// 0 or one event does not have to be sorted.
 		if(evts.length<=1)
 			return;
-		
+
 		while(found==true)
 		{
 			// reset found.
@@ -433,7 +433,7 @@ GMLParser.TODOS = function()
 }
 
 /***************************************************************************************************************************************/
-	
+
 // do some funny loading texts.
 var getLoadingText = function()
 {
@@ -462,7 +462,7 @@ var getLoadingText = function()
 }
 
 // show a status in the status line at the bottom.
-function status(text) 
+function status(text)
 {
 	if(m_statustimer!=null)
 	{
@@ -488,7 +488,7 @@ function status(text)
 	var l2= statusdiv.width();
 	if(l1>l2)
 	{
-		m_statustimer = setInterval(function() 
+		m_statustimer = setInterval(function()
 		{
 			var adv = $('#statusadvancer');
 			var left = adv.css('left');
@@ -533,17 +533,17 @@ function audioRecord()
 
 		// show stop button.
 		$('.audioRecordBtn').removeClass('audio_not_recording');
-		$('.audioRecordBtn').addClass('audio_recording');	
-		
+		$('.audioRecordBtn').addClass('audio_recording');
+
 		const mediaRecorder = new MediaRecorder(stream);
 		g_audioRecorder = mediaRecorder;
 
 		mediaRecorder.start();
 		const audioChunks = [];
-		
+
 		// add data to the chunks.
 		mediaRecorder.addEventListener("dataavailable", event => {audioChunks.push(event.data);});
-		
+
 		// create a data blob with the audio chunks.
 		mediaRecorder.addEventListener("stop", () => {
 			const audioBlob = new Blob(audioChunks,{type: 'audio/wav'});
@@ -555,7 +555,7 @@ function audioRecord()
 			else
 				g_lastRecordedAudio=null;
 			g_audioRecorder = null;
-			
+
 			// maybe just save after stopping.
 			var s = g_audioDirectSave;
 			g_audioDirectSave = null;
@@ -588,7 +588,7 @@ function audioStopRecord(doplay = true)
 function audioSwitchRecording()
 {
 	if(g_audioRecorder==null)
-	{	
+	{
 		audioRecord()
 	}else{
 		audioStopRecord();
@@ -625,7 +625,7 @@ function audioPlayFile(filename)
 		g_singleAudio.pause();
 		g_singleAudio.currentTime=0;
 	}
-	
+
 	console.log("Play Audio: "+filename);
 	g_singleAudio = new Audio("DATA/AUDIO/"+filename);
 	g_singleAudio.play();
@@ -649,12 +649,12 @@ Date.daysBetween = function( date1, date2 ) {
 	  date1_ms = date2_ms;
 	  date2_ms=s;
   }
-  
+
   // Calculate the difference in milliseconds
   var difference_ms = date2_ms - date1_ms;
 
   // Convert back to days and return
-  return Math.round(difference_ms/one_day)+1; 
+  return Math.round(difference_ms/one_day)+1;
 };
 
 // set just the day, month and year of a date, not the time.
@@ -694,7 +694,7 @@ Date.toSQL = function(datetime)
 	var day = datetime.getDate();
 	var hour = datetime.getHours();
 	var minute=datetime.getMinutes();
-	
+
 	if(month<10)
 		month="0"+month;
 	if(day<10)
@@ -703,8 +703,8 @@ Date.toSQL = function(datetime)
 		hour="0"+hour;
 	if(minute<10)
 		minute="0"+minute;
-	
-	return year+"-"+month+"-"+day+"T"+hour+":"+minute+":00.000";	
+
+	return year+"-"+month+"-"+day+"T"+hour+":"+minute+":00.000";
 };
 
 // return DD.MM.YYYY
@@ -758,14 +758,14 @@ var BeCalDayField = function(day,x,y,w,h,slotcount)
 		// unknown slots are always occupied. ;)
 		return true;
 	}
-	
+
 	// set a slot value.
 	this.occupySlot=function(index, occupy = true)
 	{
 		if(index>=0 && index<slots.length)
-			slots[index]=occupy;		
+			slots[index]=occupy;
 	}
-	
+
 	clearSlots();
 }
 
@@ -784,16 +784,16 @@ var BeCal = function(contentdivid)
 	var m_maxEventSlots = 5;			// max slots on a field to put events into.
 
 	var m_renderstate = "month";	// drawing state. Not yet used.
-	
+
 	var m_renderDate = new Date();	// previously BeCal.globalToday
 	this.getRenderDate = function() {return m_renderDate;};
-	
+
 	// the actual view for the todos.
 	var m_actualTodoView = 2; // 1 = alle, 2 = not done, 0 = done
-		
+
 	// color for a new entry.
 	this.newEntryColor = BeCal.eventDefaultColor;
-	
+
 	// mouse is over or out of an event. Show new status.
 	this.eventMouseOver = function(evtid, mouseOut)
 	{
@@ -807,7 +807,7 @@ var BeCal = function(contentdivid)
 				// maybe add the summary to the status.
 				if(evt.summary!="")
 					spc=" ";
-				
+
 				if(evttype==0)	// event
 				{
 					var sts = Date.toShortDate(evt.startdate);
@@ -827,15 +827,15 @@ var BeCal = function(contentdivid)
 			status("");
 		}
 	};
-	
+
 	// DB FUNCTIONS
 	var loadEventsBetween = function(startdate, enddate, successFunc)
 	{
 		showBlocker(getLoadingText());
-	
+
 // NEW: LOAD FROM JSON
 		// load the file each time we load the events, for synced everything.
-		PARSEGMLFILE(g_becalDatabaseFile , function() 
+		PARSEGMLFILE(g_becalDatabaseFile , function()
 		{
 			var data = GMLParser.EVENTSBETWEEN(startdate, enddate);
 			log(data.length+" events loaded.");
@@ -852,14 +852,14 @@ var BeCal = function(contentdivid)
 			hideBlocker();
 		});
 	};
-	
+
 	// load the todos for the todo screen.
 	var loadTodos = function(successFunc)
 	{
 		showBlocker(getLoadingText());
 // NEW: LOAD FROM JSON
 		// load the file each time we load the events, for synced everything.
-		PARSEGMLFILE(g_becalDatabaseFile , function() 
+		PARSEGMLFILE(g_becalDatabaseFile , function()
 		{
 			var data = GMLParser.TODOS();//(startdate, enddate);
 			log(data.length+" events loaded.");
@@ -876,7 +876,7 @@ var BeCal = function(contentdivid)
 			hideBlocker();
 		});
 	};
-	
+
 	// save an event to the DB.
 	this.DBsave = function(evt) {saveToDB(evt);};
 	var saveToDB = function(becalevt)
@@ -896,7 +896,7 @@ var BeCal = function(contentdivid)
 				return;
 				// maybe wait for the audiorecorder to stop.
 			}
-			
+
 			// get the audio blob.
 			var lastAudio=0;
 			if(g_lastRecordedAudio!=null)
@@ -904,7 +904,7 @@ var BeCal = function(contentdivid)
 
 			// set up the php request.
 			var url = 'php/ajax_save_audiofile.php';
-		
+
 			// success function for audio saving.
 			var audioprocessed = function(data)
 			{
@@ -916,7 +916,7 @@ var BeCal = function(contentdivid)
 				// hideBlocker(); render will load all events and show blocker in the meanwhile
 				audioReset();
 			}
-		
+
 			var data = new FormData();
 			data.append('file', lastAudio);
 
@@ -935,7 +935,7 @@ var BeCal = function(contentdivid)
 			audioReset();
 		}
 	}
-	
+
 	function saveToDB_afteraudio(becalevt)
 	{
 		// create SQL strings from the dates.
@@ -956,15 +956,15 @@ var BeCal = function(contentdivid)
 					};			// the CUD event to do.
 					// ^if CUD == 'create', it will create OR update an object.
 					// if CUD == 'delete', it will delete the object.
-		
+
 		// success function.
 		var aftersavemethod = function(data)
 		{
-			console.log("CUD event result:" +data);		
+			console.log("CUD event result:" +data);
 			m_renderDate=me.render(m_renderDate);
 			// hideBlocker(); render will load all events and show blocker in the meanwhile
 		}
-		
+
 		$.ajax({
 			type: 'POST',
 			url: url,
@@ -980,7 +980,7 @@ var BeCal = function(contentdivid)
 	{
 		showBlocker();
 		// create SQL strings from the dates.
-	
+
 		// set up the php request.
 		// we only need the db id but CUD will read all the other values.
 		var url = 'php/ajax_CUD_event.php';
@@ -995,7 +995,7 @@ var BeCal = function(contentdivid)
 					CUD: 'delete'};			// the CUD event to do.
 					// ^if CUD == 'create', it will create OR update an object.
 					// if CUD == 'delete', it will delete the object.
-		
+
 		// success function.
 		var success = function(data)
 		{
@@ -1010,17 +1010,17 @@ var BeCal = function(contentdivid)
 			data: data,
 			success: success,
 			dataType: 'text'
-		});		
+		});
 	}
-	
+
 	// ENDOF DB FUNCTIONS
-	
+
 	this.clearEvents = function() 
 	{
 		// NP m_eventArray = new Array();};
 		GMLParser.EVENTS().clear();
 	}
-	
+
 	// return an event by its id.
 	this.getEventByID = function(id)
 	{
@@ -1032,7 +1032,7 @@ var BeCal = function(contentdivid)
 		}
 		return null;
 	};
-	
+
 	// get the day field associated to a date.
 	this.getDayField = function(searchdate)
 	{
@@ -1109,7 +1109,7 @@ var BeCal = function(contentdivid)
 			mt+='<span class="becalAdvanceBtn">&nbsp;</span>';
 			mt+='<a href="javascript:" class="becalMainBtn '+actTodo+'" onclick="BeCal.switchTodoView();"></a>&nbsp;';
 			mt+='<a href="javascript:" class="becalMainBtn becalToCalendarBtn" onclick="BeCal.setStateMonth();"></a>&nbsp;';
-			
+
 			mt+='<a href="javascript:" class="becalMainBtn becalSettingsBtn" onclick="BeCal.showSettings();"></a>';
 		mt+='</div>';
 		$('#'+BeCal.divNameTopMenu).html(mt);
@@ -1124,7 +1124,7 @@ var BeCal = function(contentdivid)
 			var txt='<div class="fullscreen scrollvertical" onclick="BeCal.openEditDialog(\'TODOS\')"><br />';
 			// NP var entries = m_eventArray;
 			var entries = GMLParser.TODOS();
-			
+
 			// first get all entries in range.
 			// only push the timed events first.
 			var now = new Date();
@@ -1140,7 +1140,7 @@ var BeCal = function(contentdivid)
 					continue;
 
 				entrycount++;
-				
+
 				var end = new Date(e.enddate);
 				if(end>=now && tdyfound==0)
 				{
@@ -1524,7 +1524,7 @@ var BeCal = function(contentdivid)
 		else
 			$('#BecalTodoDONEBtn').show();
 	}
-	
+
 	// switch the month in month view including setting a cookie.
 	this.switchmonthview=function()
 	{
@@ -1612,7 +1612,7 @@ var BeCal = function(contentdivid)
 		$('#'+BeCal.divNameOverlay).jdCreateWindow(BeCal.editEntryWindow,100,100,500,220, title, txt);
 
 		// *************************************************************
-		
+
 		// the window to check a todo before the edit window pops up.
 		txt='<div class="becalWindow"><div class="intermediaryTodoButtons"><nobr>';
 				txt+='<a href="javascript:" id="BecalTodoDONEBtn" class="becalOkBtn becalHakenBtn" onclick="BeCal.updateEventBtnPressed(2)"></a>';
@@ -1645,7 +1645,7 @@ var BeCal = function(contentdivid)
 			togglePaletteMoreText: '==>',
 			togglePaletteLessText: '<==',
 			clickoutFiresChange: true,
-			change: function(color) 
+			change: function(color)
 			{
 				editColorPickerChanged(color);
 			},
@@ -1660,10 +1660,10 @@ var BeCal = function(contentdivid)
 				["#33F","#3F3","#F33","#FF3","#F3F","#3FF"],
 			]
 		});
-		
+
 		// show the actual entry duration.
 		showEntryDuration();
-		
+
 		// do something when the input fields change.
 		$('#'+BeCal.inputNameDate1).on('change', function()
 		{
@@ -1685,15 +1685,15 @@ var BeCal = function(contentdivid)
 			//constrainDateInput();
 			showEntryDuration();
 		});
-	
+
 		// hide all the created UI windows.
 		$('#'+BeCal.divNameOverlay).jdHideAllWindows();
-		
+
 		// show a welcome message in the status field.
 		var d = new Date();
 		status("Welcome to BeCal v"+becalVersion+". Date: "+Date.toShortDate(d)+" "+Date.toShortTime(d)+" / This website uses cookies to save your layout settings.");
 	};
-		
+
 	// constrain the date inputs so that the end date cannot be < start date.
 	// use unconstrain if it is a todo.
 	var constrainDateInput = function()
@@ -1705,7 +1705,7 @@ var BeCal = function(contentdivid)
 			return;
 		}
 		m_isChangingDateInput=true;
-	
+
 		//console.log("CONSTRAINING DATE INPUT START");
 		// get the real dates.
 		var day1 = Date.setTime(AnyTime.getCurrent(BeCal.inputNameDate1),AnyTime.getCurrent(BeCal.inputNameTime1));
@@ -1721,22 +1721,22 @@ var BeCal = function(contentdivid)
 		earliestdate.setHours(0);
 		earliestdate.setMinutes(0);
 		earliestdate.setSeconds(1);
-	
+
 		//	console.log("Setting earliest: "+earliestdate+" / "+time1);
 		AnyTime.setEarliest(BeCal.inputNameDate2, earliestdate);
 
-		// set the earliest time.	
+		// set the earliest time.
 		if(Date.compareOnlyDate(day1,day2)==true)
 			AnyTime.setEarliest(BeCal.inputNameTime2, time1);
 		else
 			AnyTime.setEarliest(BeCal.inputNameTime2, defaultConv.parse("00:00"));
-	
+
 		// hide some fields.
 		$('#AnyTime--'+BeCal.inputNameDate2).hide();
-		$('#AnyTime--'+BeCal.inputNameTime2).hide();	
+		$('#AnyTime--'+BeCal.inputNameTime2).hide();
 		m_isChangingDateInput=false;
 	};
-	
+
 	// unconstrain the datetime input of field 2 for todos.
 	this.unconstrainDateTimeInput = function()
 	{
@@ -1746,30 +1746,30 @@ var BeCal = function(contentdivid)
 		var earliestdate = new Date("1900-01-01T00:00:00");
 		AnyTime.setEarliest(BeCal.inputNameDate2, earliestdate);
 		AnyTime.setEarliest(BeCal.inputNameTime2, defaultConv.parse("00:00"));
-		
+
 		$('#AnyTime--'+BeCal.inputNameDate2).hide();
-		$('#AnyTime--'+BeCal.inputNameTime2).hide();	
+		$('#AnyTime--'+BeCal.inputNameTime2).hide();
 	};
-	
+
 	// undo the unconstrain on todos.
 	this.UNunconstrainDateTimeInput = function()
 	{
 		m_isChangingDateInput = false;
 		constrainDateInput();
 	};
-	
+
 	// show the duration between the two dates on the edit/show event window.
 	var m_blockEntryDuration = false;
 	var showEntryDuration = function(date1 = false, date2 = false)
-	{		
+	{
 		// prevent from reset all the time.
 		if(m_blockEntryDuration==true)
 			return;
-		
+
 		var durationdiv = $('.becalEntryDurationDiv');
 		var txt = "Dauer:";
 		var isBig = false;
-		
+
 		var daytime1 = 0;
 		var daytime2 = 0;
 		if(date1==false && date2==false)
@@ -1788,23 +1788,23 @@ var BeCal = function(contentdivid)
 			daytime2=new Date(date2);
 			//console.log("Got time from parameters. ;)");
 		}
-		
+
 		// get the milliseconds since 1970.
 		var ms1 = daytime1.getTime();
 		var ms2 = daytime2.getTime();
-		
+
 		//console.log("ms1:"+ms1+" ms2:"+ms2);
 		var timeinMS = ms2-ms1;
 		//console.log("MS: "+timeinMS);
-		
+
 		// the seconds.
 		var seconds = parseInt(timeinMS * 1/1000); // prevent zero division by multiplication.
 		//console.log("Seconds:"+seconds);
-				
+
 		// the minutes.
 		var timeinMinutes = parseInt(seconds * 1/60);
 		//console.log("Minutes: "+timeinMinutes);
-		
+
 		var minutes = timeinMinutes % 60;
 		timeinMinutes -= minutes;
 		//console.log("Minutes 2:"+timeinMinutes+" Rest: "+minutes);
@@ -1812,11 +1812,11 @@ var BeCal = function(contentdivid)
 		// the hours.
 		var timeinHours = parseInt(timeinMinutes * 1/60);
 		//console.log("Hours: "+timeinHours);
-		
+
 		var hours = timeinHours % 24;
 		timeinHours -= hours;
 		//console.log("Hours 2: "+timeinHours+" Rest: "+hours);
-		
+
 		var days = parseInt(timeinHours * 1/24);
 
 		if(days>=7)
@@ -1827,7 +1827,7 @@ var BeCal = function(contentdivid)
 				n="n";
 			isBig = ">= "+weeks+" Woche"+n;
 		}
-		
+
 		if(days>=30)
 		{
 			var months = days * 1/30;
@@ -1835,8 +1835,8 @@ var BeCal = function(contentdivid)
 			if(months>1)
 				e="e";
 			isBig = ">= "+months+" Monat"+e;
-		}		
-		
+		}
+
 		// create duration text.
 		if(isBig==false)
 		{
@@ -1848,7 +1848,7 @@ var BeCal = function(contentdivid)
 				txt+=minutes+"min";
 
 			//console.log(">D:"+days+" H:"+hours+" M:"+minutes);
-			
+
 			if(days==0 && hours==0 && minutes==0)
 			{
 				txt = "Zeitlos";
@@ -1856,7 +1856,7 @@ var BeCal = function(contentdivid)
 		}else{
 			txt=isBig;
 		}
-		
+
 		// set the divs content.
 		durationdiv.each(function() {$(this).html(txt);});
 	};
@@ -1968,14 +1968,14 @@ var BeCal = function(contentdivid)
 		var h = win.height();
 		var cw=content.width();
 		var ch=content.height();
-	
+
 		// set window position
 		posX += entryWidth*0.75;
 		if(posX+w>cw)
 			posX=posX-w-entryWidth*0.5;
 		if(posY+h>ch)
 			posY=ch-h-4;
-		
+
 		if(posX<0)
 			posX=0;
 		if(posY<0)
@@ -1988,7 +1988,7 @@ var BeCal = function(contentdivid)
 		win.jdShow();
 		win.focus();
 	};
-	
+
 	// the color picker of the edit window changed.
 	var editColorPickerChanged = function(col)
 	{
@@ -2013,10 +2013,10 @@ var BeCal = function(contentdivid)
 		txt+='<div onclick="BeCal.showAboutWindow();" class="becalBtn" style="width: 238px;">Info</div>';
 		txt+='</div>';
 
-		win.jdHTML(txt)		
+		win.jdHTML(txt);
 		win.jdShow();
 	}
-	
+
 	// show the settings dialog with the style switcher.
 	this.showStyleSwitcher = function()
 	{
@@ -2037,10 +2037,10 @@ var BeCal = function(contentdivid)
 		txt+='<div onclick="switchCSS(\'customstyle\', \'style_whiteNblack.css\');" class="becalBtn" style="width: 238px;">W & B</div>';
 		txt+='<div onclick="switchCSS(\'customstyle\', \'style_whiteNblack_HC.css\');" class="becalBtn" style="width: 238px;">W & B HC</div>';
 		txt+='</div>';
-		win.jdHTML(txt);		
+		win.jdHTML(txt);
 		win.jdShow();
 	}
-	
+
 	this.showAboutWindow = function()
 	{
 		var menuHeight = $('#'+BeCal.divNameTopMenu).height();//+$('.becalDayField').height();
@@ -2058,16 +2058,16 @@ var BeCal = function(contentdivid)
 		txt+='<a href="https://twitter.com/ben0bi">Beni Yager</a><br />';
 		txt+='2018,2020'
 		txt+='</center></div>';
-		win.jdHTML(txt);		
+		win.jdHTML(txt);
 		win.jdShow();
 	}
-	
+
 	// open the edit entry dialog.
 	this.openEditDialog = function(datefieldid)
 	{
 		// get the date field where the click happened.
 		var f = m_datefieldArray[datefieldid];
-	
+
 		var now = new Date();
 		var day = new Date(f.date);
 
@@ -2075,16 +2075,16 @@ var BeCal = function(contentdivid)
 		day.setHours(now.getHours());
 		day.setMinutes(now.getMinutes());
 		day.setSeconds(0);
-	
+
 		// set the end time one hour later.
 		var day2 = new Date(day);
 		day2.setHours(day2.getHours()+1);
-	
+
 		var menuHeight = $('#'+BeCal.divNameTopMenu).height()+$('.becalDayField').height();
-	
+
 		realOpenEditDialog(day, day2, parseInt(f.left),parseInt(f.top)+menuHeight, f.width);
 	};
-	
+
 	// open the edit dialog in the todo window.
 	this.openEditDialog_TODO = function()
 	{
@@ -2093,18 +2093,18 @@ var BeCal = function(contentdivid)
 
 		var day2 = new Date(now);
 		day2.setHours(day2.getHours()+1);
-		
+
 		realOpenEditDialog(now, day2, 100, 100, 1);
 	}
-	
+
 	var realOpenEditDialog = function(day, day2, px, py, pwidth)
 	{
 		// reset the selected event.
 		m_selectedEvent = null;
-		
+
 		$('#eventView_has_audio_file').hide();
 		//audioReset(); // it will stop on hideallwindows in showwindowpos.
-		
+
 		// hide the intermediary interface window.
 		$('#'+BeCal.updateTodoWindow).hide();
 
@@ -2114,33 +2114,33 @@ var BeCal = function(contentdivid)
 
 		AnyTime.setCurrent( BeCal.inputNameDate2, day2);
 		AnyTime.setCurrent( BeCal.inputNameTime2, day2);
-		
+
 		// it is a new entry, so we show the input stuff and hide the show stuff (entry mode).
 		$('#'+BeCal.divNameEditContainer).show();
 
 		// NEW: No show stuff anymore, just the menu
 		 $('#'+BeCal.divNameShowContainer).hide();
-	
+
 		changeEntryWindowEvtColor(me.newEntryColor);
 		$('#'+BeCal.inputNameColorPicker).spectrum("set", me.newEntryColor);
-	
+
 		showWindowPos(BeCal.editEntryWindow, px,py,pwidth);
 		$('#'+BeCal.inputNameEventTitle).focus();
 	}
-	
+
 	// open the dialog to show the event view.
 	m_selectedEvent = null;
 	this.openEventViewDialog = function(eventid, afterintermediary=false)
 	{
 		// reset the audio recording.
 		//audioReset(); // it will stop on hideallwindows in showwindowpos.
-				
+
 		// hide the intermediary interface window.
 		$('#'+BeCal.updateTodoWindow).hide();
-		
+
 		// prevent duration div from updating all the time.
 		m_blockEntryDuration = true;
-		
+
 		var evt = me.getEventByID(eventid);
 		m_selectedEvent = evt;
 		//var evt = BeCal.entries[eventid];
@@ -2148,7 +2148,7 @@ var BeCal = function(contentdivid)
 		{
 			console.log("FATAL: Event with id "+eventid+" not found.");
 			m_selectedEvent = null;
-			return; 
+			return;
 		}
 
 		// show or hide the speaker icon. TODO: audio in table.
@@ -2156,21 +2156,21 @@ var BeCal = function(contentdivid)
 			$('#eventView_has_audio_file').show();
 		else
 			$('#eventView_has_audio_file').hide();
-		
+
 		// maybe play the associated sound.
 		audioPlayEvent(evt);
 
 		// get the event type and set it to the checkboxes.
 		var eventtype = evt.eventtype;
-		
+
 		// it is a normal event.
 		if(eventtype==0)
 			$('#'+BeCal.inputNameCheckTodo).prop('checked', false);
-		
+
 		// it is a TODO.
 		if(eventtype>=1)
 			$('#'+BeCal.inputNameCheckTodo).prop('checked', true);
-		
+
 		// show the right button.
 		if(eventtype==1)
 			showTodoBtn(false); // todo not done.
@@ -2179,32 +2179,32 @@ var BeCal = function(contentdivid)
 
 		// update the checkbox content.
 		BeCal.checkBoxTodo();
-		
+
 		var left=$().Mouse().x;
 		var top=$().Mouse().y;
 		//var menuHeight = $('#'+BeCal.divNameTopMenu).height()+$('.becalDayField').height();
-	
+
 		// it is an old entry, so we show the show stuff and hide the input stuff (show mode).
 		$('#'+BeCal.divNameEditContainer).hide();
-		
+
 		// NEW: No show stuff anymore, just the menu
 		$('#'+BeCal.divNameShowContainer).show();
-	
+
 		// OLD: divnameSHOWtitle.html...
 		$('#'+BeCal.inputNameEventTitle).val(evt.title);
-	
+
 		// set the dates in the inputs so we can get their formatted values for the non-input text.
 		AnyTime.setCurrent( BeCal.inputNameDate1, evt.startdate);
 		AnyTime.setCurrent( BeCal.inputNameDate2, evt.enddate);
 		AnyTime.setCurrent( BeCal.inputNameTime1, evt.startdate);
 		AnyTime.setCurrent( BeCal.inputNameTime2, evt.enddate);
-	
+
 		// set the event color.
 		changeEntryWindowEvtColor(evt.color);
-		
+
 		// NEW: also set the color picker color.
 		$('#'+BeCal.inputNameColorPicker).spectrum("set", evt.color);
-	
+
 		m_blockEntryDuration = false;
 		// show the duration of the event.
 		showEntryDuration(evt.startdate, evt.enddate);
@@ -2220,20 +2220,20 @@ var BeCal = function(contentdivid)
 		// show the window.
 		showWindowPos(BeCal.editEntryWindow,parseInt(left),parseInt(top), 1);
 	};
-	
+
 	// open the event view dialog from the intermediary todo button overlay.
 	this.editEventBtnInTodoOverlayPressed =function()
 	{
 		// hide the intermediary interface window.
 		$('#'+BeCal.updateTodoWindow).hide();
-		
+
 		// open the event view for the selected item.
 		if(m_selectedEvent!=null)
 			me.openEventViewDialog(m_selectedEvent.getID(),true);
 		else
 			console.log("ERROR: Event not found after clicking edit on intermediary todo overlay.");
 	};
-	
+
 	// create a new event from the data in the edit window.
 	this.createNewEventBtnPressed = function()
 	{
@@ -2245,15 +2245,15 @@ var BeCal = function(contentdivid)
 		var todo = $('#'+BeCal.inputNameCheckTodo).prop('checked');
 		if(todo==true)
 			evttype=1;
-		
+
 		e.create(start, end, evttype, $('#'+BeCal.inputNameEventTitle).val(), "", "", this.newEntryColor);
-	
+
 		$('#'+BeCal.editEntryWindow).hide();
 		$('#'+BeCal.inputNameEventTitle).val("");
-		
-		saveToDB(e);		
+
+		saveToDB(e);
 	};
-	
+
 	// update an event.
 	this.updateEventBtnPressed = function(eventtype = -1)
 	{
@@ -2263,27 +2263,27 @@ var BeCal = function(contentdivid)
 			console.log("ERROR: No event selected.")
 			return;
 		}
-		
+
 		// The event is saved in the m_selectedEvent variable, just set the new values.
 		m_selectedEvent.startdate=Date.setTime(AnyTime.getCurrent(BeCal.inputNameDate1), AnyTime.getCurrent(BeCal.inputNameTime1));
 		m_selectedEvent.enddate=Date.setTime(AnyTime.getCurrent(BeCal.inputNameDate2), AnyTime.getCurrent(BeCal.inputNameTime2));
 		m_selectedEvent.title = $('#'+BeCal.inputNameEventTitle).val();
 		m_selectedEvent.color = $('#'+BeCal.inputNameColorPicker).spectrum('get').toHexString(); // TODO: Set new color
-		
+
 		// get the old event type.
 		var oldtype = m_selectedEvent.eventtype;
-		
+
 		// set the event type from update window.
 		var todocheck = $('#'+BeCal.inputNameCheckTodo).prop('checked');
 		if(todocheck==true)
 			m_selectedEvent.eventtype = 1;
 		else
 			m_selectedEvent.eventtype = 0;
-		
+
 		// maybe set it to done.
 		if(oldtype==2 && todocheck==true)
 			m_selectedEvent.eventtype = 2;
-		
+
 		// set the event type from function parameter.
 		if(eventtype!=-1)
 			m_selectedEvent.eventtype = eventtype;
@@ -2293,14 +2293,14 @@ var BeCal = function(contentdivid)
 
 		saveToDB(m_selectedEvent);
 		m_selectedEvent = null;
-		
+
 		$('#'+BeCal.inputNameEventTitle).val("");
  	};
-	
+
 	// delete a selected element.
 	this.deleteEventBtnPressed = function()
 	{
-		hideAllWindows();		
+		hideAllWindows();
 		$('#'+BeCal.inputNameEventTitle).val("");
 
 		// selectedevent will be set when you click on an existing event.
@@ -2308,10 +2308,10 @@ var BeCal = function(contentdivid)
 			removeFromDB(m_selectedEvent);
 		m_selectedEvent = null;
 	};
-	
+
 	// INIT
 	if(BeCal.instance == null)
-	{	
+	{
 		BeCal.instance = me;
 		createUI();
 
@@ -2319,7 +2319,7 @@ var BeCal = function(contentdivid)
 		var layoutcookie = getCookie("becal_layout_customstyle");
 		if(layoutcookie!=null)
 			switchCSS('customstyle', layoutcookie);
-		
+
 		BeCal.checkBoxTodo();
 	}else{
 		console.log("WARNING: There is already a BeCal instance. Aborting.");
@@ -2456,7 +2456,7 @@ BeCal.checkBoxTodo = function(invert=false)
 		checked = !checked;
 		$('#'+BeCal.inputNameCheckTodo).prop('checked', checked);
 	}
-	
+
 	var tn = $('.TodoCheckName');
 	if(checked)
 	{
@@ -2465,13 +2465,13 @@ BeCal.checkBoxTodo = function(invert=false)
 		$('#becalTodoTextView').show();
 		tn.removeClass('eventname');
 		tn.addClass('todoname');
-		
+
 		if(BeCal.instance!=null)
-			BeCal.instance.unconstrainDateTimeInput();		
+			BeCal.instance.unconstrainDateTimeInput();
 	}else{
 		$('#becalTodoTextView').hide();
 		//$('.becalInputMiddlestrich').show();
-		$('#becalStartDateView').show();		
+		$('#becalStartDateView').show();
 		tn.removeClass('todoname');
 		tn.addClass('eventname');
 
