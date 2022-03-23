@@ -1,6 +1,8 @@
 # BeCal
 Onfline Calendar: You can set it up on your own server and use it locally.
 
+<img src="becalscreenshot.png" />
+
 Using JSON. No Database setup needed here. You just need php (and thus, a server) for saving, updating and deleting events.
 All data can be read locally without PHP! (You can share the whole calendar with your data on an usb stick to look at it...)
 
